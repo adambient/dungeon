@@ -10,6 +10,7 @@ SECTION bss_user: assign zero initial data to this section
 #include <stdlib.h>
 #include "globals.h"
 #include "map.h"
+#include <input.h>
 
 // imported from screen.asm
 extern void print_string(uint8_t *string) __z88dk_fastcall; // print null terminated string, accepts rst $10 control codes
@@ -19,31 +20,48 @@ extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char 
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void copy_attr_buffer(void) __z88dk_callee; // copy attribute buffer into attribute memory
 
-void loop_around_map(void) // loop around map with 1 tile between player and edge
+static inline unsigned char move_up(void)
 {
-    // intial position/map
-    player_x = MAP_SIZE - 2;
-    player_y = 1;
-    // forward    
-    for (player_x = MAP_SIZE - 2; player_x > 1;)
+    if (player_x > 0)
     {
         map_move_up();
-    }    
-    // right    
-    for (player_y = 1; player_y < MAP_SIZE - 2;)
+        return 1;
+    }
+
+    return 0;
+}
+
+static inline unsigned char move_right(void)
+{
+    if (player_y < MAP_SIZE - 1)
     {
         map_move_right();
+        return 1;
     }
-    // backward    
-    for (player_x = 1; player_x < MAP_SIZE - 2;)
+
+    return 0;
+}
+
+static inline unsigned char move_down(void)
+{
+    if (player_x < MAP_SIZE - 1)
     {
         map_move_down();
+        return 1;
     }
-    // left    
-    for (player_y = MAP_SIZE - 2; player_y > 1;)
+
+    return 0;
+}
+
+static inline unsigned char move_left(void)
+{
+    if (player_y > 0)
     {
         map_move_left();
+        return 1;
     }
+
+    return 0;
 }
 
 void main(void)
@@ -53,9 +71,44 @@ void main(void)
     fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern
     fill_rectangle_attr(0, 0, 24, 32, 0, 7);
     copy_attr_buffer();
+    player_x = MAP_SIZE - 1;
+    player_y = 0;
+    player_dir = 0; // move up first of all to draw map TODO - shouldn't need to do this
     do
-    {        
+    {
         // loop around map
-        loop_around_map();
+        switch (player_dir)
+        {
+            default:
+                // stand still TODO - torch should still flicker
+                break;
+            case 0:
+                move_up();
+                break;
+            case 1:
+                move_right();
+                break;
+            case 2:
+                move_down();
+                break;
+            case 3:
+                move_left();
+                break;
+        }
+
+        // check for movement
+        player_dir = 4;
+        if (in_key_pressed(IN_KEY_SCANCODE_q) == 0xFFFF) {
+            player_dir = 0;
+        }
+        if (in_key_pressed(IN_KEY_SCANCODE_p) == 0xFFFF) {
+            player_dir = 1;
+        }
+        if (in_key_pressed(IN_KEY_SCANCODE_a) == 0xFFFF) {
+            player_dir = 2;
+        }
+        if (in_key_pressed(IN_KEY_SCANCODE_o) == 0xFFFF) {
+            player_dir = 3;
+        }
     } while (1);
 }
