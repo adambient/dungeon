@@ -131,14 +131,14 @@ static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
 void player_draw_up(void)
 {    
     if (DIR_UP != player_direction)
-    {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
-        bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
-        copy_attr_buffer();
+    {        
         switch (player_direction)
         {
             case DIR_RIGHT:
             case DIR_LEFT:
+                fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
+                bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
+                copy_attr_buffer();
                 fill_rectangle_char(0, 0, VISIBLE_AREA, VISIBLE_AREA, BAR_PATTERN);
                 break;
         }
@@ -155,14 +155,14 @@ void player_draw_up(void)
 void player_draw_right(void)
 {
     if (DIR_RIGHT != player_direction)
-    {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
-        bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
-        copy_attr_buffer();
+    {        
         switch (player_direction)
         {
             case DIR_UP:
             case DIR_DOWN:            
+                fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
+                bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
+                copy_attr_buffer();
                 fill_rectangle_char(0, 0, VISIBLE_AREA, VISIBLE_AREA, PIPE_PATTERN);
                 break;
         }
@@ -179,14 +179,14 @@ void player_draw_right(void)
 void player_draw_down(void)
 {
     if (DIR_DOWN != player_direction)
-    {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
-        bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
-        copy_attr_buffer();
+    {        
         switch (player_direction)
         {
             case DIR_RIGHT:
             case DIR_LEFT:
+                fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
+                bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
+                copy_attr_buffer();
                 fill_rectangle_char(0, 0, VISIBLE_AREA, VISIBLE_AREA, BAR_PATTERN);
                 break;
         }
@@ -203,14 +203,14 @@ void player_draw_down(void)
 void player_draw_left(void)
 {
     if (DIR_LEFT != player_direction)
-    {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
-        bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
-        copy_attr_buffer();
+    {        
         switch (player_direction)
         {
             case DIR_UP:
             case DIR_DOWN:            
+                fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
+                bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
+                copy_attr_buffer();
                 fill_rectangle_char(0, 0, VISIBLE_AREA, VISIBLE_AREA, PIPE_PATTERN);
                 break;
         }
