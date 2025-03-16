@@ -128,6 +128,24 @@ static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
     return (get_map_tile(x, y) >> 1 & 0b00000111);
 }
 
+static inline void player_map_bars(void)
+{
+    // fills in all squares around the player
+    fill_rectangle_char(0, 0, PLAYER_SQUARE + 2, PLAYER_SQUARE, BAR_PATTERN);
+    fill_rectangle_char(0, PLAYER_SQUARE, PLAYER_SQUARE, PLAYER_SQUARE + 2, BAR_PATTERN);
+    fill_rectangle_char(PLAYER_SQUARE + 2, 0, PLAYER_SQUARE, PLAYER_SQUARE + 2, BAR_PATTERN);
+    fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE + 2, PLAYER_SQUARE + 2, PLAYER_SQUARE, BAR_PATTERN);
+}
+
+static inline void player_map_pipes(void)
+{
+    // fills in all squares around the player
+    fill_rectangle_char(0, 0, PLAYER_SQUARE + 2, PLAYER_SQUARE, PIPE_PATTERN);
+    fill_rectangle_char(0, PLAYER_SQUARE, PLAYER_SQUARE, PLAYER_SQUARE + 2, PIPE_PATTERN);
+    fill_rectangle_char(PLAYER_SQUARE + 2, 0, PLAYER_SQUARE, PLAYER_SQUARE + 2, PIPE_PATTERN);
+    fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE + 2, PLAYER_SQUARE + 2, PLAYER_SQUARE, PIPE_PATTERN);
+}
+
 void player_draw_up(void)
 {    
     if (DIR_UP != player_direction)
@@ -136,10 +154,7 @@ void player_draw_up(void)
         {
             case DIR_RIGHT:
             case DIR_LEFT:
-                fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
-                bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
-                copy_attr_buffer();
-                fill_rectangle_char(0, 0, VISIBLE_AREA, VISIBLE_AREA, BAR_PATTERN);
+                player_map_bars();
                 break;
         }
         player_direction = DIR_UP;
@@ -160,10 +175,7 @@ void player_draw_right(void)
         {
             case DIR_UP:
             case DIR_DOWN:            
-                fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
-                bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
-                copy_attr_buffer();
-                fill_rectangle_char(0, 0, VISIBLE_AREA, VISIBLE_AREA, PIPE_PATTERN);
+                player_map_pipes();
                 break;
         }
         player_direction = DIR_RIGHT;
@@ -184,10 +196,7 @@ void player_draw_down(void)
         {
             case DIR_RIGHT:
             case DIR_LEFT:
-                fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
-                bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
-                copy_attr_buffer();
-                fill_rectangle_char(0, 0, VISIBLE_AREA, VISIBLE_AREA, BAR_PATTERN);
+                player_map_bars();
                 break;
         }
         player_direction = DIR_DOWN;
@@ -208,10 +217,7 @@ void player_draw_left(void)
         {
             case DIR_UP:
             case DIR_DOWN:            
-                fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2, player_tile_next, player_tile_next);
-                bright_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 2, 2);
-                copy_attr_buffer();
-                fill_rectangle_char(0, 0, VISIBLE_AREA, VISIBLE_AREA, PIPE_PATTERN);
+                player_map_pipes();
                 break;
         }
         player_direction = DIR_LEFT;
