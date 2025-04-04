@@ -72,7 +72,7 @@ void main(void)
     fill_rectangle_attr(0, 0, 24, 32, 0, 7);
     copy_attr_buffer();
     player_x = MAP_SIZE - 1;
-    player_y = 0;
+    player_y = 1;
     player_dir = 0; // move up first of all to draw map TODO - shouldn't need to do this
     do
     {

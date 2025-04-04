@@ -2,6 +2,26 @@
 #include "globals.h"
 #include "player.h"
 
+// TODO - this is obviously hard coded to be [16][2] so perhaps we should generate this
+static unsigned char map[MAP_SIZE][MAP_SIZE / 8] = {
+    { 0b11111111, 0b11111111 },
+    { 0b10000000, 0b00000001 },
+    { 0b10101111, 0b11110101 },
+    { 0b10001111, 0b11110001 },
+    { 0b10111111, 0b11111101 },
+    { 0b10111111, 0b11111101 },
+    { 0b10111111, 0b11111101 },
+    { 0b10111111, 0b11111101 },
+    { 0b10111111, 0b11111101 },
+    { 0b10111111, 0b11111101 },
+    { 0b10111111, 0b11111101 },
+    { 0b10111111, 0b11111101 },
+    { 0b10001111, 0b11110001 },
+    { 0b10101111, 0b11110101 },
+    { 0b10000000, 0b00000001 },
+    { 0b11111111, 0b11111111 }
+};
+
 // imported from map.asm
 extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_callee;
 extern void set_map_tile(unsigned char x, unsigned char y, unsigned int tile)  __z88dk_callee;
@@ -19,7 +39,7 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
 {
     if (x < MAP_SIZE && y < MAP_SIZE)
     {
-        unsigned char tile = get_map_tile(x, y);        
+        unsigned char tile = get_map_tile(x, y);
         if (tile & 0b00000001 == 0b00000001) // has tile been seen
         {
             return (tile << 2 & 0b00111000);
@@ -144,18 +164,30 @@ void map_draw_horizontal(void)
 
 void map_init(void)
 {
-    start_attr_address = (unsigned char*)(ATTR_BUFF); // start of map attribute memory
+    start_attr_address = (unsigned char*)(ATTR_BUFF); // start of map attribute memory    
     for (unsigned char x = MAP_SIZE - 1; x < 255; x--)
     {
-        for (unsigned char y = MAP_SIZE - 1; y < 255 ; y--)
-        {
-            set_map_tile(x, y, (rand() % 6) << 1);
+        for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--) {
+            unsigned char i = 0;
+            unsigned char m = map[x][y];
+            for (unsigned char i = 7; i < 255; i--) {
+                if ((m << i & 0b10000000) == 0b00000000) {
+                    set_map_tile(x, i + (8 * y), ((rand() % 5) + 1) << 1);
+                }
+            }
         }
     }
 }
 
 void map_move_up(void)
 {   
+    unsigned char tile = get_map_tile(player_x - 1, player_y);
+    if ((tile & 0b00001110) == 0b00000000)
+    {
+        // tile is inaccessible
+        return;
+    }
+
     player_draw_up(); 
     // animate up            
     map_frame = 1;    
@@ -180,6 +212,13 @@ void map_move_up(void)
 
 void map_move_down(void)
 {   
+    unsigned char tile = get_map_tile(player_x + 1, player_y);
+    if ((tile & 0b00001110) == 0b00000000)
+    {
+        // tile is inaccessible
+        return;
+    }
+    
     player_draw_down();
     // animate down                 
     map_frame = 3;    
@@ -204,6 +243,13 @@ void map_move_down(void)
 
 void map_move_left(void)
 {       
+    unsigned char tile = get_map_tile(player_x, player_y - 1);
+    if ((tile & 0b00001110) == 0b00000000)
+    {
+        // tile is inaccessible
+        return;
+    }
+
     player_draw_left();
     // animate left
     map_frame = 1;        
@@ -227,7 +273,14 @@ void map_move_left(void)
 }
 
 void map_move_right(void)
-{       
+{
+    unsigned char tile = get_map_tile(player_x, player_y + 1);
+    if ((tile & 0b00001110) == 0b00000000)
+    {
+        // tile is inaccessible
+        return;
+    }
+
     player_draw_right();
     // animate right     
     map_frame = 3;        
