@@ -1,5 +1,5 @@
 MAP_SIZE: equ $10 ; 64
-COMPRESSED_MAP_WIDTH: equ $20 ; half of MAP_SIZE
+COMPRESSED_MAP_WIDTH: equ $08 ; half of MAP_SIZE
 
 SECTION code_user
 
@@ -96,4 +96,4 @@ load_cell_location:
 
 SECTION bss_user
 
-_map: ds MAP_SIZE*COMPRESSED_MAP_WIDTH
+_map: ds MAP_SIZE*(COMPRESSED_MAP_WIDTH + 1)
