@@ -170,12 +170,12 @@ void map_init(void)
             unsigned char i = 0;
             unsigned char m = map[x][y];            
             for (unsigned char i = 7; i < 255; i--) {
-                unsigned char tile = 1; // wall
+                unsigned char tile = BLUE; // wall
                 if ((m << i & 0b10000000) == 0b00000000) {
                     if (((x + i) & 0b00000001) == 0b00000001) {
-                        tile = 2; // carpet 1
+                        tile = RED; // carpet 1
                     } else {
-                        tile = 3; // carpet 2
+                        tile = MAGENTA; // carpet 2
                     }
                 }
                 set_map_tile(x, i + (8 * y), tile << 1);
