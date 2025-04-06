@@ -165,15 +165,20 @@ void map_draw_horizontal(void)
 void map_init(void)
 {
     start_attr_address = (unsigned char*)(ATTR_BUFF); // start of map attribute memory    
-    for (unsigned char x = MAP_SIZE - 1; x < 255; x--)
-    {
+    for (unsigned char x = MAP_SIZE - 1; x < 255; x--) {
         for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--) {
             unsigned char i = 0;
-            unsigned char m = map[x][y];
+            unsigned char m = map[x][y];            
             for (unsigned char i = 7; i < 255; i--) {
+                unsigned char tile = 1; // wall
                 if ((m << i & 0b10000000) == 0b00000000) {
-                    set_map_tile(x, i + (8 * y), ((rand() % 5) + 1) << 1);
+                    if (((x + i) & 0b00000001) == 0b00000001) {
+                        tile = 2; // carpet 1
+                    } else {
+                        tile = 3; // carpet 2
+                    }
                 }
+                set_map_tile(x, i + (8 * y), tile << 1);
             }
         }
     }
@@ -182,7 +187,7 @@ void map_init(void)
 void map_move_up(void)
 {   
     unsigned char tile = get_map_tile(player_x - 1, player_y);
-    if ((tile & 0b00001110) == 0b00000000)
+    if ((tile & 0b00001110) == 0b00000010)
     {
         // tile is inaccessible
         return;
@@ -213,7 +218,7 @@ void map_move_up(void)
 void map_move_down(void)
 {   
     unsigned char tile = get_map_tile(player_x + 1, player_y);
-    if ((tile & 0b00001110) == 0b00000000)
+    if ((tile & 0b00001110) == 0b00000010)
     {
         // tile is inaccessible
         return;
@@ -244,7 +249,7 @@ void map_move_down(void)
 void map_move_left(void)
 {       
     unsigned char tile = get_map_tile(player_x, player_y - 1);
-    if ((tile & 0b00001110) == 0b00000000)
+    if ((tile & 0b00001110) == 0b00000010)
     {
         // tile is inaccessible
         return;
@@ -275,7 +280,7 @@ void map_move_left(void)
 void map_move_right(void)
 {
     unsigned char tile = get_map_tile(player_x, player_y + 1);
-    if ((tile & 0b00001110) == 0b00000000)
+    if ((tile & 0b00001110) == 0b00000010)
     {
         // tile is inaccessible
         return;
