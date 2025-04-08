@@ -236,7 +236,7 @@ void player_draw_background_vertical(void)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_2, BLACK);
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, WHITE);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, player_background_1, WHITE);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, WHITE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_1, BLACK);
     }
     else
@@ -254,13 +254,15 @@ void player_draw_background_horizontal(void)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_1, YELLOW);
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, BLACK);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, player_background_1, WHITE);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, WHITE);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_2, WHITE);
     }
     else
     {
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_1, WHITE);
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, YELLOW);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, player_background_1, BLACK);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, BLACK);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_2, BLACK);
     }          
     bright_rectangle_attr(PLAYER_SQUARE - player_torch_size, PLAYER_SQUARE - player_torch_size, 2 + player_torch_size + player_torch_size, 2 + player_torch_size + player_torch_size);
 }
