@@ -5,3 +5,4 @@ unsigned char player_y;
 unsigned char player_dir;
 unsigned char player_tile;
 unsigned char player_tile_next;
+unsigned char is_player_pushing;

@@ -55,7 +55,7 @@ static inline void frame_draw_up(void)
         case 4:
             fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY3); // draw man
             player_frame = 1;
-            break;        
+            break;   
     }
 }
 
@@ -232,30 +232,46 @@ void player_draw_left(void)
 
 void player_draw_background_vertical(void)
 {
+    unsigned char block_loc;
+
     if (player_direction == DIR_UP)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_2, BLACK);
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, WHITE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, WHITE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_1, BLACK);
+
+        block_loc = PLAYER_SQUARE - 2;
     }
     else
     {
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, player_background_2, YELLOW);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, BLACK);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_1, WHITE);
-    }    
+
+        block_loc = PLAYER_SQUARE + 2;        
+    }
+
+    if (is_player_pushing) {
+        // draw block next to player
+        fill_rectangle_attr(block_loc, PLAYER_SQUARE, 2, 2, YELLOW, YELLOW);
+    }
+
     bright_rectangle_attr(PLAYER_SQUARE - player_torch_size, PLAYER_SQUARE - player_torch_size, 2 + player_torch_size + player_torch_size, 2 + player_torch_size + player_torch_size);    
 }
 
 void player_draw_background_horizontal(void)
 {
+    unsigned char block_loc;
+
     if (player_direction == DIR_LEFT)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_1, YELLOW);
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, BLACK);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, WHITE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_2, WHITE);
+
+        block_loc = PLAYER_SQUARE - 2;
     }
     else
     {
@@ -263,7 +279,15 @@ void player_draw_background_horizontal(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, YELLOW);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, BLACK);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_2, BLACK);
-    }          
+
+        block_loc = PLAYER_SQUARE + 2;        
+    }
+
+    if (is_player_pushing) {
+        // draw block next to player
+        fill_rectangle_attr(PLAYER_SQUARE, block_loc, 2, 2, YELLOW, YELLOW);
+    }
+
     bright_rectangle_attr(PLAYER_SQUARE - player_torch_size, PLAYER_SQUARE - player_torch_size, 2 + player_torch_size + player_torch_size, 2 + player_torch_size + player_torch_size);
 }
 

@@ -3,23 +3,24 @@
 #include "player.h"
 
 // TODO - this is obviously hard coded to be [16][2] so perhaps we should generate this
-static unsigned char map[MAP_SIZE][MAP_SIZE / 8] = {
-    { 0b11111111, 0b11111111 },
-    { 0b10000001, 0b10000001 },
-    { 0b10101101, 0b10110101 },
-    { 0b10000000, 0b00000001 },
-    { 0b10101101, 0b11010101 },
-    { 0b10001101, 0b10010001 },
-    { 0b10100001, 0b10110101 },
-    { 0b10111111, 0b10000101 },
-    { 0b10100001, 0b11111101 },
-    { 0b10101101, 0b10000101 },
-    { 0b10001001, 0b10110001 },
-    { 0b10101011, 0b10110101 },
-    { 0b10000000, 0b00000001 },
-    { 0b10101101, 0b10110101 },
-    { 0b10000001, 0b10000001 },
-    { 0b11111111, 0b11111111 },
+static unsigned char map[MAP_SIZE][MAP_SIZE / 4] = {
+    // walls                  // crates 
+    { 0b11111111, 0b11111111, 0b00000000, 0b00000000},
+    { 0b10000001, 0b10000001, 0b00000000, 0b00000000},
+    { 0b10101101, 0b10110101, 0b00000000, 0b00000000},
+    { 0b10000000, 0b00000001, 0b00100000, 0b00000100},
+    { 0b10101101, 0b11010101, 0b00000000, 0b00000000},
+    { 0b10001101, 0b10010001, 0b00100000, 0b00000100},
+    { 0b10100001, 0b10110101, 0b00000000, 0b00000000},
+    { 0b10111111, 0b10000101, 0b00000000, 0b00000000},
+    { 0b10100001, 0b11111101, 0b00000000, 0b00000000},
+    { 0b10101101, 0b10000101, 0b00000000, 0b00000000},
+    { 0b10001001, 0b10110001, 0b00000000, 0b00000000},
+    { 0b10101011, 0b10110101, 0b00000000, 0b00000000},
+    { 0b10000000, 0b00000001, 0b00100000, 0b00000100},
+    { 0b10101101, 0b10110101, 0b00000000, 0b00000000},
+    { 0b10000001, 0b10000001, 0b00100000, 0b00000100},
+    { 0b11111111, 0b11111111, 0b00000000, 0b00000000},
 };
 
 // imported from map.asm
@@ -168,14 +169,21 @@ void map_init(void)
     for (unsigned char x = MAP_SIZE - 1; x < 255; x--) {
         for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--) {
             unsigned char i = 0;
-            unsigned char m = map[x][y];            
+            unsigned char m = map[x][y]; // map
+            unsigned char c = map[x][y + 2]; // crate
             for (unsigned char i = 7; i < 255; i--) {
                 unsigned char tile = BLUE; // wall
-                if ((m << i & 0b10000000) == 0b00000000) {
-                    if (((x + i) & 0b00000001) == 0b00000001) {
-                        tile = RED; // carpet 1
-                    } else {
-                        tile = MAGENTA; // carpet 2
+                if ((c << i & 0b10000000) == 0b10000000) {
+                    // use crate data
+                    tile = YELLOW; // crate
+                } else {
+                    // use map data                    
+                    if ((m << i & 0b10000000) == 0b00000000) {
+                        if (((x + i) & 0b00000001) == 0b00000001) {
+                            tile = RED; // carpet 1
+                        } else {
+                            tile = MAGENTA; // carpet 2
+                        }
                     }
                 }
                 set_map_tile(x, i + (8 * y), tile << 1);
@@ -191,6 +199,21 @@ void map_move_up(void)
     {
         // tile is inaccessible
         return;
+    }
+
+    if ((tile & 0b00001110) == 0b00001100)
+    {
+        // tile is a crate
+        unsigned char next_tile = get_map_tile(player_x - 2, player_y);
+        if ((next_tile & 0b00001110) == 0b00000010 || (next_tile & 0b00001110) == 0b00001100)
+        {
+            // next tile is blocked
+            return;
+        }
+
+        // replace crate with carpet pattern
+        set_map_tile(player_x - 1, player_y, (RED  | (player_x + player_y & 0b00000001)) << 1 | 0b00000001);
+        is_player_pushing = 1;            
     }
 
     player_draw_up(); 
@@ -212,6 +235,11 @@ void map_move_up(void)
     player_see(3, 2, 2, 2); // final position    
     map_draw_vertical();
     player_draw_background_vertical();
+    if (is_player_pushing == 1) {
+        // place crate
+        is_player_pushing = 0;
+        set_map_tile(player_x - 1, player_y, YELLOW << 1 | 0b00000001);
+    }
     copy_attr_buffer();
 }
 
@@ -222,6 +250,21 @@ void map_move_down(void)
     {
         // tile is inaccessible
         return;
+    }
+
+    if ((tile & 0b00001110) == 0b00001100)
+    {
+        // tile is a crate
+        unsigned char next_tile = get_map_tile(player_x + 2, player_y);
+        if ((next_tile & 0b00001110) == 0b00000010 || (next_tile & 0b00001110) == 0b00001100)
+        {
+            // next tile is blocked
+            return;
+        }
+
+        // replace crate with carpet pattern
+        set_map_tile(player_x + 1, player_y, (RED  | (player_x + player_y & 0b00000001)) << 1 | 0b00000001);
+        is_player_pushing = 1;
     }
     
     player_draw_down();
@@ -243,6 +286,11 @@ void map_move_down(void)
     player_see(2, 3, 2, 2); // final position    
     map_draw_vertical();
     player_draw_background_vertical();
+    if (is_player_pushing == 1) {
+        // place crate
+        is_player_pushing = 0;
+        set_map_tile(player_x + 1, player_y, YELLOW << 1 | 0b00000001);
+    }
     copy_attr_buffer();
 }
 
@@ -253,6 +301,21 @@ void map_move_left(void)
     {
         // tile is inaccessible
         return;
+    }
+
+    if ((tile & 0b00001110) == 0b00001100)
+    {
+        // tile is a crate
+        unsigned char next_tile = get_map_tile(player_x, player_y - 2);
+        if ((next_tile & 0b00001110) == 0b00000010 || (next_tile & 0b00001110) == 0b00001100)
+        {
+            // next tile is blocked
+            return;
+        }
+
+        // replace crate with carpet pattern
+        set_map_tile(player_x, player_y - 1, (RED  | (player_x + player_y & 0b00000001)) << 1 | 0b00000001);
+        is_player_pushing = 1;
     }
 
     player_draw_left();
@@ -274,6 +337,11 @@ void map_move_left(void)
     player_see(2, 2, 3, 2); // final position    
     map_draw_horizontal();
     player_draw_background_horizontal();
+    if (is_player_pushing == 1) {
+        // place crate
+        is_player_pushing = 0;
+        set_map_tile(player_x, player_y - 1, YELLOW << 1 | 0b00000001);
+    }
     copy_attr_buffer();
 }
 
@@ -284,6 +352,21 @@ void map_move_right(void)
     {
         // tile is inaccessible
         return;
+    }
+
+    if ((tile & 0b00001110) == 0b00001100)
+    {
+        // tile is a crate
+        unsigned char next_tile = get_map_tile(player_x, player_y + 2);
+        if ((next_tile & 0b00001110) == 0b00000010 || (next_tile & 0b00001110) == 0b00001100)
+        {
+            // next tile is blocked
+            return;
+        }
+
+        // replace crate with carpet pattern
+        set_map_tile(player_x, player_y + 1, (RED  | (player_x + player_y & 0b00000001)) << 1 | 0b00000001);
+        is_player_pushing = 1;
     }
 
     player_draw_right();
@@ -305,5 +388,10 @@ void map_move_right(void)
     player_see(2, 2, 2, 3); // final position
     map_draw_horizontal();
     player_draw_background_horizontal();
+    if (is_player_pushing == 1) {
+        // place crate
+        is_player_pushing = 0;
+        set_map_tile(player_x, player_y + 1, YELLOW << 1 | 0b00000001);
+    }
     copy_attr_buffer();
 }
