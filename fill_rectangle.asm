@@ -1,7 +1,7 @@
 ; used to populate attribute memory from buffer via _copy_attr_buffer
 VIDEOATT: equ $5800 ; address of attribute RAM
-VIDEOATT_L: equ $0300 ; length of attribute RAM
-ATTR_BUFF: equ $F800 ; hard coded attribute buffer address
+VIDEOATT_L: equ $0240 ; length of attribute RAM (was $0300 i.e. 24 rows but we only need 18 so this is an optimisation)
+ATTR_BUFF: equ $F800 ; hard coded attribute buffer address (was $F800 but we again we only need 18 rows)
 SECTION code_user
 
 PUBLIC _fill_rectangle_char

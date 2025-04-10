@@ -11,6 +11,7 @@ SECTION bss_user: assign zero initial data to this section
 #include "globals.h"
 #include "map.h"
 #include <input.h>
+#include "int.h"
 
 // imported from screen.asm
 extern void print_string(uint8_t *string) __z88dk_fastcall; // print null terminated string, accepts rst $10 control codes
@@ -66,10 +67,11 @@ static inline unsigned char move_left(void)
 
 void main(void)
 {       
+    setup_int();
     print_string("Initialising...");    
     map_init();    
     fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern
-    fill_rectangle_attr(0, 0, 24, 32, 0, 7);
+    fill_rectangle_attr(0, 0, 24, 32, 0, 7);    
     copy_attr_buffer();
     player_x = MAP_SIZE - 1;
     player_y = 1;
@@ -110,5 +112,7 @@ void main(void)
         if (in_key_pressed(IN_KEY_SCANCODE_o) == 0xFFFF) {
             player_dir = 3;
         }
+        
+        wait();
     } while (1);
 }

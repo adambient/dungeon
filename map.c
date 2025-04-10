@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "player.h"
+#include "int.h"
+#include <im2.h>
+#include <intrinsic.h>
 
 // TODO - this is obviously hard coded to be [16][2] so perhaps we should generate this
 static unsigned char map[MAP_SIZE][MAP_SIZE / 4] = {
@@ -221,14 +224,17 @@ void map_move_up(void)
     map_frame = 1;    
     map_draw_vertical();
     player_draw_background_vertical();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame++;
     map_draw_vertical();
     player_draw_background_vertical();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame++;
     map_draw_vertical();
     player_draw_background_vertical();
+    intrinsic_halt();
     copy_attr_buffer();
     player_x--;    
     map_frame = 0;
@@ -240,6 +246,7 @@ void map_move_up(void)
         is_player_pushing = 0;
         set_map_tile(player_x - 1, player_y, YELLOW << 1 | 0b00000001);
     }
+    intrinsic_halt();
     copy_attr_buffer();
 }
 
@@ -273,14 +280,17 @@ void map_move_down(void)
     player_x++;
     map_draw_vertical();
     player_draw_background_vertical();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame--;
     map_draw_vertical();
     player_draw_background_vertical();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame--;
     map_draw_vertical(); 
     player_draw_background_vertical();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame--;
     player_see(2, 3, 2, 2); // final position    
@@ -291,6 +301,7 @@ void map_move_down(void)
         is_player_pushing = 0;
         set_map_tile(player_x + 1, player_y, YELLOW << 1 | 0b00000001);
     }
+    intrinsic_halt();
     copy_attr_buffer();
 }
 
@@ -323,14 +334,17 @@ void map_move_left(void)
     map_frame = 1;        
     map_draw_horizontal();
     player_draw_background_horizontal();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame++;
     map_draw_horizontal();
     player_draw_background_horizontal();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame++;
     map_draw_horizontal();
     player_draw_background_horizontal();
+    intrinsic_halt();
     copy_attr_buffer();
     player_y--;
     map_frame = 0;
@@ -342,6 +356,7 @@ void map_move_left(void)
         is_player_pushing = 0;
         set_map_tile(player_x, player_y - 1, YELLOW << 1 | 0b00000001);
     }
+    intrinsic_halt();
     copy_attr_buffer();
 }
 
@@ -375,14 +390,17 @@ void map_move_right(void)
     player_y++;
     map_draw_horizontal();
     player_draw_background_horizontal();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame--;
     map_draw_horizontal();
     player_draw_background_horizontal();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame--;
     map_draw_horizontal();
     player_draw_background_horizontal();
+    intrinsic_halt();
     copy_attr_buffer();
     map_frame--;
     player_see(2, 2, 2, 3); // final position
@@ -393,5 +411,6 @@ void map_move_right(void)
         is_player_pushing = 0;
         set_map_tile(player_x, player_y + 1, YELLOW << 1 | 0b00000001);
     }
+    intrinsic_halt();
     copy_attr_buffer();
 }

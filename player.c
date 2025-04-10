@@ -30,7 +30,6 @@ extern void set_map_tile(unsigned char x, unsigned char y, unsigned int tile)  _
 extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
-extern void copy_attr_buffer(void) __z88dk_callee; // copy attribute buffer into attribute memory
 
 unsigned char player_frame = 1;
 unsigned char player_direction = 0; // 1:up;2:right;3:down;4:left
