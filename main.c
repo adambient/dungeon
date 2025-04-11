@@ -19,7 +19,6 @@ extern void print_string(uint8_t *string) __z88dk_fastcall; // print null termin
 // imported from fill_rectangle.asm
 extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
-extern void copy_attr_buffer(void) __z88dk_callee; // copy attribute buffer into attribute memory
 
 static inline unsigned char move_up(void)
 {
@@ -71,7 +70,7 @@ void main(void)
     print_string("Initialising...");    
     fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern    
     fill_rectangle_attr(0, 0, 24, 32, 7, 7);
-    copy_attr_buffer();
+    refresh_screen();
     map_init();
     fill_rectangle_char(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "["); // fill with pipes
     player_x = MAP_SIZE - 1;

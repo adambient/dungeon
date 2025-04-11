@@ -9,6 +9,7 @@
 
 extern unsigned char tick;
 
+extern void refresh_screen(void);
 extern void wait(void);
 extern void setup_int(void);
 
