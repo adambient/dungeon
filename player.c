@@ -35,7 +35,6 @@ unsigned char player_frame = 1;
 unsigned char player_direction = 0; // 1:up;2:right;3:down;4:left
 unsigned char player_background_1;
 unsigned char player_background_2;
-unsigned char player_torch_size = 1;
 
 static inline void frame_draw_up(void)
 {        
@@ -256,7 +255,8 @@ void player_draw_background_vertical(void)
         fill_rectangle_attr(block_loc, PLAYER_SQUARE, 2, 2, YELLOW, YELLOW);
     }
 
-    bright_rectangle_attr(PLAYER_SQUARE - player_torch_size, PLAYER_SQUARE - player_torch_size, 2 + player_torch_size + player_torch_size, 2 + player_torch_size + player_torch_size);    
+    // draw torchlight
+    bright_rectangle_attr(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
 }
 
 void player_draw_background_horizontal(void)
@@ -287,7 +287,8 @@ void player_draw_background_horizontal(void)
         fill_rectangle_attr(PLAYER_SQUARE, block_loc, 2, 2, YELLOW, YELLOW);
     }
 
-    bright_rectangle_attr(PLAYER_SQUARE - player_torch_size, PLAYER_SQUARE - player_torch_size, 2 + player_torch_size + player_torch_size, 2 + player_torch_size + player_torch_size);
+    // draw torchlight
+    bright_rectangle_attr(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
 }
 
 void player_see(unsigned char up, unsigned char down, unsigned char left, unsigned char right)
@@ -299,17 +300,6 @@ void player_see(unsigned char up, unsigned char down, unsigned char left, unsign
         {
             set_map_tile(x, y, get_map_tile(x, y) | 0b00000001);
         }
-    }
-    // toggle the torch size
-    switch (player_torch_size)
-    {
-        default:
-        case 1:
-            player_torch_size = 2;
-            break;
-        case 2:
-            player_torch_size = 1;
-            break;
     }
     // final background draw should have solid background
     player_background_1 = player_tile_next;
