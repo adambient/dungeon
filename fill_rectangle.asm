@@ -1,7 +1,8 @@
 ; used to populate attribute memory from buffer via _copy_attr_buffer
 VIDEOATT: equ $5800 ; address of attribute RAM
-VIDEOATT_L: equ $0240 ; length of attribute RAM (was $0300 i.e. 24 rows but we only need 18 so this is an optimisation)
-ATTR_BUFF: equ $F800 ; hard coded attribute buffer address (was $F800 but we again we only need 18 rows)
+VIDEOATT_L: equ $0300 ; length of attribute RAM
+ATTR_BUFF: equ $F800 ; hard coded attribute buffer address TODO - why does this need to be hardcoded?
+
 SECTION code_user
 
 PUBLIC _fill_rectangle_char
@@ -86,7 +87,7 @@ _fill_rectangle_char_loop3:
 ; outputs: hl = location of attribute (buffer) address
 ;----------
 get_attr_address:
-            ld bc, ATTR_BUFF
+            ld bc, _attr_buffer            
             ld a,e
             rrca
             rrca
@@ -181,10 +182,15 @@ _bright_rectangle_attr_loop2:
 ;----------
 _copy_attr_buffer:
             ld de, VIDEOATT ; target is attribute memory
-            ld hl, ATTR_BUFF ; source is attribute buffer
+            ld hl, _attr_buffer ; source is attribute buffer
             ld bc, VIDEOATT_L ; length is size of attribute memory
             ldir ; copy
             ret
+
+SECTION bss_user
+org ATTR_BUFF ; TODO - why does this need to be hardcoded to 7800?
+PUBLIC _attr_buffer
+_attr_buffer: ds VIDEOATT_L
 
 SECTION rodata_user
 udgs: 

@@ -69,10 +69,11 @@ void main(void)
 {       
     setup_int();
     print_string("Initialising...");    
-    map_init();    
-    fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern
-    fill_rectangle_attr(0, 0, 24, 32, 0, 7);    
+    fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern    
+    fill_rectangle_attr(0, 0, 24, 32, 7, 7);
     copy_attr_buffer();
+    map_init();
+    fill_rectangle_char(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "["); // fill with pipes
     player_x = MAP_SIZE - 1;
     player_y = 1;
     player_dir = 0; // move up first of all to draw map TODO - shouldn't need to do this

@@ -30,6 +30,7 @@ static unsigned char map[MAP_SIZE][MAP_SIZE / 4] = {
 extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_callee;
 extern void set_map_tile(unsigned char x, unsigned char y, unsigned int tile)  __z88dk_callee;
 // imported from fill_rectangle.asm
+extern unsigned char* attr_buffer;
 extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
@@ -168,7 +169,7 @@ void map_draw_horizontal(void)
 
 void map_init(void)
 {
-    start_attr_address = (unsigned char*)(ATTR_BUFF); // start of map attribute memory    
+    start_attr_address = (unsigned char *)(&attr_buffer); // start of map attribute memory    
     for (unsigned char x = MAP_SIZE - 1; x < 255; x--) {
         for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--) {
             unsigned char i = 0;
