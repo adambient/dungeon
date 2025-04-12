@@ -1,7 +1,6 @@
 ; used to populate attribute memory from buffer via _copy_attr_buffer
 VIDEOATT: equ $5800 ; address of attribute RAM
 VIDEOATT_L: equ $0300 ; length of attribute RAM
-ATTR_BUFF: equ $F900 ; hard coded attribute buffer address TODO - why does this need to be hardcoded?
 
 SECTION code_user
 
@@ -9,6 +8,7 @@ PUBLIC _fill_rectangle_char
 PUBLIC _fill_rectangle_attr
 PUBLIC _bright_rectangle_attr
 PUBLIC _copy_attr_buffer
+EXTERN _attr_buffer
 
 ;----------
 ; _fill_rectangle_char
@@ -186,11 +186,6 @@ _copy_attr_buffer:
             ld bc, VIDEOATT_L ; length is size of attribute memory
             ldir ; copy
             ret
-
-SECTION bss_user
-org ATTR_BUFF ; TODO - why does this need to be hardcoded to 7800?
-PUBLIC _attr_buffer
-_attr_buffer: ds VIDEOATT_L
 
 SECTION rodata_user
 udgs: 
