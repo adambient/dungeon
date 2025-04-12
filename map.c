@@ -28,11 +28,10 @@ static unsigned char map[MAP_SIZE][MAP_SIZE / 4] = {
 extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_callee;
 extern void set_map_tile(unsigned char x, unsigned char y, unsigned int tile)  __z88dk_callee;
 // imported from fill_rectangle.asm
+extern unsigned char* attr_buffer;
 extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
-// referenced from fill_rectangle.asm TODO - for some reason if we don't hard code the memory address and let z88dk decide it causes corruption
-__at (0xF900) unsigned char attr_buffer[768];
 
 unsigned char *start_attr_address;
 unsigned char *attr_address;
