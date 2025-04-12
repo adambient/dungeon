@@ -188,7 +188,7 @@ _copy_attr_buffer:
             ret
 
 SECTION bss_user
-org ATTR_BUFF ; TODO - why does this need to be hardcoded to 7800?
+org ATTR_BUFF ; TODO - why does this need to be hardcoded?
 PUBLIC _attr_buffer
 _attr_buffer: ds VIDEOATT_L
 

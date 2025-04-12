@@ -5,6 +5,8 @@
 #include <z80.h>
 #include "int.h"
 
+extern void copy_attr_buffer(void) __z88dk_callee; // copy attribute buffer into attribute memory
+
 // timer
 unsigned char tick;
 unsigned char timer;
@@ -15,10 +17,15 @@ IM2_DEFINE_ISR(isr)
     ++tick;
 }
 
+void refresh_screen(void) {
+    intrinsic_halt();
+    copy_attr_buffer();
+}
+
 void wait(void)
 {
     while (abs(tick - timer) < WFRAMES) {
-        intrinsic_halt();
+        refresh_screen();
     }
 
     timer = tick;
