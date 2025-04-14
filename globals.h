@@ -19,7 +19,7 @@
 #define DARKNESS BLACK
 #define WALL BLUE
 #define BLOCK YELLOW
-#define TARGET CYAN
+#define TARGET MAGENTA // works better if matches carpet
 #define PLACED GREEN
 #define CARPET_1 RED
 #define CARPET_2 MAGENTA // this will actually always be CARPET_1 plus 1

@@ -8,6 +8,7 @@
 #define clock(x) (tick)
 
 extern unsigned char tick;
+extern unsigned char colour;
 
 extern void refresh_screen(void);
 extern void wait(void);
