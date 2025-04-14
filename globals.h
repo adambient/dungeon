@@ -4,8 +4,8 @@
 #define PLAYER_SQUARE (VISIBLE_BLOCKS - 1) // position of player on screen
 #define MAP_OFFSET (PLAYER_SQUARE / 2) // offset to centralise display
 
-#define BG_BYTES 0b00000111
-#define SEEN_BYTE 0b0001000
+#define BG_BYTES 0b00000111 // bytes used for background
+#define TG_BYTE 0b0001000 // square is target
 #define BLACK 0
 #define BLUE 1
 #define RED 2
@@ -19,7 +19,6 @@
 #define DARKNESS BLACK
 #define WALL BLUE
 #define BLOCK YELLOW
-#define TARGET MAGENTA // works better if matches carpet
 #define PLACED GREEN
 #define CARPET_1 RED
 #define CARPET_2 MAGENTA // this will actually always be CARPET_1 plus 1

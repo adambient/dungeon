@@ -42,7 +42,7 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
     if (x < MAP_SIZE && y < MAP_SIZE)
     {
         unsigned char tile = get_map_tile(x, y);
-        if (tile & SEEN_BYTE) {
+        if (tile & TG_BYTE) {
             return colour;
         }
 
@@ -189,7 +189,7 @@ void map_init(void)
                         }
                     }
                     if ((t << i & 0b10000000) == 0b10000000) {
-                        tile = tile | SEEN_BYTE;
+                        tile = tile | TG_BYTE;
                     }
                 }
                 set_map_tile(x, i + (8 * y), tile);
@@ -221,7 +221,7 @@ void map_move_up(void)
         if ((tile & BG_BYTES) == PLACED)
         {
             // was placed - replace current tile with target
-            next_tile = next_tile | SEEN_BYTE;
+            next_tile = next_tile | TG_BYTE;
         }
         set_map_tile(player_x - 1, player_y, next_tile);
         is_player_pushing = 1;           
@@ -250,7 +250,7 @@ void map_move_up(void)
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x - 1, player_y);
-        if ((next_tile & SEEN_BYTE) == SEEN_BYTE) {
+        if ((next_tile & TG_BYTE) == TG_BYTE) {
             // target location
             set_map_tile(player_x - 1, player_y, PLACED);
             // remove BLOCK as part of player
@@ -286,7 +286,7 @@ void map_move_down(void)
         if ((tile & BG_BYTES) == PLACED)
         {
             // was placed - replace current tile with target
-            next_tile = next_tile | SEEN_BYTE;
+            next_tile = next_tile | TG_BYTE;
         }
         set_map_tile(player_x + 1, player_y, next_tile);
         is_player_pushing = 1;          
@@ -315,7 +315,7 @@ void map_move_down(void)
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x + 1, player_y);
-        if ((next_tile & SEEN_BYTE) == SEEN_BYTE) {
+        if ((next_tile & TG_BYTE) == TG_BYTE) {
             // target location
             set_map_tile(player_x + 1, player_y, PLACED);
             // remove BLOCK as part of player
@@ -351,7 +351,7 @@ void map_move_left(void)
         if ((tile & BG_BYTES) == PLACED)
         {
             // was placed - replace current tile with target
-            next_tile = next_tile | SEEN_BYTE;
+            next_tile = next_tile | TG_BYTE;
         }
         set_map_tile(player_x, player_y - 1, next_tile);
         is_player_pushing = 1;           
@@ -380,7 +380,7 @@ void map_move_left(void)
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x, player_y - 1);
-        if ((next_tile & SEEN_BYTE) == SEEN_BYTE) {
+        if ((next_tile & TG_BYTE) == TG_BYTE) {
             // target location
             set_map_tile(player_x, player_y - 1, PLACED);
             // remove BLOCK as part of player
@@ -416,7 +416,7 @@ void map_move_right(void)
         if ((tile & BG_BYTES) == PLACED)
         {
             // was placed - replace current tile with target
-            next_tile = next_tile | SEEN_BYTE;
+            next_tile = next_tile | TG_BYTE;
         }
         set_map_tile(player_x, player_y + 1, next_tile);
         is_player_pushing = 1;            
@@ -445,7 +445,7 @@ void map_move_right(void)
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x, player_y + 1);
-        if ((next_tile & SEEN_BYTE) == SEEN_BYTE) {
+        if ((next_tile & TG_BYTE) == TG_BYTE) {
             // target location
             set_map_tile(player_x, player_y + 1, PLACED);
             // remove BLOCK as part of player
