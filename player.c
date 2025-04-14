@@ -234,25 +234,25 @@ void player_draw_background_vertical(void)
 
     if (player_direction == DIR_UP)
     {       
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_2, BLACK);
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, WHITE);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, WHITE);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_1, BLACK);
+        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_2, PLAYER_BODY_1);
+        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, PLAYER_BODY_2);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, PLAYER_BODY_2);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_1, PLAYER_BODY_1);
 
         block_loc = PLAYER_SQUARE - 2;
     }
     else
     {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, player_background_2, YELLOW);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, BLACK);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_1, WHITE);
+        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, player_background_2, PLAYER_FACE);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, PLAYER_BODY_1);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_1, PLAYER_BODY_2);
 
         block_loc = PLAYER_SQUARE + 2;        
     }
 
     if (is_player_pushing) {
         // draw block next to player
-        fill_rectangle_attr(block_loc, PLAYER_SQUARE, 2, 2, YELLOW, YELLOW);
+        fill_rectangle_attr(block_loc, PLAYER_SQUARE, 2, 2, BLOCK, BLOCK);
     }
 
     // draw torchlight
@@ -265,26 +265,26 @@ void player_draw_background_horizontal(void)
 
     if (player_direction == DIR_LEFT)
     {       
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_1, YELLOW);
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, BLACK);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, WHITE);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_2, WHITE);
+        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_1, PLAYER_FACE);
+        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, PLAYER_BODY_1);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, PLAYER_BODY_2);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_2, PLAYER_BODY_2);
 
         block_loc = PLAYER_SQUARE - 2;
     }
     else
     {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_1, WHITE);
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, YELLOW);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, BLACK);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_2, BLACK);
+        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_1, PLAYER_BODY_2);
+        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, player_background_2, PLAYER_FACE);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, player_background_1, PLAYER_BODY_1);
+        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, player_background_2, PLAYER_BODY_1);
 
         block_loc = PLAYER_SQUARE + 2;        
     }
 
     if (is_player_pushing) {
         // draw block next to player
-        fill_rectangle_attr(PLAYER_SQUARE, block_loc, 2, 2, YELLOW, YELLOW);
+        fill_rectangle_attr(PLAYER_SQUARE, block_loc, 2, 2, BLOCK, BLOCK);
     }
 
     // draw torchlight

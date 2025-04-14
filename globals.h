@@ -15,6 +15,18 @@
 #define YELLOW 6
 #define WHITE 7
 
+// using these constants will allow us to experiment with colours
+#define DARKNESS BLACK
+#define WALL BLUE
+#define BLOCK YELLOW
+#define TARGET CYAN
+#define PLACED GREEN
+#define CARPET_1 RED
+#define CARPET_2 MAGENTA // this will actually always be CARPET_1 plus 1
+#define PLAYER_FACE YELLOW
+#define PLAYER_BODY_1 WHITE
+#define PLAYER_BODY_2 BLACK
+
 extern unsigned char player_x;
 extern unsigned char player_y;
 extern unsigned char player_dir; // 0 - up, 1 - right, 2 - down, 3 left

@@ -5,7 +5,7 @@
 
 // TODO - this is obviously hard coded to be [16][6] so perhaps we should generate this, also is it optimal space wise?
 static unsigned char map[MAP_SIZE][(MAP_SIZE / 8) * 3] = {
-    // walls                  // crates               // target squares
+    // walls                  // BLOCKs               // target squares
     { 0b11111111, 0b11111111, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
     { 0b10000001, 0b10000001, 0b00000000, 0b00000000, 0b00000100, 0b00100000},
     { 0b10101101, 0b10110101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
@@ -48,7 +48,7 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
         }
     }
 
-    return 0;
+    return DARKNESS;
 }
 
 void row_draw_vertical(signed char x, signed char x2, unsigned char y)
@@ -171,23 +171,23 @@ void map_init(void)
         for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--) {
             unsigned char i = 0;
             unsigned char m = map[x][y]; // map
-            unsigned char c = map[x][y + 2]; // crate
+            unsigned char c = map[x][y + 2]; // BLOCK
             unsigned char t = map[x][y + 4]; // target
             for (unsigned char i = 7; i < 255; i--) {
-                unsigned char tile = BLUE; // wall
+                unsigned char tile = WALL; // wall
                 if ((c << i & 0b10000000) == 0b10000000) {
-                    // use crate data
-                    tile = YELLOW; // crate
+                    // use BLOCK data
+                    tile = BLOCK; // BLOCK
                 } else if ((t << i & 0b10000000) == 0b10000000) {
                     // use target data
-                    tile = CYAN; // target
+                    tile = TARGET; // target
                 } else {
                     // use map data                    
                     if ((m << i & 0b10000000) == 0b00000000) {
                         if (((x + i) & 0b00000001) == 0b00000001) {
-                            tile = RED; // carpet 1
+                            tile = CARPET_1; // carpet 1
                         } else {
-                            tile = MAGENTA; // carpet 2
+                            tile = CARPET_2; // carpet 2
                         }
                     }
                 }
@@ -200,31 +200,31 @@ void map_init(void)
 void map_move_up(void)
 {   
     unsigned char tile = get_map_tile(player_x - 1, player_y);
-    if ((tile & BG_BYTES) == BLUE)
+    if ((tile & BG_BYTES) == WALL)
     {
         // tile is inaccessible
         return;
     }
 
-    if ((tile & BG_BYTES) == YELLOW || (tile & BG_BYTES) == GREEN)
+    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
     {
-        // tile is a crate or placed crate
+        // tile is a BLOCK or placed BLOCK
         unsigned char next_tile = get_map_tile(player_x - 2, player_y);
-        if ((next_tile & BG_BYTES) == BLUE || (next_tile & BG_BYTES) == YELLOW || (next_tile & BG_BYTES) == GREEN)
+        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
         {
             // next tile is blocked
             return;
         }
 
-        if ((tile & BG_BYTES) == GREEN)
+        if ((tile & BG_BYTES) == PLACED)
         {
-            // tile is placed crate, replace with target
-            set_map_tile(player_x - 1, player_y, CYAN | SEEN_BYTE);
+            // tile is placed BLOCK, replace with target
+            set_map_tile(player_x - 1, player_y, TARGET | SEEN_BYTE);
         }
         else
         {
             // replace with carpet pattern
-            set_map_tile(player_x - 1, player_y, (RED  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+            set_map_tile(player_x - 1, player_y, (CARPET_1  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
         }
 
         is_player_pushing = 1;            
@@ -250,17 +250,17 @@ void map_move_up(void)
     map_draw_vertical();
     player_draw_background_vertical();
     if (is_player_pushing == 1) {
-        // place crate
+        // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x - 1, player_y);
-        if ((next_tile & BG_BYTES) == CYAN) {
+        if ((next_tile & BG_BYTES) == TARGET) {
             // target location
-            set_map_tile(player_x - 1, player_y, GREEN | SEEN_BYTE);
-            // remove crate as part of player
+            set_map_tile(player_x - 1, player_y, PLACED | SEEN_BYTE);
+            // remove BLOCK as part of player
             map_draw_vertical();
             player_draw_background_vertical();
         } else {
-            set_map_tile(player_x - 1, player_y, YELLOW | SEEN_BYTE);
+            set_map_tile(player_x - 1, player_y, BLOCK | SEEN_BYTE);
         }        
     }
     refresh_screen();
@@ -269,31 +269,31 @@ void map_move_up(void)
 void map_move_down(void)
 {   
     unsigned char tile = get_map_tile(player_x + 1, player_y);
-    if ((tile & BG_BYTES) == BLUE)
+    if ((tile & BG_BYTES) == WALL)
     {
         // tile is inaccessible
         return;
     }
 
-    if ((tile & BG_BYTES) == YELLOW || (tile & BG_BYTES) == GREEN)
+    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
     {
-        // tile is a crate or placed crate
+        // tile is a BLOCK or placed BLOCK
         unsigned char next_tile = get_map_tile(player_x + 2, player_y);
-        if ((next_tile & BG_BYTES) == BLUE || (next_tile & BG_BYTES) == YELLOW || (next_tile & BG_BYTES) == GREEN)
+        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
         {
             // next tile is blocked
             return;
         }
 
-        if ((tile & BG_BYTES) == GREEN)
+        if ((tile & BG_BYTES) == PLACED)
         {
-            // tile is placed crate, replace with target
-            set_map_tile(player_x + 1, player_y, CYAN | SEEN_BYTE);
+            // tile is placed BLOCK, replace with target
+            set_map_tile(player_x + 1, player_y, TARGET | SEEN_BYTE);
         }
         else
         {
             // replace with carpet pattern
-            set_map_tile(player_x + 1, player_y, (RED  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+            set_map_tile(player_x + 1, player_y, (CARPET_1  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
         }
 
         is_player_pushing = 1;            
@@ -319,17 +319,17 @@ void map_move_down(void)
     map_draw_vertical();
     player_draw_background_vertical();
     if (is_player_pushing == 1) {
-        // place crate
+        // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x + 1, player_y);
-        if ((next_tile & BG_BYTES) == CYAN) {
+        if ((next_tile & BG_BYTES) == TARGET) {
             // target location
-            set_map_tile(player_x + 1, player_y, GREEN | SEEN_BYTE);
-            // remove crate as part of player
+            set_map_tile(player_x + 1, player_y, PLACED | SEEN_BYTE);
+            // remove BLOCK as part of player
             map_draw_vertical();
             player_draw_background_vertical();
         } else {
-            set_map_tile(player_x + 1, player_y, YELLOW | SEEN_BYTE);
+            set_map_tile(player_x + 1, player_y, BLOCK | SEEN_BYTE);
         } 
     }
     refresh_screen();
@@ -338,31 +338,31 @@ void map_move_down(void)
 void map_move_left(void)
 {       
     unsigned char tile = get_map_tile(player_x, player_y - 1);
-    if ((tile & BG_BYTES) == BLUE)
+    if ((tile & BG_BYTES) == WALL)
     {
         // tile is inaccessible
         return;
     }
 
-    if ((tile & BG_BYTES) == YELLOW || (tile & BG_BYTES) == GREEN)
+    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
     {
-        // tile is a crate or placed crate
+        // tile is a BLOCK or placed BLOCK
         unsigned char next_tile = get_map_tile(player_x, player_y - 2);
-        if ((next_tile & BG_BYTES) == BLUE || (next_tile & BG_BYTES) == YELLOW || (next_tile & BG_BYTES) == GREEN)
+        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
         {
             // next tile is blocked
             return;
         }
 
-        if ((tile & BG_BYTES) == GREEN)
+        if ((tile & BG_BYTES) == PLACED)
         {
-            // tile is placed crate, replace with target
-            set_map_tile(player_x, player_y - 1, CYAN | SEEN_BYTE);
+            // tile is placed BLOCK, replace with target
+            set_map_tile(player_x, player_y - 1, TARGET | SEEN_BYTE);
         }
         else
         {
             // replace with carpet pattern
-            set_map_tile(player_x, player_y - 1, (RED  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+            set_map_tile(player_x, player_y - 1, (CARPET_1  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
         }
 
         is_player_pushing = 1;            
@@ -388,17 +388,17 @@ void map_move_left(void)
     map_draw_horizontal();
     player_draw_background_horizontal();
     if (is_player_pushing == 1) {
-        // place crate
+        // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x, player_y - 1);
-        if ((next_tile & BG_BYTES) == CYAN) {
+        if ((next_tile & BG_BYTES) == TARGET) {
             // target location
-            set_map_tile(player_x, player_y - 1, GREEN | SEEN_BYTE);
-            // remove crate as part of player
+            set_map_tile(player_x, player_y - 1, PLACED | SEEN_BYTE);
+            // remove BLOCK as part of player
             map_draw_horizontal();
             player_draw_background_horizontal();
         } else {
-            set_map_tile(player_x, player_y - 1, YELLOW | SEEN_BYTE);
+            set_map_tile(player_x, player_y - 1, BLOCK | SEEN_BYTE);
         }
     }
     refresh_screen();
@@ -407,31 +407,31 @@ void map_move_left(void)
 void map_move_right(void)
 {
     unsigned char tile = get_map_tile(player_x, player_y + 1);
-    if ((tile & BG_BYTES) == BLUE)
+    if ((tile & BG_BYTES) == WALL)
     {
         // tile is inaccessible
         return;
     }
 
-    if ((tile & BG_BYTES) == YELLOW || (tile & BG_BYTES) == GREEN)
+    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
     {
-        // tile is a crate or placed crate
+        // tile is a BLOCK or placed BLOCK
         unsigned char next_tile = get_map_tile(player_x, player_y + 2);
-        if ((next_tile & BG_BYTES) == BLUE || (next_tile & BG_BYTES) == YELLOW || (next_tile & BG_BYTES) == GREEN)
+        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
         {
             // next tile is blocked
             return;
         }
 
-        if ((tile & BG_BYTES) == GREEN)
+        if ((tile & BG_BYTES) == PLACED)
         {
-            // tile is placed crate, replace with target
-            set_map_tile(player_x, player_y + 1, CYAN | SEEN_BYTE);
+            // tile is placed BLOCK, replace with target
+            set_map_tile(player_x, player_y + 1, TARGET | SEEN_BYTE);
         }
         else
         {
             // replace with carpet pattern
-            set_map_tile(player_x, player_y + 1, (RED  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+            set_map_tile(player_x, player_y + 1, (CARPET_1  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
         }
 
         is_player_pushing = 1;            
@@ -457,17 +457,17 @@ void map_move_right(void)
     map_draw_horizontal();
     player_draw_background_horizontal();
     if (is_player_pushing == 1) {
-        // place crate
+        // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x, player_y + 1);
-        if ((next_tile & BG_BYTES) == CYAN) {
+        if ((next_tile & BG_BYTES) == TARGET) {
             // target location
-            set_map_tile(player_x, player_y + 1, GREEN | SEEN_BYTE);
-            // remove crate as part of player
+            set_map_tile(player_x, player_y + 1, PLACED | SEEN_BYTE);
+            // remove BLOCK as part of player
             map_draw_horizontal();
             player_draw_background_horizontal();
         } else {
-            set_map_tile(player_x, player_y + 1, YELLOW | SEEN_BYTE);
+            set_map_tile(player_x, player_y + 1, BLOCK | SEEN_BYTE);
         } 
     }
     refresh_screen();
