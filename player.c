@@ -123,7 +123,7 @@ static inline void frame_draw_right(void)
 static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
 {
     // no need to check if seen but rotate to last 3 (background)
-    return (get_map_tile(x, y) >> 1 & 0b00000111);
+    return (get_map_tile(x, y) & BG_BYTES);
 }
 
 static inline void player_map_bars(void)
@@ -298,7 +298,7 @@ void player_see(unsigned char up, unsigned char down, unsigned char left, unsign
     {
         for (unsigned char y = player_y + right; y >= player_y - left && y < 255; y--)
         {
-            set_map_tile(x, y, get_map_tile(x, y) | 0b00000001);
+            set_map_tile(x, y, get_map_tile(x, y) | SEEN_BYTE);
         }
     }
     // final background draw should have solid background
