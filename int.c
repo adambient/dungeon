@@ -9,15 +9,20 @@ extern void copy_attr_buffer(void) __z88dk_callee; // copy attribute buffer into
 
 // timer
 unsigned char tick;
+unsigned char colour;
 unsigned char timer;
 
 IM2_DEFINE_ISR(isr)
 {    
     // update the clock
-    ++tick;
+    ++tick;    
 }
 
 void refresh_screen(void) {
+    ++colour;
+    if (colour > 7) {
+        colour = 0;
+    }
     intrinsic_halt();
     copy_attr_buffer();
 }

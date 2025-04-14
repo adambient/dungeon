@@ -291,16 +291,8 @@ void player_draw_background_horizontal(void)
     bright_rectangle_attr(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
 }
 
-void player_see(unsigned char up, unsigned char down, unsigned char left, unsigned char right)
+void player_see(void)
 {
-    // mark area around player as seen
-    for (unsigned char x = player_x + down; x >= player_x - up && x < 255; x--)
-    {
-        for (unsigned char y = player_y + right; y >= player_y - left && y < 255; y--)
-        {
-            set_map_tile(x, y, get_map_tile(x, y) | SEEN_BYTE);
-        }
-    }
     // final background draw should have solid background
     player_background_1 = player_tile_next;
     player_background_2 = player_tile_next;

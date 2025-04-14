@@ -42,10 +42,11 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
     if (x < MAP_SIZE && y < MAP_SIZE)
     {
         unsigned char tile = get_map_tile(x, y);
-        if ((tile & SEEN_BYTE) == SEEN_BYTE) // has tile been seen
-        {
-            return (tile & BG_BYTES); // return bg data only
+        if (tile & TG_BYTE) {
+            return colour;
         }
+
+        return (tile & BG_BYTES);
     }
 
     return DARKNESS;
@@ -178,9 +179,6 @@ void map_init(void)
                 if ((c << i & 0b10000000) == 0b10000000) {
                     // use BLOCK data
                     tile = BLOCK; // BLOCK
-                } else if ((t << i & 0b10000000) == 0b10000000) {
-                    // use target data
-                    tile = TARGET; // target
                 } else {
                     // use map data                    
                     if ((m << i & 0b10000000) == 0b00000000) {
@@ -189,6 +187,9 @@ void map_init(void)
                         } else {
                             tile = CARPET_2; // carpet 2
                         }
+                    }
+                    if ((t << i & 0b10000000) == 0b10000000) {
+                        tile = tile | TG_BYTE;
                     }
                 }
                 set_map_tile(x, i + (8 * y), tile);
@@ -215,19 +216,15 @@ void map_move_up(void)
             // next tile is blocked
             return;
         }
-
+        // replace current tile with carpet
+        next_tile = (CARPET_1  | (player_x + player_y & 0b00000001));
         if ((tile & BG_BYTES) == PLACED)
         {
-            // tile is placed BLOCK, replace with target
-            set_map_tile(player_x - 1, player_y, TARGET | SEEN_BYTE);
+            // was placed - replace current tile with target
+            next_tile = next_tile | TG_BYTE;
         }
-        else
-        {
-            // replace with carpet pattern
-            set_map_tile(player_x - 1, player_y, (CARPET_1  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
-        }
-
-        is_player_pushing = 1;            
+        set_map_tile(player_x - 1, player_y, next_tile);
+        is_player_pushing = 1;           
     }
 
     player_draw_up(); 
@@ -246,21 +243,21 @@ void map_move_up(void)
     refresh_screen();
     player_x--;    
     map_frame = 0;
-    player_see(3, 2, 2, 2); // final position    
+    player_see(); // final position    
     map_draw_vertical();
     player_draw_background_vertical();
     if (is_player_pushing == 1) {
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x - 1, player_y);
-        if ((next_tile & BG_BYTES) == TARGET) {
+        if ((next_tile & TG_BYTE) == TG_BYTE) {
             // target location
-            set_map_tile(player_x - 1, player_y, PLACED | SEEN_BYTE);
+            set_map_tile(player_x - 1, player_y, PLACED);
             // remove BLOCK as part of player
             map_draw_vertical();
             player_draw_background_vertical();
         } else {
-            set_map_tile(player_x - 1, player_y, BLOCK | SEEN_BYTE);
+            set_map_tile(player_x - 1, player_y, BLOCK);
         }        
     }
     refresh_screen();
@@ -284,19 +281,15 @@ void map_move_down(void)
             // next tile is blocked
             return;
         }
-
+        // replace current tile with carpet
+        next_tile = (CARPET_1  | (player_x + player_y & 0b00000001));
         if ((tile & BG_BYTES) == PLACED)
         {
-            // tile is placed BLOCK, replace with target
-            set_map_tile(player_x + 1, player_y, TARGET | SEEN_BYTE);
+            // was placed - replace current tile with target
+            next_tile = next_tile | TG_BYTE;
         }
-        else
-        {
-            // replace with carpet pattern
-            set_map_tile(player_x + 1, player_y, (CARPET_1  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
-        }
-
-        is_player_pushing = 1;            
+        set_map_tile(player_x + 1, player_y, next_tile);
+        is_player_pushing = 1;          
     }
     
     player_draw_down();
@@ -315,21 +308,21 @@ void map_move_down(void)
     player_draw_background_vertical();
     refresh_screen();
     map_frame--;
-    player_see(2, 3, 2, 2); // final position    
+    player_see(); // final position    
     map_draw_vertical();
     player_draw_background_vertical();
     if (is_player_pushing == 1) {
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x + 1, player_y);
-        if ((next_tile & BG_BYTES) == TARGET) {
+        if ((next_tile & TG_BYTE) == TG_BYTE) {
             // target location
-            set_map_tile(player_x + 1, player_y, PLACED | SEEN_BYTE);
+            set_map_tile(player_x + 1, player_y, PLACED);
             // remove BLOCK as part of player
             map_draw_vertical();
             player_draw_background_vertical();
         } else {
-            set_map_tile(player_x + 1, player_y, BLOCK | SEEN_BYTE);
+            set_map_tile(player_x + 1, player_y, BLOCK);
         } 
     }
     refresh_screen();
@@ -353,19 +346,15 @@ void map_move_left(void)
             // next tile is blocked
             return;
         }
-
+        // replace current tile with carpet
+        next_tile = (CARPET_1  | (player_x + player_y & 0b00000001));
         if ((tile & BG_BYTES) == PLACED)
         {
-            // tile is placed BLOCK, replace with target
-            set_map_tile(player_x, player_y - 1, TARGET | SEEN_BYTE);
+            // was placed - replace current tile with target
+            next_tile = next_tile | TG_BYTE;
         }
-        else
-        {
-            // replace with carpet pattern
-            set_map_tile(player_x, player_y - 1, (CARPET_1  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
-        }
-
-        is_player_pushing = 1;            
+        set_map_tile(player_x, player_y - 1, next_tile);
+        is_player_pushing = 1;           
     }
 
     player_draw_left();
@@ -384,21 +373,21 @@ void map_move_left(void)
     refresh_screen();
     player_y--;
     map_frame = 0;
-    player_see(2, 2, 3, 2); // final position    
+    player_see(); // final position    
     map_draw_horizontal();
     player_draw_background_horizontal();
     if (is_player_pushing == 1) {
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x, player_y - 1);
-        if ((next_tile & BG_BYTES) == TARGET) {
+        if ((next_tile & TG_BYTE) == TG_BYTE) {
             // target location
-            set_map_tile(player_x, player_y - 1, PLACED | SEEN_BYTE);
+            set_map_tile(player_x, player_y - 1, PLACED);
             // remove BLOCK as part of player
             map_draw_horizontal();
             player_draw_background_horizontal();
         } else {
-            set_map_tile(player_x, player_y - 1, BLOCK | SEEN_BYTE);
+            set_map_tile(player_x, player_y - 1, BLOCK);
         }
     }
     refresh_screen();
@@ -422,18 +411,14 @@ void map_move_right(void)
             // next tile is blocked
             return;
         }
-
+        // replace current tile with carpet
+        next_tile = (CARPET_1  | (player_x + player_y & 0b00000001));
         if ((tile & BG_BYTES) == PLACED)
         {
-            // tile is placed BLOCK, replace with target
-            set_map_tile(player_x, player_y + 1, TARGET | SEEN_BYTE);
+            // was placed - replace current tile with target
+            next_tile = next_tile | TG_BYTE;
         }
-        else
-        {
-            // replace with carpet pattern
-            set_map_tile(player_x, player_y + 1, (CARPET_1  | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
-        }
-
+        set_map_tile(player_x, player_y + 1, next_tile);
         is_player_pushing = 1;            
     }
 
@@ -453,21 +438,21 @@ void map_move_right(void)
     player_draw_background_horizontal();
     refresh_screen();
     map_frame--;
-    player_see(2, 2, 2, 3); // final position
+    player_see(); // final position
     map_draw_horizontal();
     player_draw_background_horizontal();
     if (is_player_pushing == 1) {
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x, player_y + 1);
-        if ((next_tile & BG_BYTES) == TARGET) {
+        if ((next_tile & TG_BYTE) == TG_BYTE) {
             // target location
-            set_map_tile(player_x, player_y + 1, PLACED | SEEN_BYTE);
+            set_map_tile(player_x, player_y + 1, PLACED);
             // remove BLOCK as part of player
             map_draw_horizontal();
             player_draw_background_horizontal();
         } else {
-            set_map_tile(player_x, player_y + 1, BLOCK | SEEN_BYTE);
+            set_map_tile(player_x, player_y + 1, BLOCK);
         } 
     }
     refresh_screen();
