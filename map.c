@@ -44,7 +44,7 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
         unsigned char tile = get_map_tile(x, y);
         if ((tile & SEEN_BYTE) == SEEN_BYTE) // has tile been seen
         {
-            return (tile << 3 & 0b00111000);
+            return (tile & BG_BYTES); // return bg data only
         }
     }
 
@@ -58,7 +58,7 @@ void row_draw_vertical(signed char x, signed char x2, unsigned char y)
     {
         unsigned char tile = row_get_tile(x, y);
         unsigned char tile2 = x == x2 ? tile : row_get_tile(x2, y);
-        tile = tile >> 3 | tile2;
+        tile = tile | tile2 << 3;
         *attr_address++ = tile;
         *attr_address++ = tile;
         y++;
@@ -91,7 +91,7 @@ void row_draw_horizontal(signed char x, unsigned char y)
                 case 1:
                 case 2:
                     // catch up last block (first skipped)
-                    *attr_address++ = tile >> 3 | tile;
+                    *attr_address++ = tile | tile << 3;
                     break;
             }
             attr_address++;
@@ -102,9 +102,9 @@ void row_draw_horizontal(signed char x, unsigned char y)
             if (map_frame == 0 || map_frame == 3 || i < VISIBLE_BLOCKS)
             {
                 // do not skip first block
-                *attr_address++ = tile >> 3 | tile;
+                *attr_address++ = tile | tile << 3;
             }
-            *attr_address++ = tile >> 3 | tile2;
+            *attr_address++ = tile | tile2 << 3;
             y++;
         }
     }
