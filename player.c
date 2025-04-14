@@ -1,4 +1,5 @@
 #include "globals.h"
+#include "int.h"
 
 #define MAN_UP_HEAD "KL"
 #define MAN_UP_BODY1 "UV"
@@ -120,12 +121,6 @@ static inline void frame_draw_right(void)
     }
 }
 
-static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
-{
-    // no need to check if seen but rotate to last 3 (background)
-    return (get_map_tile(x, y) & BG_BYTES);
-}
-
 static inline void player_map_bars(void)
 {
     // fills in all squares around the player
@@ -159,7 +154,7 @@ void player_draw_up(void)
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_UP_HEAD);
     }
     player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x - 1, player_y);
+    player_tile_next = get_map_tile(player_x - 1, player_y);
     player_background_1 = player_tile;
     player_background_2 = player_tile_next;
     frame_draw_up();
@@ -180,7 +175,7 @@ void player_draw_right(void)
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_RIGHT_HEAD);
     }
     player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x, player_y + 1);
+    player_tile_next = get_map_tile(player_x, player_y + 1);
     player_background_1 = player_tile;
     player_background_2 = player_tile_next;    
     frame_draw_right();
@@ -201,7 +196,7 @@ void player_draw_down(void)
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_DOWN_HEAD);
     }
     player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x + 1, player_y);
+    player_tile_next = get_map_tile(player_x + 1, player_y);
     player_background_1 = player_tile_next;
     player_background_2 = player_tile;    
     frame_draw_down();
@@ -222,7 +217,7 @@ void player_draw_left(void)
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_LEFT_HEAD);
     }
     player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x, player_y - 1);
+    player_tile_next = get_map_tile(player_x, player_y - 1);
     player_background_1 = player_tile_next;
     player_background_2 = player_tile;
     frame_draw_left();
@@ -231,7 +226,14 @@ void player_draw_left(void)
 void player_draw_background_vertical(void)
 {
     unsigned char block_loc;
-
+    if ((player_background_1 & TG_BYTE) == TG_BYTE) {
+        player_background_1 = colour;
+    }
+    if ((player_background_2 & TG_BYTE) == TG_BYTE) {
+        player_background_2 = colour;
+    }
+    player_background_1 = player_background_1 & BG_BYTES;
+    player_background_2 = player_background_2 & BG_BYTES;
     if (player_direction == DIR_UP)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_2, PLAYER_BODY_1);
@@ -262,7 +264,14 @@ void player_draw_background_vertical(void)
 void player_draw_background_horizontal(void)
 {
     unsigned char block_loc;
-
+    if ((player_background_1 & TG_BYTE) == TG_BYTE) {
+        player_background_1 = colour;
+    }
+    if ((player_background_2 & TG_BYTE) == TG_BYTE) {
+        player_background_2 = colour;
+    }
+    player_background_1 = player_background_1 & BG_BYTES;
+    player_background_2 = player_background_2 & BG_BYTES;
     if (player_direction == DIR_LEFT)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_1, PLAYER_FACE);
