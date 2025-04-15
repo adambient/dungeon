@@ -231,12 +231,12 @@ void player_draw_left(void)
 void player_draw_background_vertical(void)
 {
     unsigned char block_loc;
-    // use cycled colour for target squares
+    // TODO - use cycled colour for target squares, currently using carpet as colour is out of sync (not sure why)
     if (player_background_1 == TARGET) {
-        player_background_1 = colour;
+        player_background_1 = (CARPET_1  | (player_x + player_y + 1 & 0b00000001));
     }
     if (player_background_2 == TARGET) {
-        player_background_2 = colour;
+        player_background_2 = (CARPET_1  | (player_x + player_y + 1 & 0b00000001));
     }
     if (player_direction == DIR_UP)
     {       
@@ -268,12 +268,12 @@ void player_draw_background_vertical(void)
 void player_draw_background_horizontal(void)
 {
     unsigned char block_loc;
-    // use cycled colour for target squares
+    // TODO - use cycled colour for target squares, currently using carpet as colour is out of sync (not sure why)
     if (player_background_1 == TARGET) {
-        player_background_1 = colour;
+        player_background_1 = (CARPET_1  | (player_x + player_y + 1 & 0b00000001));
     }
     if (player_background_2 == TARGET) {
-        player_background_2 = colour;
+        player_background_2 = (CARPET_1  | (player_x + player_y + 1 & 0b00000001));
     }
     if (player_direction == DIR_LEFT)
     {       
