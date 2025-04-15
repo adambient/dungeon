@@ -42,12 +42,15 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
     if (x < MAP_SIZE && y < MAP_SIZE)
     {
         unsigned char tile = (get_map_tile(x, y) & BG_BYTES);
-        if (tile == TARGET) {
-            // use cycled colour for target squares
-            return colour;
+        switch (tile) {
+            case TARGET:
+                return colour;
+            case PLACED:
+                // cycle bettween yellow and white
+                return (YELLOW  | (player_x + player_y & 0b00000001));
+            default:
+                return tile;
         }
-
-        return tile;
     }
 
     return DARKNESS;
