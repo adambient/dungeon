@@ -47,7 +47,7 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
                 return colour;
             case PLACED:
                 // cycle bettween yellow and white
-                return (YELLOW  | (player_x + player_y & 0b00000001));
+                return (YELLOW  | (colour & 0b00000001));
             default:
                 return tile;
         }
@@ -466,6 +466,25 @@ void map_move_right(void)
         } else {
             set_map_tile(player_x, player_y + 1, BLOCK);
         } 
+    }
+    refresh_screen();
+}
+
+void map_move_none(void)
+{
+    switch (player_dir)
+    {
+        default:
+        case 0:
+        case 2:
+            map_draw_vertical();
+            player_draw_background_vertical();
+            break;
+        case 1:
+        case 3:
+            map_draw_horizontal();
+            player_draw_background_horizontal();
+            break;
     }
     refresh_screen();
 }

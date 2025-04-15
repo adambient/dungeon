@@ -20,48 +20,57 @@ extern void print_string(uint8_t *string) __z88dk_fastcall; // print null termin
 extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 
-static inline unsigned char move_up(void)
+unsigned char last_player_dir;
+
+static void inline move_none(void)
 {
+    player_dir = last_player_dir;
+    map_move_none();
+    player_dir = 4;
+}
+
+static void inline move_up(void)
+{
+    last_player_dir = player_dir;
     if (player_x > 0)
     {
         map_move_up();
-        return 1;
+        return;
     }
-
-    return 0;
+    move_none();
 }
 
-static inline unsigned char move_right(void)
+static void inline move_right(void)
 {
+    last_player_dir = player_dir;
     if (player_y < MAP_SIZE - 1)
     {
         map_move_right();
-        return 1;
+        return;
     }
-
-    return 0;
+    move_none();
 }
 
-static inline unsigned char move_down(void)
+static void inline move_down(void)
 {
+    last_player_dir = player_dir;
     if (player_x < MAP_SIZE - 1)
     {
         map_move_down();
-        return 1;
+        return;
     }
-
-    return 0;
+    move_none();
 }
 
-static inline unsigned char move_left(void)
+static void inline move_left(void)
 {
+    last_player_dir = player_dir;
     if (player_y > 0)
     {
         map_move_left();
-        return 1;
+        return;
     }
-
-    return 0;
+    move_none();
 }
 
 void main(void)
@@ -77,12 +86,12 @@ void main(void)
     player_y = 1;
     player_dir = 0; // move up first of all to draw map TODO - shouldn't need to do this
     do
-    {
+    {        
         // loop around map
         switch (player_dir)
         {
             default:
-                // stand still TODO - torch should still flicker
+                move_none();
                 break;
             case 0:
                 move_up();
@@ -98,7 +107,7 @@ void main(void)
                 break;
         }
 
-        // check for movement
+        // check for movement                
         player_dir = 4;
         if (in_key_pressed(IN_KEY_SCANCODE_q) == 0xFFFF) {
             player_dir = 0;
