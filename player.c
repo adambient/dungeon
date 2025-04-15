@@ -37,6 +37,11 @@ unsigned char player_direction = 0; // 1:up;2:right;3:down;4:left
 unsigned char player_background_1;
 unsigned char player_background_2;
 
+static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
+{
+    return (get_map_tile(x, y) & BG_BYTES);   
+}
+
 static inline void frame_draw_up(void)
 {        
     switch (player_frame)
@@ -141,6 +146,10 @@ static inline void player_map_pipes(void)
 
 void player_draw_up(void)
 {    
+    player_tile = player_tile_next;
+    player_tile_next = player_get_tile(player_x - 1, player_y);
+    player_background_1 = player_tile;
+    player_background_2 = player_tile_next;
     if (DIR_UP != player_direction)
     {        
         switch (player_direction)
@@ -152,16 +161,16 @@ void player_draw_up(void)
         }
         player_direction = DIR_UP;
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_UP_HEAD);
-    }
-    player_tile = player_tile_next;
-    player_tile_next = get_map_tile(player_x - 1, player_y);
-    player_background_1 = player_tile;
-    player_background_2 = player_tile_next;
+    }    
     frame_draw_up();
 }
 
 void player_draw_right(void)
 {
+    player_tile = player_tile_next;
+    player_tile_next = player_get_tile(player_x, player_y + 1);
+    player_background_1 = player_tile;
+    player_background_2 = player_tile_next;
     if (DIR_RIGHT != player_direction)
     {        
         switch (player_direction)
@@ -173,16 +182,16 @@ void player_draw_right(void)
         }
         player_direction = DIR_RIGHT;
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_RIGHT_HEAD);
-    }
-    player_tile = player_tile_next;
-    player_tile_next = get_map_tile(player_x, player_y + 1);
-    player_background_1 = player_tile;
-    player_background_2 = player_tile_next;    
+    }    
     frame_draw_right();
 }
 
 void player_draw_down(void)
 {
+    player_tile = player_tile_next;
+    player_tile_next = player_get_tile(player_x + 1, player_y);
+    player_background_1 = player_tile_next;
+    player_background_2 = player_tile;
     if (DIR_DOWN != player_direction)
     {        
         switch (player_direction)
@@ -194,16 +203,16 @@ void player_draw_down(void)
         }
         player_direction = DIR_DOWN;
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_DOWN_HEAD);
-    }
-    player_tile = player_tile_next;
-    player_tile_next = get_map_tile(player_x + 1, player_y);
-    player_background_1 = player_tile_next;
-    player_background_2 = player_tile;    
+    }    
     frame_draw_down();
 }
 
 void player_draw_left(void)
 {
+    player_tile = player_tile_next;
+    player_tile_next = player_get_tile(player_x, player_y - 1);
+    player_background_1 = player_tile_next;
+    player_background_2 = player_tile;
     if (DIR_LEFT != player_direction)
     {        
         switch (player_direction)
@@ -215,25 +224,20 @@ void player_draw_left(void)
         }
         player_direction = DIR_LEFT;
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_LEFT_HEAD);
-    }
-    player_tile = player_tile_next;
-    player_tile_next = get_map_tile(player_x, player_y - 1);
-    player_background_1 = player_tile_next;
-    player_background_2 = player_tile;
+    }    
     frame_draw_left();
 }
 
 void player_draw_background_vertical(void)
 {
     unsigned char block_loc;
-    if ((player_background_1 & TG_BYTE) == TG_BYTE) {
+    // use cycled colour for target squares
+    if (player_background_1 == TARGET) {
         player_background_1 = colour;
     }
-    if ((player_background_2 & TG_BYTE) == TG_BYTE) {
+    if (player_background_2 == TARGET) {
         player_background_2 = colour;
     }
-    player_background_1 = player_background_1 & BG_BYTES;
-    player_background_2 = player_background_2 & BG_BYTES;
     if (player_direction == DIR_UP)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_2, PLAYER_BODY_1);
@@ -264,14 +268,13 @@ void player_draw_background_vertical(void)
 void player_draw_background_horizontal(void)
 {
     unsigned char block_loc;
-    if ((player_background_1 & TG_BYTE) == TG_BYTE) {
+    // use cycled colour for target squares
+    if (player_background_1 == TARGET) {
         player_background_1 = colour;
     }
-    if ((player_background_2 & TG_BYTE) == TG_BYTE) {
+    if (player_background_2 == TARGET) {
         player_background_2 = colour;
     }
-    player_background_1 = player_background_1 & BG_BYTES;
-    player_background_2 = player_background_2 & BG_BYTES;
     if (player_direction == DIR_LEFT)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, player_background_1, PLAYER_FACE);

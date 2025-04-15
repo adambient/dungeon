@@ -5,7 +5,7 @@
 #define MAP_OFFSET (PLAYER_SQUARE / 2) // offset to centralise display
 
 #define BG_BYTES 0b00000111 // bytes used for background
-#define TG_BYTE 0b0001000 // square is target
+#define TG_BYTE 0b0001000 // TODO - each square has a free bit which has been used for "seen" squares but we could/should think of something else
 #define BLACK 0
 #define BLUE 1
 #define RED 2
@@ -20,6 +20,7 @@
 #define WALL BLUE
 #define BLOCK YELLOW
 #define PLACED GREEN
+#define TARGET CYAN
 #define CARPET_1 RED
 #define CARPET_2 MAGENTA // this will actually always be CARPET_1 plus 1
 #define PLAYER_FACE YELLOW
