@@ -30,7 +30,7 @@ void refresh_screen(void) {
 void wait(void)
 {
     while (abs(tick - timer) < WFRAMES) {
-        refresh_screen();
+        intrinsic_halt();
     }
 
     timer = tick;

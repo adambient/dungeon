@@ -34,12 +34,52 @@ extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned cha
 
 unsigned char player_frame = 1;
 unsigned char player_direction = 0; // 1:up;2:right;3:down;4:left
-unsigned char player_background_1;
-unsigned char player_background_2;
+unsigned char player_background_data; // lower bytes: player_background_1; higher bytes: player_background_2
+unsigned char player_tile_data; // lower bytes: player_tile; higher bytes: player_tile_next
 
 static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
 {
     return (get_map_tile(x, y) & BG_BYTES);   
+}
+
+static inline void set_player_tile(unsigned char player_tile)
+{
+    player_tile_data = ((player_tile_data & 0b11110000) | (player_tile & 0b00001111));
+}
+
+static inline unsigned char get_player_tile(void)
+{
+    return player_tile_data & 0b00001111;
+}
+
+static inline void set_player_tile_next(unsigned char player_tile_next)
+{
+    player_tile_data = ((player_tile_data & 0b00001111) | ((player_tile_next << 4) & 0b11110000));
+}
+
+static inline unsigned char get_player_tile_next(void)
+{
+    return (player_tile_data >> 4) & 0b00001111;
+}
+
+static inline void set_player_background_1(unsigned char player_background_1)
+{
+    player_background_data = ((player_background_data & 0b11110000) | (player_background_1 & 0b00001111));
+}
+
+static inline unsigned char get_player_background_1(void)
+{
+    return player_background_data & 0b00001111;
+}
+
+static inline void set_player_background_2(unsigned char player_background_2)
+{
+    player_background_data = ((player_background_data & 0b00001111) | ((player_background_2 << 4) & 0b11110000));
+}
+
+static inline unsigned char get_player_background_2(void)
+{
+    return (player_background_data >> 4) & 0b00001111;
 }
 
 static inline void frame_draw_up(void)
@@ -146,10 +186,10 @@ static inline void player_map_pipes(void)
 
 void player_draw_up(void)
 {    
-    player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x - 1, player_y);
-    player_background_1 = player_tile;
-    player_background_2 = player_tile_next;
+    set_player_tile(get_player_tile_next());
+    set_player_tile_next(player_get_tile(player_x - 1, player_y));
+    set_player_background_1(get_player_tile());
+    set_player_background_2(get_player_tile_next());
     if (DIR_UP != player_direction)
     {        
         switch (player_direction)
@@ -167,10 +207,10 @@ void player_draw_up(void)
 
 void player_draw_right(void)
 {
-    player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x, player_y + 1);
-    player_background_1 = player_tile;
-    player_background_2 = player_tile_next;
+    set_player_tile(get_player_tile_next());
+    set_player_tile_next(player_get_tile(player_x, player_y + 1));
+    set_player_background_1(get_player_tile());
+    set_player_background_2(get_player_tile_next());
     if (DIR_RIGHT != player_direction)
     {        
         switch (player_direction)
@@ -188,10 +228,10 @@ void player_draw_right(void)
 
 void player_draw_down(void)
 {
-    player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x + 1, player_y);
-    player_background_1 = player_tile_next;
-    player_background_2 = player_tile;
+    set_player_tile(get_player_tile_next());
+    set_player_tile_next(player_get_tile(player_x + 1, player_y));
+    set_player_background_1(get_player_tile_next());
+    set_player_background_2(get_player_tile());
     if (DIR_DOWN != player_direction)
     {        
         switch (player_direction)
@@ -209,10 +249,10 @@ void player_draw_down(void)
 
 void player_draw_left(void)
 {
-    player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x, player_y - 1);
-    player_background_1 = player_tile_next;
-    player_background_2 = player_tile;
+    set_player_tile(get_player_tile_next());
+    set_player_tile_next(player_get_tile(player_x, player_y - 1));
+    set_player_background_1(get_player_tile_next());
+    set_player_background_2(get_player_tile());
     if (DIR_LEFT != player_direction)
     {        
         switch (player_direction)
@@ -232,12 +272,12 @@ void player_draw_background_vertical(void)
 {
     unsigned char block_loc;
     // use cycled colour for target squares, store in temp var so next check works
-    unsigned char pb_1 = player_background_1;
-    unsigned char pb_2 = player_background_2;
-    if (player_background_1 == TARGET) {
+    unsigned char pb_1 = get_player_background_1();
+    unsigned char pb_2 = get_player_background_2();
+    if (pb_1 == TARGET) {
         pb_1 = colour;
     }
-    if (player_background_2 == TARGET) {
+    if (pb_2 == TARGET) {
         pb_2 = colour;
     }
     if (player_direction == DIR_UP)
@@ -271,12 +311,12 @@ void player_draw_background_horizontal(void)
 {
     unsigned char block_loc;
     // use cycled colour for target squares, store in temp var so next check works
-    unsigned char pb_1 = player_background_1;
-    unsigned char pb_2 = player_background_2;
-    if (player_background_1 == TARGET) {
+    unsigned char pb_1 = get_player_background_1();
+    unsigned char pb_2 = get_player_background_2();
+    if (pb_1 == TARGET) {
         pb_1 = colour;
     }
-    if (player_background_2 == TARGET) {
+    if (pb_2 == TARGET) {
         pb_2 = colour;
     }
     if (player_direction == DIR_LEFT)
@@ -307,9 +347,9 @@ void player_draw_background_horizontal(void)
     bright_rectangle_attr(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
 }
 
-void player_see(void)
+void player_draw_done(void)
 {
     // final background draw should have solid background
-    player_background_1 = player_tile_next;
-    player_background_2 = player_tile_next;
+    set_player_background_1(get_player_tile_next());
+    set_player_background_2(get_player_tile_next());
 }

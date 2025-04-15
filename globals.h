@@ -30,6 +30,4 @@
 extern unsigned char player_x;
 extern unsigned char player_y;
 extern unsigned char player_dir; // 0 - up, 1 - right, 2 - down, 3 left
-extern unsigned char player_tile;
-extern unsigned char player_tile_next;
 extern unsigned char is_player_pushing; // TODO - use for state, not just is pushing

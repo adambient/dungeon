@@ -249,7 +249,7 @@ void map_move_up(void)
     refresh_screen();
     player_x--;    
     map_frame = 0;
-    player_see(); // final position    
+    player_draw_done(); // final position    
     map_draw_vertical();
     player_draw_background_vertical();
     if (is_player_pushing == 1) {
@@ -316,7 +316,7 @@ void map_move_down(void)
     player_draw_background_vertical();
     refresh_screen();
     map_frame--;
-    player_see(); // final position    
+    player_draw_done(); // final position    
     map_draw_vertical();
     player_draw_background_vertical();
     if (is_player_pushing == 1) {
@@ -383,7 +383,7 @@ void map_move_left(void)
     refresh_screen();
     player_y--;
     map_frame = 0;
-    player_see(); // final position    
+    player_draw_done(); // final position    
     map_draw_horizontal();
     player_draw_background_horizontal();
     if (is_player_pushing == 1) {
@@ -450,7 +450,7 @@ void map_move_right(void)
     player_draw_background_horizontal();
     refresh_screen();
     map_frame--;
-    player_see(); // final position
+    player_draw_done(); // final position
     map_draw_horizontal();
     player_draw_background_horizontal();
     if (is_player_pushing == 1) {
