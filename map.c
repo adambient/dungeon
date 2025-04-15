@@ -203,35 +203,38 @@ void map_init(void)
     }
 }
 
+static inline unsigned char can_move_check(signed char dx, signed char dy)
+{
+    unsigned char tile = get_map_tile(player_x + dx, player_y + dy);
+    if ((tile & BG_BYTES) == WALL) {
+        // tile is inaccessible
+        return 0;
+    }
+    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED) {
+        // tile is a BLOCK or placed BLOCK so extra checks
+        unsigned char next_tile = get_map_tile(player_x + dx + dx, player_y + dy + dy);
+        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED) {
+            // next tile is blocked so cannot move
+            return 0;
+        }        
+        if ((tile & BG_BYTES) == PLACED) {
+            // was placed - replace current tile with target
+            set_map_tile(player_x + dx, player_y + dy, TARGET);
+        }
+        else {
+            // replace current tile with carpet
+            set_map_tile(player_x + dx, player_y + dy, (CARPET_1  | (player_x + player_y & 0b00000001)));
+        }
+        // flag used to show player pushing
+        is_player_pushing = 1;
+    }
+    return 1;
+}
+
 void map_move_up(void)
 {   
-    unsigned char tile = get_map_tile(player_x - 1, player_y);
-    if ((tile & BG_BYTES) == WALL)
-    {
-        // tile is inaccessible
+    if (!can_move_check(-1, 0)) {
         return;
-    }
-
-    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
-    {
-        // tile is a BLOCK or placed BLOCK
-        unsigned char next_tile = get_map_tile(player_x - 2, player_y);
-        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
-        {
-            // next tile is blocked
-            return;
-        }        
-        if ((tile & BG_BYTES) == PLACED)
-        {
-            // was placed - replace current tile with target
-            set_map_tile(player_x - 1, player_y, TARGET);
-        }
-        else
-        {
-            // replace current tile with carpet
-            set_map_tile(player_x - 1, player_y, (CARPET_1  | (player_x + player_y & 0b00000001)));
-        }
-        is_player_pushing = 1;           
     }
 
     player_draw_up(); 
@@ -272,33 +275,8 @@ void map_move_up(void)
 
 void map_move_down(void)
 {   
-    unsigned char tile = get_map_tile(player_x + 1, player_y);
-    if ((tile & BG_BYTES) == WALL)
-    {
-        // tile is inaccessible
+    if (!can_move_check(1, 0)) {
         return;
-    }
-
-    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
-    {
-        // tile is a BLOCK or placed BLOCK
-        unsigned char next_tile = get_map_tile(player_x + 2, player_y);
-        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
-        {
-            // next tile is blocked
-            return;
-        }
-        if ((tile & BG_BYTES) == PLACED)
-        {
-            // was placed - replace current tile with target
-            set_map_tile(player_x + 1, player_y, TARGET);
-        }
-        else
-        {
-            // replace current tile with carpet
-            set_map_tile(player_x + 1, player_y, (CARPET_1  | (player_x + player_y & 0b00000001)));
-        }
-        is_player_pushing = 1;          
     }
     
     player_draw_down();
@@ -339,33 +317,8 @@ void map_move_down(void)
 
 void map_move_left(void)
 {       
-    unsigned char tile = get_map_tile(player_x, player_y - 1);
-    if ((tile & BG_BYTES) == WALL)
-    {
-        // tile is inaccessible
+    if (!can_move_check(0, -1)) {
         return;
-    }
-
-    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
-    {
-        // tile is a BLOCK or placed BLOCK
-        unsigned char next_tile = get_map_tile(player_x, player_y - 2);
-        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
-        {
-            // next tile is blocked
-            return;
-        }
-        if ((tile & BG_BYTES) == PLACED)
-        {
-            // was placed - replace current tile with target
-            set_map_tile(player_x, player_y - 1, TARGET);
-        }
-        else
-        {
-            // replace current tile with carpet
-            set_map_tile(player_x, player_y - 1, (CARPET_1  | (player_x + player_y & 0b00000001)));
-        }
-        is_player_pushing = 1;  
     }
 
     player_draw_left();
@@ -406,33 +359,8 @@ void map_move_left(void)
 
 void map_move_right(void)
 {
-    unsigned char tile = get_map_tile(player_x, player_y + 1);
-    if ((tile & BG_BYTES) == WALL)
-    {
-        // tile is inaccessible
+    if (!can_move_check(0, 1)) {
         return;
-    }
-
-    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
-    {
-        // tile is a BLOCK or placed BLOCK
-        unsigned char next_tile = get_map_tile(player_x, player_y + 2);
-        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
-        {
-            // next tile is blocked
-            return;
-        }
-        if ((tile & BG_BYTES) == PLACED)
-        {
-            // was placed - replace current tile with target
-            set_map_tile(player_x, player_y + 1, TARGET);
-        }
-        else
-        {
-            // replace current tile with carpet
-            set_map_tile(player_x, player_y + 1, (CARPET_1  | (player_x + player_y & 0b00000001)));
-        }
-        is_player_pushing = 1;  
     }
 
     player_draw_right();
