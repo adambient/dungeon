@@ -20,18 +20,15 @@ extern void print_string(uint8_t *string) __z88dk_fastcall; // print null termin
 extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 
-unsigned char last_player_dir;
-
 static void inline move_none(void)
 {
-    player_dir = last_player_dir;
+    player_dir = player_facing; // so the correct kind of refresh happens
     map_move_none();
     player_dir = 4;
 }
 
 static void inline move_up(void)
 {
-    last_player_dir = player_dir;
     if (player_x > 0)
     {
         map_move_up();
@@ -42,7 +39,6 @@ static void inline move_up(void)
 
 static void inline move_right(void)
 {
-    last_player_dir = player_dir;
     if (player_y < MAP_SIZE - 1)
     {
         map_move_right();
@@ -53,7 +49,6 @@ static void inline move_right(void)
 
 static void inline move_down(void)
 {
-    last_player_dir = player_dir;
     if (player_x < MAP_SIZE - 1)
     {
         map_move_down();
@@ -64,7 +59,6 @@ static void inline move_down(void)
 
 static void inline move_left(void)
 {
-    last_player_dir = player_dir;
     if (player_y > 0)
     {
         map_move_left();
@@ -84,7 +78,7 @@ void main(void)
     fill_rectangle_char(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "["); // fill with pipes
     player_x = MAP_SIZE - 1;
     player_y = 1;
-    player_dir = 0; // move up first of all to draw map TODO - shouldn't need to do this
+    player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this
     do
     {        
         // loop around map
@@ -93,33 +87,33 @@ void main(void)
             default:
                 move_none();
                 break;
-            case 0:
+            case DIR_UP:
                 move_up();
                 break;
-            case 1:
+            case DIR_RIGHT:
                 move_right();
                 break;
-            case 2:
+            case DIR_DOWN:
                 move_down();
                 break;
-            case 3:
+            case DIR_LEFT:
                 move_left();
                 break;
         }
 
         // check for movement                
-        player_dir = 4;
+        player_dir = DIR_NONE;
         if (in_key_pressed(IN_KEY_SCANCODE_q) == 0xFFFF) {
-            player_dir = 0;
+            player_dir = DIR_UP;
         }
         if (in_key_pressed(IN_KEY_SCANCODE_p) == 0xFFFF) {
-            player_dir = 1;
+            player_dir = DIR_RIGHT;
         }
         if (in_key_pressed(IN_KEY_SCANCODE_a) == 0xFFFF) {
-            player_dir = 2;
+            player_dir = DIR_DOWN;
         }
         if (in_key_pressed(IN_KEY_SCANCODE_o) == 0xFFFF) {
-            player_dir = 3;
+            player_dir = DIR_LEFT;
         }
         
         wait();

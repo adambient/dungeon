@@ -33,9 +33,14 @@ extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char 
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
 
-unsigned char *start_attr_address;
 unsigned char *attr_address;
 unsigned char map_frame;
+
+// gets the memory address of the attribute buffer so it can be populated incrementally which is faster than using the index
+static inline unsigned char* get_start_attr_address(void)
+{
+    return (unsigned char *)(&attr_buffer);
+}
 
 static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
 {
@@ -122,7 +127,7 @@ void row_draw_horizontal(signed char x, unsigned char y)
 
 void map_draw_vertical(void)
 {    
-    attr_address = start_attr_address; // reset shared attr_address    
+    attr_address = get_start_attr_address(); // reset shared attr_address    
     unsigned char sub_frame = 0;
     switch (map_frame)
     {
@@ -156,7 +161,7 @@ void map_draw_vertical(void)
 
 void map_draw_horizontal(void)
 {
-    attr_address = start_attr_address; // reset shared attr_address    
+    attr_address = get_start_attr_address(); // reset shared attr_address    
     unsigned char y = player_y - MAP_OFFSET;
     if (map_frame == 2)
     {
@@ -171,7 +176,6 @@ void map_draw_horizontal(void)
 
 void map_init(void)
 {
-    start_attr_address = (unsigned char *)(&attr_buffer); // start of map attribute memory    
     for (unsigned char x = MAP_SIZE - 1; x < 255; x--) {
         for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--) {
             unsigned char i = 0;

@@ -19,10 +19,6 @@
 #define MAN_RIGHT_BODY3 "ST"
 #define PIPE_PATTERN "\\"
 #define BAR_PATTERN "["
-#define DIR_UP 1
-#define DIR_LEFT 2
-#define DIR_DOWN 3
-#define DIR_RIGHT 4
 
 // imported from map.asm
 extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_callee;
@@ -33,7 +29,6 @@ extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char 
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
 
 unsigned char player_frame = 1;
-unsigned char player_direction = 0; // 1:up;2:right;3:down;4:left
 unsigned char player_background_data; // lower bytes: player_background_1; higher bytes: player_background_2
 unsigned char player_tile_data; // lower bytes: player_tile; higher bytes: player_tile_next
 
@@ -190,16 +185,16 @@ void player_draw_up(void)
     set_player_tile_next(player_get_tile(player_x - 1, player_y));
     set_player_background_1(get_player_tile());
     set_player_background_2(get_player_tile_next());
-    if (DIR_UP != player_direction)
+    if (DIR_UP != player_facing)
     {        
-        switch (player_direction)
+        switch (player_facing)
         {
             case DIR_RIGHT:
             case DIR_LEFT:
                 player_map_bars();
                 break;
         }
-        player_direction = DIR_UP;
+        player_facing = DIR_UP;
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_UP_HEAD);
     }    
     frame_draw_up();
@@ -211,16 +206,16 @@ void player_draw_right(void)
     set_player_tile_next(player_get_tile(player_x, player_y + 1));
     set_player_background_1(get_player_tile());
     set_player_background_2(get_player_tile_next());
-    if (DIR_RIGHT != player_direction)
+    if (DIR_RIGHT != player_facing)
     {        
-        switch (player_direction)
+        switch (player_facing)
         {
             case DIR_UP:
             case DIR_DOWN:            
                 player_map_pipes();
                 break;
         }
-        player_direction = DIR_RIGHT;
+        player_facing = DIR_RIGHT;
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_RIGHT_HEAD);
     }    
     frame_draw_right();
@@ -232,16 +227,16 @@ void player_draw_down(void)
     set_player_tile_next(player_get_tile(player_x + 1, player_y));
     set_player_background_1(get_player_tile_next());
     set_player_background_2(get_player_tile());
-    if (DIR_DOWN != player_direction)
+    if (DIR_DOWN != player_facing)
     {        
-        switch (player_direction)
+        switch (player_facing)
         {
             case DIR_RIGHT:
             case DIR_LEFT:
                 player_map_bars();
                 break;
         }
-        player_direction = DIR_DOWN;
+        player_facing = DIR_DOWN;
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_DOWN_HEAD);
     }    
     frame_draw_down();
@@ -253,16 +248,16 @@ void player_draw_left(void)
     set_player_tile_next(player_get_tile(player_x, player_y - 1));
     set_player_background_1(get_player_tile_next());
     set_player_background_2(get_player_tile());
-    if (DIR_LEFT != player_direction)
+    if (DIR_LEFT != player_facing)
     {        
-        switch (player_direction)
+        switch (player_facing)
         {
             case DIR_UP:
             case DIR_DOWN:            
                 player_map_pipes();
                 break;
         }
-        player_direction = DIR_LEFT;
+        player_facing = DIR_LEFT;
         fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_LEFT_HEAD);
     }    
     frame_draw_left();
@@ -280,7 +275,7 @@ void player_draw_background_vertical(void)
     if (pb_2 == TARGET) {
         pb_2 = colour;
     }
-    if (player_direction == DIR_UP)
+    if (player_facing == DIR_UP)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, pb_2, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_2);
@@ -319,7 +314,7 @@ void player_draw_background_horizontal(void)
     if (pb_2 == TARGET) {
         pb_2 = colour;
     }
-    if (player_direction == DIR_LEFT)
+    if (player_facing == DIR_LEFT)
     {       
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_FACE);
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_1);

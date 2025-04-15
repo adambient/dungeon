@@ -27,7 +27,17 @@
 #define PLAYER_BODY_1 WHITE
 #define PLAYER_BODY_2 BLACK
 
+// player directions
+#define DIR_UP 0
+#define DIR_RIGHT 1
+#define DIR_DOWN 2
+#define DIR_LEFT 3
+#define DIR_NONE 4
+
+// TODO - combine values into single char to save space
 extern unsigned char player_x;
 extern unsigned char player_y;
-extern unsigned char player_dir; // 0 - up, 1 - right, 2 - down, 3 left
-extern unsigned char is_player_pushing; // TODO - use for state, not just is pushing
+// TODO - combine values into single char to save space
+extern unsigned char player_dir; // the way the player is currently moving
+extern unsigned char player_facing; // the way the player is currently facing
+extern unsigned char is_player_pushing; // is player currently pushing a crate
