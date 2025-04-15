@@ -179,24 +179,21 @@ void map_init(void)
     for (unsigned char x = MAP_SIZE - 1; x < 255; x--) {
         for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--) {
             unsigned char i = 0;
-            unsigned char m = map[x][y]; // map
-            unsigned char c = map[x][y + 2]; // BLOCK
-            unsigned char t = map[x][y + 4]; // target
             for (unsigned char i = 7; i < 255; i--) {
                 unsigned char tile = WALL; // wall
-                if ((c << i & 0b10000000) == 0b10000000) {
+                if ((map[x][y + 2] << i & 0b10000000) == 0b10000000) {
                     // use BLOCK data
                     tile = BLOCK; // BLOCK
                 } else {
                     // use map data                    
-                    if ((m << i & 0b10000000) == 0b00000000) {
+                    if ((map[x][y] << i & 0b10000000) == 0b00000000) {
                         if (((x + i) & 0b00000001) == 0b00000001) {
                             tile = CARPET_1; // carpet 1
                         } else {
                             tile = CARPET_2; // carpet 2
                         }
                     }
-                    if ((t << i & 0b10000000) == 0b10000000) {
+                    if ((map[x][y + 4] << i & 0b10000000) == 0b10000000) {
                         tile = TARGET;
                     }
                 }
