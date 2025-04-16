@@ -452,7 +452,7 @@ void map_move_right(void)
 
 void map_move_none(void)
 {
-    switch (player_dir)
+    switch (player_facing)
     {
     default:
     case 0:

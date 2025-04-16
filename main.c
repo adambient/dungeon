@@ -21,13 +21,6 @@ extern void print_string(uint8_t *string) __z88dk_fastcall; // print null termin
 extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 
-static void inline move_none(void)
-{
-    player_dir = player_facing; // so the correct kind of refresh happens
-    map_move_none();
-    player_dir = 4;
-}
-
 static void inline move_up(void)
 {
     if (player_x > 0)
@@ -35,7 +28,7 @@ static void inline move_up(void)
         map_move_up();
         return;
     }
-    move_none();
+    map_move_none();
 }
 
 static void inline move_right(void)
@@ -45,7 +38,7 @@ static void inline move_right(void)
         map_move_right();
         return;
     }
-    move_none();
+    map_move_none();
 }
 
 static void inline move_down(void)
@@ -55,7 +48,7 @@ static void inline move_down(void)
         map_move_down();
         return;
     }
-    move_none();
+    map_move_none();
 }
 
 static void inline move_left(void)
@@ -65,7 +58,7 @@ static void inline move_left(void)
         map_move_left();        
         return;
     }
-    move_none();
+    map_move_none();
 }
 
 void main(void)
@@ -86,7 +79,7 @@ void main(void)
         switch (player_dir)
         {
         default:
-            move_none();
+            map_move_none();
             break;
         case DIR_UP:
             move_up();
