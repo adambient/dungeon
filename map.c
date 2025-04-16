@@ -6,29 +6,29 @@
 // TODO - this is obviously hard coded to be [16][6] so perhaps we should generate this, also is it optimal space wise?
 static unsigned char map[MAP_SIZE][(MAP_SIZE / 8) * 3] = {
     // walls                  // BLOCKs               // target squares
-    { 0b11111111, 0b11111111, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
-    { 0b10000001, 0b10000001, 0b00000000, 0b00000000, 0b00000100, 0b00100000},
-    { 0b10101101, 0b10110101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
-    { 0b10000000, 0b00000001, 0b00100000, 0b00000100, 0b00000100, 0b00100000},
-    { 0b10101101, 0b11010101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
-    { 0b10001101, 0b10010001, 0b00100000, 0b00000100, 0b00000000, 0b00000000},
-    { 0b10100001, 0b10110101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
-    { 0b10111111, 0b10000101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
-    { 0b10100001, 0b11111101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
-    { 0b10101101, 0b10000101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
-    { 0b10001001, 0b10110001, 0b00100000, 0b00000100, 0b00000000, 0b00000000},
-    { 0b10101011, 0b10110101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
-    { 0b10000000, 0b00000001, 0b00100000, 0b00000100, 0b00000100, 0b00100000},
-    { 0b10101101, 0b10110101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
-    { 0b10000001, 0b10000001, 0b00000000, 0b00000000, 0b00000100, 0b00100000},
-    { 0b11111111, 0b11111111, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b11111111, 0b11111111, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b10000001, 0b10000001, 0b00000000, 0b00000000, 0b00000100, 0b00100000},
+    {0b10101101, 0b10110101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b10000000, 0b00000001, 0b00100000, 0b00000100, 0b00000100, 0b00100000},
+    {0b10101101, 0b11010101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b10001101, 0b10010001, 0b00100000, 0b00000100, 0b00000000, 0b00000000},
+    {0b10100001, 0b10110101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b10111111, 0b10000101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b10100001, 0b11111101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b10101101, 0b10000101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b10001001, 0b10110001, 0b00100000, 0b00000100, 0b00000000, 0b00000000},
+    {0b10101011, 0b10110101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b10000000, 0b00000001, 0b00100000, 0b00000100, 0b00000100, 0b00100000},
+    {0b10101101, 0b10110101, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
+    {0b10000001, 0b10000001, 0b00000000, 0b00000000, 0b00000100, 0b00100000},
+    {0b11111111, 0b11111111, 0b00000000, 0b00000000, 0b00000000, 0b00000000},
 };
 
 // imported from map.asm
 extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_callee;
-extern void set_map_tile(unsigned char x, unsigned char y, unsigned int tile)  __z88dk_callee;
+extern void set_map_tile(unsigned char x, unsigned char y, unsigned int tile) __z88dk_callee;
 // imported from fill_rectangle.asm
-extern unsigned char* attr_buffer;
+extern unsigned char *attr_buffer;
 extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
@@ -37,7 +37,7 @@ unsigned char *attr_address;
 unsigned char map_frame;
 
 // gets the memory address of the attribute buffer so it can be populated incrementally which is faster than using the index
-static inline unsigned char* get_start_attr_address(void)
+static inline unsigned char *get_start_attr_address(void)
 {
     return (unsigned char *)(&attr_buffer);
 }
@@ -46,15 +46,20 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
 {
     if (x < MAP_SIZE && y < MAP_SIZE)
     {
-        unsigned char tile = (get_map_tile(x, y) & BG_BYTES);
-        switch (tile) {
+        unsigned char tile = get_map_tile(x, y);
+        if ((tile & SEEN_BYTE) == SEEN_BYTE)
+        {
+            tile = tile & BG_BYTES;
+            switch (tile)
+            {
             case TARGET:
                 return colour;
             case PLACED:
                 // cycle bettween yellow and white
-                return (YELLOW  | (colour & 0b00000001));
+                return (YELLOW | (colour & 0b00000001));
             default:
                 return tile;
+            }
         }
     }
 
@@ -81,28 +86,28 @@ void row_draw_vertical(signed char x, signed char x2, unsigned char y)
 }
 
 void row_draw_horizontal(signed char x, unsigned char y)
-{    
+{
     for (unsigned char i = VISIBLE_BLOCKS; i < 255; i--)
     {
         unsigned char tile = row_get_tile(x, y);
         unsigned char tile2 = tile;
         switch (map_frame)
         {
-            case 1:
-            case 3:
-                tile = row_get_tile(x, y - 1);
-                break;
+        case 1:
+        case 3:
+            tile = row_get_tile(x, y - 1);
+            break;
         }
 
         if (i == 0)
         {
             switch (map_frame)
             {
-                case 1:
-                case 2:
-                    // catch up last block (first skipped)
-                    *attr_address++ = tile | tile << 3;
-                    break;
+            case 1:
+            case 2:
+                // catch up last block (first skipped)
+                *attr_address++ = tile | tile << 3;
+                break;
             }
             attr_address++;
             attr_address++;
@@ -119,31 +124,31 @@ void row_draw_horizontal(signed char x, unsigned char y)
         }
     }
     for (unsigned char i = 15; i > VISIBLE_BLOCKS; i--)
-    {        
+    {
         attr_address++;
         attr_address++;
     }
 }
 
 void map_draw_vertical(void)
-{    
-    attr_address = get_start_attr_address(); // reset shared attr_address    
+{
+    attr_address = get_start_attr_address(); // reset shared attr_address
     unsigned char sub_frame = 0;
     switch (map_frame)
     {
-        case 1:
-        case 3:
-            sub_frame++;
-            break;
+    case 1:
+    case 3:
+        sub_frame++;
+        break;
     }
     signed char x = player_x - MAP_OFFSET - 1; // starting row (could be negative)
     unsigned char y = player_y - MAP_OFFSET;
     switch (map_frame)
     {
-        case 2:
-        case 3:
-            row_draw_vertical(x, x, y);
-            break;
+    case 2:
+    case 3:
+        row_draw_vertical(x, x, y);
+        break;
     }
     signed char rows = player_x + MAP_OFFSET;
     for (x = x + 1; x < rows; x++)
@@ -156,12 +161,12 @@ void map_draw_vertical(void)
     {
         // catch up row
         row_draw_vertical(x, x, y);
-    }    
+    }
 }
 
 void map_draw_horizontal(void)
 {
-    attr_address = get_start_attr_address(); // reset shared attr_address    
+    attr_address = get_start_attr_address(); // reset shared attr_address
     unsigned char y = player_y - MAP_OFFSET;
     if (map_frame == 2)
     {
@@ -171,29 +176,40 @@ void map_draw_horizontal(void)
     {
         row_draw_horizontal(x, y);
         row_draw_horizontal(x, y);
-    }    
+    }
 }
 
 void map_init(void)
 {
-    for (unsigned char x = MAP_SIZE - 1; x < 255; x--) {
-        for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--) {
+    for (unsigned char x = MAP_SIZE - 1; x < 255; x--)
+    {
+        for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--)
+        {
             unsigned char i = 0;
-            for (unsigned char i = 7; i < 255; i--) {
+            for (unsigned char i = 7; i < 255; i--)
+            {
                 unsigned char tile = WALL; // wall
-                if ((map[x][y + 2] << i & 0b10000000) == 0b10000000) {
+                if ((map[x][y + 2] << i & 0b10000000) == 0b10000000)
+                {
                     // use BLOCK data
                     tile = BLOCK; // BLOCK
-                } else {
-                    // use map data                    
-                    if ((map[x][y] << i & 0b10000000) == 0b00000000) {
-                        if (((x + i) & 0b00000001) == 0b00000001) {
+                }
+                else
+                {
+                    // use map data
+                    if ((map[x][y] << i & 0b10000000) == 0b00000000)
+                    {
+                        if (((x + i) & 0b00000001) == 0b00000001)
+                        {
                             tile = CARPET_1; // carpet 1
-                        } else {
+                        }
+                        else
+                        {
                             tile = CARPET_2; // carpet 2
                         }
                     }
-                    if ((map[x][y + 4] << i & 0b10000000) == 0b10000000) {
+                    if ((map[x][y + 4] << i & 0b10000000) == 0b10000000)
+                    {
                         tile = TARGET;
                     }
                 }
@@ -206,24 +222,29 @@ void map_init(void)
 static inline unsigned char can_move_check(signed char dx, signed char dy)
 {
     unsigned char tile = get_map_tile(player_x + dx, player_y + dy);
-    if ((tile & BG_BYTES) == WALL) {
+    if ((tile & BG_BYTES) == WALL)
+    {
         // tile is inaccessible
         return 0;
     }
-    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED) {
+    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
+    {
         // tile is a BLOCK or placed BLOCK so extra checks
         unsigned char next_tile = get_map_tile(player_x + dx + dx, player_y + dy + dy);
-        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED) {
+        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
+        {
             // next tile is blocked so cannot move
             return 0;
-        }        
-        if ((tile & BG_BYTES) == PLACED) {
-            // was placed - replace current tile with target
-            set_map_tile(player_x + dx, player_y + dy, TARGET);
         }
-        else {
+        if ((tile & BG_BYTES) == PLACED)
+        {
+            // was placed - replace current tile with target
+            set_map_tile(player_x + dx, player_y + dy, TARGET | SEEN_BYTE);
+        }
+        else
+        {
             // replace current tile with carpet
-            set_map_tile(player_x + dx, player_y + dy, (CARPET_1  | (player_x + player_y & 0b00000001)));
+            set_map_tile(player_x + dx, player_y + dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
         }
         // flag used to show player pushing
         is_player_pushing = 1;
@@ -232,14 +253,15 @@ static inline unsigned char can_move_check(signed char dx, signed char dy)
 }
 
 void map_move_up(void)
-{   
-    if (!can_move_check(-1, 0)) {
+{
+    if (!can_move_check(-1, 0))
+    {
         return;
     }
 
-    player_draw_up(); 
-    // animate up            
-    map_frame = 1;    
+    player_draw_up();
+    // animate up
+    map_frame = 1;
     map_draw_vertical();
     player_draw_background_vertical();
     refresh_screen();
@@ -251,37 +273,42 @@ void map_move_up(void)
     map_draw_vertical();
     player_draw_background_vertical();
     refresh_screen();
-    player_x--;    
+    player_x--;
     map_frame = 0;
-    player_draw_done(); // final position    
+    player_draw_done(); // final position
     map_draw_vertical();
     player_draw_background_vertical();
-    if (is_player_pushing == 1) {
+    if (is_player_pushing == 1)
+    {
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x - 1, player_y);
-        if ((next_tile & BG_BYTES) == TARGET) {
+        if ((next_tile & BG_BYTES) == TARGET)
+        {
             // target location
-            set_map_tile(player_x - 1, player_y, PLACED);
+            set_map_tile(player_x - 1, player_y, PLACED | SEEN_BYTE);
             // remove BLOCK as part of player
             map_draw_vertical();
             player_draw_background_vertical();
-        } else {
-            set_map_tile(player_x - 1, player_y, BLOCK);
-        }        
+        }
+        else
+        {
+            set_map_tile(player_x - 1, player_y, BLOCK | SEEN_BYTE);
+        }
     }
     refresh_screen();
 }
 
 void map_move_down(void)
-{   
-    if (!can_move_check(1, 0)) {
+{
+    if (!can_move_check(1, 0))
+    {
         return;
     }
-    
+
     player_draw_down();
-    // animate down                 
-    map_frame = 3;    
+    // animate down
+    map_frame = 3;
     player_x++;
     map_draw_vertical();
     player_draw_background_vertical();
@@ -291,39 +318,44 @@ void map_move_down(void)
     player_draw_background_vertical();
     refresh_screen();
     map_frame--;
-    map_draw_vertical(); 
+    map_draw_vertical();
     player_draw_background_vertical();
     refresh_screen();
     map_frame--;
-    player_draw_done(); // final position    
+    player_draw_done(); // final position
     map_draw_vertical();
     player_draw_background_vertical();
-    if (is_player_pushing == 1) {
+    if (is_player_pushing == 1)
+    {
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x + 1, player_y);
-        if ((next_tile & BG_BYTES) == TARGET) {
+        if ((next_tile & BG_BYTES) == TARGET)
+        {
             // target location
-            set_map_tile(player_x + 1, player_y, PLACED);
+            set_map_tile(player_x + 1, player_y, PLACED | SEEN_BYTE);
             // remove BLOCK as part of player
             map_draw_vertical();
             player_draw_background_vertical();
-        } else {
-            set_map_tile(player_x + 1, player_y, BLOCK);
-        } 
+        }
+        else
+        {
+            set_map_tile(player_x + 1, player_y, BLOCK | SEEN_BYTE);
+        }
     }
     refresh_screen();
 }
 
 void map_move_left(void)
-{       
-    if (!can_move_check(0, -1)) {
+{
+    if (!can_move_check(0, -1))
+    {
         return;
     }
 
     player_draw_left();
     // animate left
-    map_frame = 1;        
+    map_frame = 1;
     map_draw_horizontal();
     player_draw_background_horizontal();
     refresh_screen();
@@ -337,21 +369,25 @@ void map_move_left(void)
     refresh_screen();
     player_y--;
     map_frame = 0;
-    player_draw_done(); // final position    
+    player_draw_done(); // final position
     map_draw_horizontal();
     player_draw_background_horizontal();
-    if (is_player_pushing == 1) {
+    if (is_player_pushing == 1)
+    {
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x, player_y - 1);
-        if ((next_tile & BG_BYTES) == TARGET) {
+        if ((next_tile & BG_BYTES) == TARGET)
+        {
             // target location
-            set_map_tile(player_x, player_y - 1, PLACED);
+            set_map_tile(player_x, player_y - 1, PLACED | SEEN_BYTE);
             // remove BLOCK as part of player
             map_draw_horizontal();
             player_draw_background_horizontal();
-        } else {
-            set_map_tile(player_x, player_y - 1, BLOCK);
+        }
+        else
+        {
+            set_map_tile(player_x, player_y - 1, BLOCK | SEEN_BYTE);
         }
     }
     refresh_screen();
@@ -359,13 +395,14 @@ void map_move_left(void)
 
 void map_move_right(void)
 {
-    if (!can_move_check(0, 1)) {
+    if (!can_move_check(0, 1))
+    {
         return;
     }
 
     player_draw_right();
-    // animate right     
-    map_frame = 3;        
+    // animate right
+    map_frame = 3;
     player_y++;
     map_draw_horizontal();
     player_draw_background_horizontal();
@@ -382,19 +419,23 @@ void map_move_right(void)
     player_draw_done(); // final position
     map_draw_horizontal();
     player_draw_background_horizontal();
-    if (is_player_pushing == 1) {
+    if (is_player_pushing == 1)
+    {
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x, player_y + 1);
-        if ((next_tile & BG_BYTES) == TARGET) {
+        if ((next_tile & BG_BYTES) == TARGET)
+        {
             // target location
-            set_map_tile(player_x, player_y + 1, PLACED);
+            set_map_tile(player_x, player_y + 1, PLACED | SEEN_BYTE);
             // remove BLOCK as part of player
             map_draw_horizontal();
             player_draw_background_horizontal();
-        } else {
-            set_map_tile(player_x, player_y + 1, BLOCK);
-        } 
+        }
+        else
+        {
+            set_map_tile(player_x, player_y + 1, BLOCK | SEEN_BYTE);
+        }
     }
     refresh_screen();
 }
@@ -403,17 +444,17 @@ void map_move_none(void)
 {
     switch (player_dir)
     {
-        default:
-        case 0:
-        case 2:
-            map_draw_vertical();
-            player_draw_background_vertical();
-            break;
-        case 1:
-        case 3:
-            map_draw_horizontal();
-            player_draw_background_horizontal();
-            break;
+    default:
+    case 0:
+    case 2:
+        map_draw_vertical();
+        player_draw_background_vertical();
+        break;
+    case 1:
+    case 3:
+        map_draw_horizontal();
+        player_draw_background_horizontal();
+        break;
     }
     refresh_screen();
 }

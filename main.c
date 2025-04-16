@@ -68,10 +68,10 @@ static void inline move_left(void)
 }
 
 void main(void)
-{       
+{
     setup_int();
-    print_string("Initialising...");    
-    fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern    
+    print_string("Initialising...");
+    fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern
     fill_rectangle_attr(0, 0, 24, 32, 7, 7);
     refresh_screen();
     map_init();
@@ -80,42 +80,46 @@ void main(void)
     player_y = 1;
     player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this
     do
-    {        
+    {
         // loop around map
         switch (player_dir)
         {
-            default:
-                move_none();
-                break;
-            case DIR_UP:
-                move_up();
-                break;
-            case DIR_RIGHT:
-                move_right();
-                break;
-            case DIR_DOWN:
-                move_down();
-                break;
-            case DIR_LEFT:
-                move_left();
-                break;
+        default:
+            move_none();
+            break;
+        case DIR_UP:
+            move_up();
+            break;
+        case DIR_RIGHT:
+            move_right();
+            break;
+        case DIR_DOWN:
+            move_down();
+            break;
+        case DIR_LEFT:
+            move_left();
+            break;
         }
 
-        // check for movement                
+        // check for movement
         player_dir = DIR_NONE;
-        if (in_key_pressed(IN_KEY_SCANCODE_q) == 0xFFFF) {
+        if (in_key_pressed(IN_KEY_SCANCODE_q) == 0xFFFF)
+        {
             player_dir = DIR_UP;
         }
-        if (in_key_pressed(IN_KEY_SCANCODE_p) == 0xFFFF) {
+        if (in_key_pressed(IN_KEY_SCANCODE_p) == 0xFFFF)
+        {
             player_dir = DIR_RIGHT;
         }
-        if (in_key_pressed(IN_KEY_SCANCODE_a) == 0xFFFF) {
+        if (in_key_pressed(IN_KEY_SCANCODE_a) == 0xFFFF)
+        {
             player_dir = DIR_DOWN;
         }
-        if (in_key_pressed(IN_KEY_SCANCODE_o) == 0xFFFF) {
+        if (in_key_pressed(IN_KEY_SCANCODE_o) == 0xFFFF)
+        {
             player_dir = DIR_LEFT;
         }
-        
+
         wait();
     } while (1);
 }

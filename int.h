@@ -2,7 +2,7 @@
 #define _INT_H
 
 #ifndef WFRAMES
-#define WFRAMES  2
+#define WFRAMES 2
 #endif
 
 #define clock(x) (tick)

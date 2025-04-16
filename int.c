@@ -13,14 +13,16 @@ unsigned char colour;
 unsigned char timer;
 
 IM2_DEFINE_ISR(isr)
-{    
+{
     // update the clock
-    ++tick;    
+    ++tick;
 }
 
-void refresh_screen(void) {
+void refresh_screen(void)
+{
     ++colour;
-    if (colour > 7) {
+    if (colour > 7)
+    {
         colour = 0;
     }
     intrinsic_halt();
@@ -29,7 +31,8 @@ void refresh_screen(void) {
 
 void wait(void)
 {
-    while (abs(tick - timer) < WFRAMES) {
+    while (abs(tick - timer) < WFRAMES)
+    {
         intrinsic_halt();
     }
 

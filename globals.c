@@ -5,4 +5,3 @@ unsigned char player_y;
 unsigned char player_dir;
 unsigned char player_facing = DIR_NONE;
 unsigned char is_player_pushing;
-
