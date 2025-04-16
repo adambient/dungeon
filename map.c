@@ -282,8 +282,7 @@ void map_move_up(void)
     player_x--;
     map_frame = 0;
     player_draw_done(); // final position
-    map_draw_vertical();
-    player_draw_background_vertical();
+    
     if (is_player_pushing == 1)
     {
         // place BLOCK
@@ -293,9 +292,6 @@ void map_move_up(void)
         {
             // target location
             set_map_tile(player_x - 1, player_y, PLACED | SEEN_BYTE);
-            // remove BLOCK as part of player
-            map_draw_vertical();
-            player_draw_background_vertical();
             play_success();
         }
         else
@@ -303,6 +299,8 @@ void map_move_up(void)
             set_map_tile(player_x - 1, player_y, BLOCK | SEEN_BYTE);
         }
     }
+    map_draw_vertical();
+    player_draw_background_vertical();
     int_refresh_screen();
 }
 
@@ -329,9 +327,7 @@ void map_move_down(void)
     player_draw_background_vertical();
     int_refresh_screen();
     map_frame--;
-    player_draw_done(); // final position
-    map_draw_vertical();
-    player_draw_background_vertical();
+    player_draw_done(); // final position    
     if (is_player_pushing == 1)
     {
         // place BLOCK
@@ -341,9 +337,6 @@ void map_move_down(void)
         {
             // target location
             set_map_tile(player_x + 1, player_y, PLACED | SEEN_BYTE);
-            // remove BLOCK as part of player
-            map_draw_vertical();
-            player_draw_background_vertical();
             play_success();
         }
         else
@@ -351,6 +344,8 @@ void map_move_down(void)
             set_map_tile(player_x + 1, player_y, BLOCK | SEEN_BYTE);
         }
     }
+    map_draw_vertical();
+    player_draw_background_vertical();
     int_refresh_screen();
 }
 
@@ -377,9 +372,7 @@ void map_move_left(void)
     int_refresh_screen();
     player_y--;
     map_frame = 0;
-    player_draw_done(); // final position
-    map_draw_horizontal();
-    player_draw_background_horizontal();
+    player_draw_done(); // final position    
     if (is_player_pushing == 1)
     {
         // place BLOCK
@@ -389,9 +382,6 @@ void map_move_left(void)
         {
             // target location
             set_map_tile(player_x, player_y - 1, PLACED | SEEN_BYTE);
-            // remove BLOCK as part of player
-            map_draw_horizontal();
-            player_draw_background_horizontal();
             play_success();
         }
         else
@@ -399,6 +389,8 @@ void map_move_left(void)
             set_map_tile(player_x, player_y - 1, BLOCK | SEEN_BYTE);
         }
     }
+    map_draw_horizontal();
+    player_draw_background_horizontal();
     int_refresh_screen();
 }
 
@@ -425,9 +417,7 @@ void map_move_right(void)
     player_draw_background_horizontal();
     int_refresh_screen();
     map_frame--;
-    player_draw_done(); // final position
-    map_draw_horizontal();
-    player_draw_background_horizontal();
+    player_draw_done(); // final position    
     if (is_player_pushing == 1)
     {
         // place BLOCK
@@ -437,9 +427,6 @@ void map_move_right(void)
         {
             // target location
             set_map_tile(player_x, player_y + 1, PLACED | SEEN_BYTE);
-            // remove BLOCK as part of player
-            map_draw_horizontal();
-            player_draw_background_horizontal();
             play_success();
         }
         else
@@ -447,6 +434,8 @@ void map_move_right(void)
             set_map_tile(player_x, player_y + 1, BLOCK | SEEN_BYTE);
         }
     }
+    map_draw_horizontal();
+    player_draw_background_horizontal();
     int_refresh_screen();
 }
 
