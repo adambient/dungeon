@@ -258,6 +258,25 @@ static inline unsigned char can_move_check(signed char dx, signed char dy)
     return 1;
 }
 
+static void inline map_refresh(void)
+{
+    switch (player_facing)
+    {
+    default:
+    case 0:
+    case 2:
+        map_draw_vertical();
+        player_draw_background_vertical();
+        break;
+    case 1:
+    case 3:
+        map_draw_horizontal();
+        player_draw_background_horizontal();
+        break;
+    }
+    int_refresh_screen();
+}
+
 void map_move_up(void)
 {
     if (!can_move_check(-1, 0))
@@ -268,17 +287,11 @@ void map_move_up(void)
     player_draw_up();
     // animate up
     map_frame = 1;
-    map_draw_vertical();
-    player_draw_background_vertical();
-    int_refresh_screen();
+    map_refresh();
     map_frame++;
-    map_draw_vertical();
-    player_draw_background_vertical();
-    int_refresh_screen();
+    map_refresh();
     map_frame++;
-    map_draw_vertical();
-    player_draw_background_vertical();
-    int_refresh_screen();
+    map_refresh();
     player_x--;
     map_frame = 0;
     player_draw_done(); // final position
@@ -299,9 +312,7 @@ void map_move_up(void)
             set_map_tile(player_x - 1, player_y, BLOCK | SEEN_BYTE);
         }
     }
-    map_draw_vertical();
-    player_draw_background_vertical();
-    int_refresh_screen();
+    map_refresh();
 }
 
 void map_move_down(void)
@@ -315,17 +326,11 @@ void map_move_down(void)
     // animate down
     map_frame = 3;
     player_x++;
-    map_draw_vertical();
-    player_draw_background_vertical();
-    int_refresh_screen();
+    map_refresh();
     map_frame--;
-    map_draw_vertical();
-    player_draw_background_vertical();
-    int_refresh_screen();
+    map_refresh();
     map_frame--;
-    map_draw_vertical();
-    player_draw_background_vertical();
-    int_refresh_screen();
+    map_refresh();
     map_frame--;
     player_draw_done(); // final position    
     if (is_player_pushing == 1)
@@ -344,9 +349,7 @@ void map_move_down(void)
             set_map_tile(player_x + 1, player_y, BLOCK | SEEN_BYTE);
         }
     }
-    map_draw_vertical();
-    player_draw_background_vertical();
-    int_refresh_screen();
+    map_refresh();
 }
 
 void map_move_left(void)
@@ -359,17 +362,11 @@ void map_move_left(void)
     player_draw_left();
     // animate left
     map_frame = 1;
-    map_draw_horizontal();
-    player_draw_background_horizontal();
-    int_refresh_screen();
+    map_refresh();
     map_frame++;
-    map_draw_horizontal();
-    player_draw_background_horizontal();
-    int_refresh_screen();
+    map_refresh();
     map_frame++;
-    map_draw_horizontal();
-    player_draw_background_horizontal();
-    int_refresh_screen();
+    map_refresh();
     player_y--;
     map_frame = 0;
     player_draw_done(); // final position    
@@ -389,9 +386,7 @@ void map_move_left(void)
             set_map_tile(player_x, player_y - 1, BLOCK | SEEN_BYTE);
         }
     }
-    map_draw_horizontal();
-    player_draw_background_horizontal();
-    int_refresh_screen();
+    map_refresh();
 }
 
 void map_move_right(void)
@@ -405,17 +400,11 @@ void map_move_right(void)
     // animate right
     map_frame = 3;
     player_y++;
-    map_draw_horizontal();
-    player_draw_background_horizontal();
-    int_refresh_screen();
+    map_refresh();
     map_frame--;
-    map_draw_horizontal();
-    player_draw_background_horizontal();
-    int_refresh_screen();
+    map_refresh();
     map_frame--;
-    map_draw_horizontal();
-    player_draw_background_horizontal();
-    int_refresh_screen();
+    map_refresh();
     map_frame--;
     player_draw_done(); // final position    
     if (is_player_pushing == 1)
@@ -434,26 +423,10 @@ void map_move_right(void)
             set_map_tile(player_x, player_y + 1, BLOCK | SEEN_BYTE);
         }
     }
-    map_draw_horizontal();
-    player_draw_background_horizontal();
-    int_refresh_screen();
+    map_refresh();
 }
 
 void map_move_none(void)
 {
-    switch (player_facing)
-    {
-    default:
-    case 0:
-    case 2:
-        map_draw_vertical();
-        player_draw_background_vertical();
-        break;
-    case 1:
-    case 3:
-        map_draw_horizontal();
-        player_draw_background_horizontal();
-        break;
-    }
-    int_refresh_screen();
+    map_refresh();
 }
