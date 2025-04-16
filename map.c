@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "player.h"
 #include "int.h"
+#include "beeps.h"
 
 // TODO - this is obviously hard coded to be [16][6] so perhaps we should generate this, also is it optimal space wise?
 static unsigned char map[MAP_SIZE][(MAP_SIZE / 8) * 3] = {
@@ -226,7 +227,7 @@ static inline unsigned char can_move_check(signed char dx, signed char dy)
     {
         // tile is inaccessible
         return 0;
-    }
+    }    
     if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
     {
         // tile is a BLOCK or placed BLOCK so extra checks
@@ -248,7 +249,12 @@ static inline unsigned char can_move_check(signed char dx, signed char dy)
         }
         // flag used to show player pushing
         is_player_pushing = 1;
+        play_pushing();
     }
+    else
+    {
+        play_footstep();
+    }    
     return 1;
 }
 
@@ -264,15 +270,15 @@ void map_move_up(void)
     map_frame = 1;
     map_draw_vertical();
     player_draw_background_vertical();
-    refresh_screen();
+    int_refresh_screen();
     map_frame++;
     map_draw_vertical();
     player_draw_background_vertical();
-    refresh_screen();
+    int_refresh_screen();
     map_frame++;
     map_draw_vertical();
     player_draw_background_vertical();
-    refresh_screen();
+    int_refresh_screen();
     player_x--;
     map_frame = 0;
     player_draw_done(); // final position
@@ -290,13 +296,14 @@ void map_move_up(void)
             // remove BLOCK as part of player
             map_draw_vertical();
             player_draw_background_vertical();
+            play_success();
         }
         else
         {
             set_map_tile(player_x - 1, player_y, BLOCK | SEEN_BYTE);
         }
     }
-    refresh_screen();
+    int_refresh_screen();
 }
 
 void map_move_down(void)
@@ -312,15 +319,15 @@ void map_move_down(void)
     player_x++;
     map_draw_vertical();
     player_draw_background_vertical();
-    refresh_screen();
+    int_refresh_screen();
     map_frame--;
     map_draw_vertical();
     player_draw_background_vertical();
-    refresh_screen();
+    int_refresh_screen();
     map_frame--;
     map_draw_vertical();
     player_draw_background_vertical();
-    refresh_screen();
+    int_refresh_screen();
     map_frame--;
     player_draw_done(); // final position
     map_draw_vertical();
@@ -337,13 +344,14 @@ void map_move_down(void)
             // remove BLOCK as part of player
             map_draw_vertical();
             player_draw_background_vertical();
+            play_success();
         }
         else
         {
             set_map_tile(player_x + 1, player_y, BLOCK | SEEN_BYTE);
         }
     }
-    refresh_screen();
+    int_refresh_screen();
 }
 
 void map_move_left(void)
@@ -358,15 +366,15 @@ void map_move_left(void)
     map_frame = 1;
     map_draw_horizontal();
     player_draw_background_horizontal();
-    refresh_screen();
+    int_refresh_screen();
     map_frame++;
     map_draw_horizontal();
     player_draw_background_horizontal();
-    refresh_screen();
+    int_refresh_screen();
     map_frame++;
     map_draw_horizontal();
     player_draw_background_horizontal();
-    refresh_screen();
+    int_refresh_screen();
     player_y--;
     map_frame = 0;
     player_draw_done(); // final position
@@ -384,13 +392,14 @@ void map_move_left(void)
             // remove BLOCK as part of player
             map_draw_horizontal();
             player_draw_background_horizontal();
+            play_success();
         }
         else
         {
             set_map_tile(player_x, player_y - 1, BLOCK | SEEN_BYTE);
         }
     }
-    refresh_screen();
+    int_refresh_screen();
 }
 
 void map_move_right(void)
@@ -406,15 +415,15 @@ void map_move_right(void)
     player_y++;
     map_draw_horizontal();
     player_draw_background_horizontal();
-    refresh_screen();
+    int_refresh_screen();
     map_frame--;
     map_draw_horizontal();
     player_draw_background_horizontal();
-    refresh_screen();
+    int_refresh_screen();
     map_frame--;
     map_draw_horizontal();
     player_draw_background_horizontal();
-    refresh_screen();
+    int_refresh_screen();
     map_frame--;
     player_draw_done(); // final position
     map_draw_horizontal();
@@ -431,13 +440,14 @@ void map_move_right(void)
             // remove BLOCK as part of player
             map_draw_horizontal();
             player_draw_background_horizontal();
+            play_success();
         }
         else
         {
             set_map_tile(player_x, player_y + 1, BLOCK | SEEN_BYTE);
         }
     }
-    refresh_screen();
+    int_refresh_screen();
 }
 
 void map_move_none(void)
@@ -456,5 +466,5 @@ void map_move_none(void)
         player_draw_background_horizontal();
         break;
     }
-    refresh_screen();
+    int_refresh_screen();
 }

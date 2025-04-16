@@ -10,8 +10,8 @@
 extern unsigned char tick;
 extern unsigned char colour;
 
-extern void refresh_screen(void);
-extern void wait(void);
-extern void setup_int(void);
+extern void int_refresh_screen(void);
+extern void int_wait(void);
+extern void int_init(void);
 
 #endif

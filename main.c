@@ -12,6 +12,7 @@ SECTION bss_user: assign zero initial data to this section
 #include "map.h"
 #include <input.h>
 #include "int.h"
+#include "beeps.h"
 
 // imported from screen.asm
 extern void print_string(uint8_t *string) __z88dk_fastcall; // print null terminated string, accepts rst $10 control codes
@@ -61,7 +62,7 @@ static void inline move_left(void)
 {
     if (player_y > 0)
     {
-        map_move_left();
+        map_move_left();        
         return;
     }
     move_none();
@@ -69,11 +70,11 @@ static void inline move_left(void)
 
 void main(void)
 {
-    setup_int();
+    int_init();
     print_string("Initialising...");
     fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern
     fill_rectangle_attr(0, 0, 24, 32, 7, 7);
-    refresh_screen();
+    int_refresh_screen();
     map_init();
     fill_rectangle_char(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "["); // fill with pipes
     player_x = MAP_SIZE - 1;
@@ -120,6 +121,7 @@ void main(void)
             player_dir = DIR_LEFT;
         }
 
-        wait();
+        play_sounds();
+        int_wait();
     } while (1);
 }

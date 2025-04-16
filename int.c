@@ -18,7 +18,7 @@ IM2_DEFINE_ISR(isr)
     ++tick;
 }
 
-void refresh_screen(void)
+void int_refresh_screen(void)
 {
     ++colour;
     if (colour > 7)
@@ -29,7 +29,7 @@ void refresh_screen(void)
     copy_attr_buffer();
 }
 
-void wait(void)
+void int_wait(void)
 {
     while (abs(tick - timer) < WFRAMES)
     {
@@ -39,7 +39,7 @@ void wait(void)
     timer = tick;
 }
 
-void setup_int(void)
+void int_init(void)
 {
     im2_init((void *)0xd000); // CRT_ORG = 25124
     memset((void *)0xd000, 0xd1, 257);

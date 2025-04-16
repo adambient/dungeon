@@ -3,6 +3,7 @@ screen.asm
 map.asm
 globals.c
 player.c
+beeps.c
 map.c
 int.c
 main.c
