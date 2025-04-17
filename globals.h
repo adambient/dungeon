@@ -43,7 +43,10 @@ extern unsigned char player_y;
 // TODO - combine values into single char to save space
 extern unsigned char player_dir;        // the way the player is currently moving 0-4
 extern unsigned char player_facing;     // the way the player is currently facing 0-4
-extern unsigned char is_player_pushing; // is player currently pushing a crate 0-1
-extern unsigned char is_player_pulling; // is player currently pulling a crate 0-1
+
+extern void set_is_player_pushing(unsigned char is_player_pushing);
+extern unsigned char get_is_player_pushing(void);
+extern void set_is_player_pulling(unsigned char is_player_pulling);
+extern unsigned char get_is_player_pulling(void);
 
 #endif
