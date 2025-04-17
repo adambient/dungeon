@@ -232,7 +232,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
 
     if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
     {
-        if (is_player_action == 0)
+        if (is_player_pushing == 0)
         {
             // not pushing so cannot move
             return 0;
@@ -243,6 +243,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
         {
             // next tile is blocked so cannot move
+            is_player_pushing = 0;
             return 0;
         }
         if ((tile & BG_BYTES) == PLACED)
@@ -259,10 +260,11 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         play_pushing();
         return 1;
     }
-    else if (is_player_action == 1)
+    else if (is_player_pushing == 1)
     {
-        // we might be pulling
+        // we're not pushing but we might be pulling
         tile = get_map_tile(player_x - dx, player_y - dy);
+        is_player_pushing = 0;
         if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
         {
             // there is a block behind
@@ -422,6 +424,7 @@ unsigned char map_move_right(void)
 
 void map_move_none(void)
 {
+    is_player_pushing = 0;
     switch (player_facing)
     {
     default:

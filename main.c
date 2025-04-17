@@ -59,7 +59,6 @@ void main(void)
 
         // check for movement
         player_dir = DIR_NONE;
-        is_player_action = 0;
         if (in_key_pressed(IN_KEY_SCANCODE_q) == 0xFFFF)
         {
             player_dir = DIR_UP;
@@ -78,7 +77,7 @@ void main(void)
         }
         if (in_key_pressed(IN_KEY_SCANCODE_SPACE) ==0xFFFF)
         {
-            is_player_action = 1;
+            is_player_pushing = 1;
         }
 
         play_sounds();
