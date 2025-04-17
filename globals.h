@@ -44,5 +44,6 @@ extern unsigned char player_y;
 extern unsigned char player_dir;        // the way the player is currently moving
 extern unsigned char player_facing;     // the way the player is currently facing
 extern unsigned char is_player_pushing; // is player currently pushing a crate
+extern unsigned char is_player_action; // is player currently performing action
 
 #endif

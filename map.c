@@ -220,32 +220,65 @@ void map_init(void)
     }
 }
 
-static inline unsigned char can_move_check(signed char dx, signed char dy)
+// TODO - this need refactoring/optimising, static inline now causes corruption because I think it's too big
+static unsigned char can_move_check(signed char dx, signed char dy)
 {
     unsigned char tile = get_map_tile(player_x + dx, player_y + dy);
     if ((tile & BG_BYTES) == WALL)
     {
         // tile is inaccessible
         return 0;
-    }    
+    }
+    if (is_player_action == 1)
+    {
+        if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
+        {
+            // cannot squash ourselves between crates
+            return 0;
+        }
+        // check tile in opposite direction for crate
+        tile = get_map_tile(player_x - dx, player_y - dy);
+    }
     if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
     {
         // tile is a BLOCK or placed BLOCK so extra checks
-        unsigned char next_tile = get_map_tile(player_x + dx + dx, player_y + dy + dy);
-        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
+        if (is_player_action == 0)
         {
-            // next tile is blocked so cannot move
-            return 0;
+            // we are pushing so check next tile
+            unsigned char next_tile = get_map_tile(player_x + dx + dx, player_y + dy + dy);
+            if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
+            {
+                // next tile is blocked so cannot move
+                return 0;
+            }
         }
         if ((tile & BG_BYTES) == PLACED)
         {
             // was placed - replace current tile with target
-            set_map_tile(player_x + dx, player_y + dy, TARGET | SEEN_BYTE);
+            if (is_player_action == 0)
+            {
+                // replace tile in front            
+                set_map_tile(player_x + dx, player_y + dy, TARGET | SEEN_BYTE);
+            }
+            else
+            {
+                // replace tile behind
+                set_map_tile(player_x - dx, player_y - dy, TARGET | SEEN_BYTE);
+            }
         }
         else
         {
             // replace current tile with carpet
-            set_map_tile(player_x + dx, player_y + dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+            if (is_player_action == 0)
+            {
+                // replace tile in front
+                set_map_tile(player_x + dx, player_y + dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+            }
+            else
+            {
+                // replace tile behind
+                set_map_tile(player_x - dx, player_y - dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+            }
         }
         // flag used to show player pushing
         is_player_pushing = 1;
@@ -256,6 +289,33 @@ static inline unsigned char can_move_check(signed char dx, signed char dy)
         play_footstep();
     }    
     return 1;
+}
+
+static inline void map_move_done(signed char dx, signed char dy)
+{
+    if (is_player_pushing == 1)
+    {
+        if (is_player_action == 1)
+        {
+            // we are pulling not pushing
+            dx = dx * -1;
+            dy = dy * -1;
+        }
+
+        // place BLOCK
+        is_player_pushing = 0;
+        unsigned char next_tile = get_map_tile(player_x + dx, player_y + dy);
+        if ((next_tile & BG_BYTES) == TARGET)
+        {
+            // target location
+            set_map_tile(player_x + dx, player_y + dy, PLACED | SEEN_BYTE);
+            play_success();
+        }
+        else
+        {
+            set_map_tile(player_x + dx, player_y + dy, BLOCK | SEEN_BYTE);
+        }
+    }
 }
 
 static void map_refresh_vertical(void)
@@ -289,23 +349,8 @@ unsigned char map_move_up(void)
     map_refresh_vertical();
     player_x--;
     map_frame = 0;
-    player_draw_done(); // final position    
-    if (is_player_pushing == 1)
-    {
-        // place BLOCK
-        is_player_pushing = 0;
-        unsigned char next_tile = get_map_tile(player_x - 1, player_y);
-        if ((next_tile & BG_BYTES) == TARGET)
-        {
-            // target location
-            set_map_tile(player_x - 1, player_y, PLACED | SEEN_BYTE);
-            play_success();
-        }
-        else
-        {
-            set_map_tile(player_x - 1, player_y, BLOCK | SEEN_BYTE);
-        }
-    }
+    player_draw_done(); // final position
+    map_move_done(-1, 0);
     map_refresh_vertical();
     return DIR_UP;
 }
@@ -327,23 +372,8 @@ unsigned char map_move_down(void)
     map_frame--;
     map_refresh_vertical();
     map_frame--;
-    player_draw_done(); // final position    
-    if (is_player_pushing == 1)
-    {
-        // place BLOCK
-        is_player_pushing = 0;
-        unsigned char next_tile = get_map_tile(player_x + 1, player_y);
-        if ((next_tile & BG_BYTES) == TARGET)
-        {
-            // target location
-            set_map_tile(player_x + 1, player_y, PLACED | SEEN_BYTE);
-            play_success();
-        }
-        else
-        {
-            set_map_tile(player_x + 1, player_y, BLOCK | SEEN_BYTE);
-        }
-    }
+    player_draw_done(); // final position
+    map_move_done(1, 0);
     map_refresh_vertical();
     return DIR_DOWN;
 }
@@ -365,23 +395,8 @@ unsigned char map_move_left(void)
     map_refresh_horizontal();
     player_y--;
     map_frame = 0;
-    player_draw_done(); // final position    
-    if (is_player_pushing == 1)
-    {
-        // place BLOCK
-        is_player_pushing = 0;
-        unsigned char next_tile = get_map_tile(player_x, player_y - 1);
-        if ((next_tile & BG_BYTES) == TARGET)
-        {
-            // target location
-            set_map_tile(player_x, player_y - 1, PLACED | SEEN_BYTE);
-            play_success();
-        }
-        else
-        {
-            set_map_tile(player_x, player_y - 1, BLOCK | SEEN_BYTE);
-        }
-    }
+    player_draw_done(); // final position
+    map_move_done(0, -1);
     map_refresh_horizontal();
     return DIR_LEFT;
 }
@@ -403,23 +418,8 @@ unsigned char map_move_right(void)
     map_frame--;
     map_refresh_horizontal();
     map_frame--;
-    player_draw_done(); // final position    
-    if (is_player_pushing == 1)
-    {
-        // place BLOCK
-        is_player_pushing = 0;
-        unsigned char next_tile = get_map_tile(player_x, player_y + 1);
-        if ((next_tile & BG_BYTES) == TARGET)
-        {
-            // target location
-            set_map_tile(player_x, player_y + 1, PLACED | SEEN_BYTE);
-            play_success();
-        }
-        else
-        {
-            set_map_tile(player_x, player_y + 1, BLOCK | SEEN_BYTE);
-        }
-    }
+    player_draw_done(); // final position
+    map_move_done(0, 1);
     map_refresh_horizontal();
     return DIR_RIGHT;
 }

@@ -283,16 +283,28 @@ void player_draw_background_vertical(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_2);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_2);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_1, PLAYER_BODY_1);
-
-        block_loc = PLAYER_SQUARE - 2;
+        if (is_player_action == 0)
+        {
+            block_loc = PLAYER_SQUARE - 2;
+        }
+        else
+        {
+            block_loc = PLAYER_SQUARE + 2;
+        }
     }
     else
     {
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, pb_2, PLAYER_FACE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_1, PLAYER_BODY_2);
-
-        block_loc = PLAYER_SQUARE + 2;
+        if (is_player_action == 0)
+        {
+            block_loc = PLAYER_SQUARE + 2;
+        }
+        else
+        {
+            block_loc = PLAYER_SQUARE - 2;
+        }
     }
 
     if (is_player_pushing)
@@ -325,8 +337,14 @@ void player_draw_background_horizontal(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_2);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_2);
-
-        block_loc = PLAYER_SQUARE - 2;
+        if (is_player_action == 0)
+        {
+            block_loc = PLAYER_SQUARE - 2;
+        }
+        else
+        {
+            block_loc = PLAYER_SQUARE + 2;
+        }
     }
     else
     {
@@ -334,8 +352,14 @@ void player_draw_background_horizontal(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_FACE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_1);
-
-        block_loc = PLAYER_SQUARE + 2;
+        if (is_player_action == 0)
+        {
+            block_loc = PLAYER_SQUARE + 2;
+        }
+        else
+        {
+            block_loc = PLAYER_SQUARE - 2;
+        }
     }
 
     if (is_player_pushing)
