@@ -272,11 +272,11 @@ static void map_refresh_horizontal(void)
     int_refresh_screen();
 }
 
-void map_move_up(void)
+unsigned char map_move_up(void)
 {
-    if (!can_move_check(-1, 0))
+    if (player_x == 0 || !can_move_check(-1, 0))
     {
-        return;
+        return DIR_NONE;
     }
 
     player_draw_up();
@@ -307,13 +307,14 @@ void map_move_up(void)
         }
     }
     map_refresh_vertical();
+    return DIR_UP;
 }
 
-void map_move_down(void)
+unsigned char map_move_down(void)
 {
-    if (!can_move_check(1, 0))
+    if (player_x == MAP_SIZE - 1 || !can_move_check(1, 0))
     {
-        return;
+        return DIR_NONE;
     }
 
     player_draw_down();
@@ -344,13 +345,14 @@ void map_move_down(void)
         }
     }
     map_refresh_vertical();
+    return DIR_DOWN;
 }
 
-void map_move_left(void)
+unsigned char map_move_left(void)
 {
-    if (!can_move_check(0, -1))
+    if (player_y == 0 || !can_move_check(0, -1))
     {
-        return;
+        return DIR_NONE;
     }
 
     player_draw_left();
@@ -381,13 +383,14 @@ void map_move_left(void)
         }
     }
     map_refresh_horizontal();
+    return DIR_LEFT;
 }
 
-void map_move_right(void)
+unsigned char map_move_right(void)
 {
-    if (!can_move_check(0, 1))
+    if (player_y == MAP_SIZE - 1 || !can_move_check(0, 1))
     {
-        return;
+        return DIR_NONE;
     }
 
     player_draw_right();
@@ -418,6 +421,7 @@ void map_move_right(void)
         }
     }
     map_refresh_horizontal();
+    return DIR_RIGHT;
 }
 
 void map_move_none(void)

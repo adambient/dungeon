@@ -21,46 +21,6 @@ extern void print_string(uint8_t *string) __z88dk_fastcall; // print null termin
 extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 
-static void inline move_up(void)
-{
-    if (player_x > 0)
-    {
-        map_move_up();
-        return;
-    }
-    map_move_none();
-}
-
-static void inline move_right(void)
-{
-    if (player_y < MAP_SIZE - 1)
-    {
-        map_move_right();
-        return;
-    }
-    map_move_none();
-}
-
-static void inline move_down(void)
-{
-    if (player_x < MAP_SIZE - 1)
-    {
-        map_move_down();
-        return;
-    }
-    map_move_none();
-}
-
-static void inline move_left(void)
-{
-    if (player_y > 0)
-    {
-        map_move_left();        
-        return;
-    }
-    map_move_none();
-}
-
 void main(void)
 {
     int_init();
@@ -78,21 +38,23 @@ void main(void)
         // loop around map
         switch (player_dir)
         {
-        default:
-            map_move_none();
-            break;
         case DIR_UP:
-            move_up();
+            player_dir = map_move_up();
             break;
         case DIR_RIGHT:
-            move_right();
+            player_dir = map_move_right();
             break;
         case DIR_DOWN:
-            move_down();
+            player_dir = map_move_down();
             break;
         case DIR_LEFT:
-            move_left();
+            player_dir = map_move_left();
             break;
+        }
+
+        if (player_dir == DIR_NONE)
+        {
+            map_move_none();
         }
 
         // check for movement
