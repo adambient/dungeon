@@ -41,9 +41,10 @@
 extern unsigned char player_x;
 extern unsigned char player_y;
 // TODO - combine values into single char to save space
-extern unsigned char player_dir;        // the way the player is currently moving
-extern unsigned char player_facing;     // the way the player is currently facing
-extern unsigned char is_player_pushing; // is player currently pushing a crate
-extern unsigned char is_player_action; // is player currently performing action
+extern unsigned char player_dir;        // the way the player is currently moving 0-4
+extern unsigned char player_facing;     // the way the player is currently facing 0-4
+extern unsigned char is_player_pushing; // is player currently pushing a crate 0-1
+extern unsigned char is_player_pulling; // is player currently pulling a crate 0-1
+extern unsigned char is_player_action; // is player currently performing action 0-1
 
 #endif

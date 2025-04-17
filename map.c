@@ -229,79 +229,75 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         // tile is inaccessible
         return 0;
     }
-    if (is_player_action == 1)
-    {
-        if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
-        {
-            // cannot squash ourselves between crates
-            return 0;
-        }
-        // check tile in opposite direction for crate
-        tile = get_map_tile(player_x - dx, player_y - dy);
-    }
+
     if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
     {
-        // tile is a BLOCK or placed BLOCK so extra checks
         if (is_player_action == 0)
         {
-            // we are pushing so check next tile
-            unsigned char next_tile = get_map_tile(player_x + dx + dx, player_y + dy + dy);
-            if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
-            {
-                // next tile is blocked so cannot move
-                return 0;
-            }
+            // not pushing so cannot move
+            return 0;
+        }
+        // there is a block in front
+        // we are pushing so check next tile
+        unsigned char next_tile = get_map_tile(player_x + dx + dx, player_y + dy + dy);
+        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
+        {
+            // next tile is blocked so cannot move
+            return 0;
         }
         if ((tile & BG_BYTES) == PLACED)
         {
-            // was placed - replace current tile with target
-            if (is_player_action == 0)
-            {
-                // replace tile in front            
-                set_map_tile(player_x + dx, player_y + dy, TARGET | SEEN_BYTE);
-            }
-            else
-            {
-                // replace tile behind
-                set_map_tile(player_x - dx, player_y - dy, TARGET | SEEN_BYTE);
-            }
+            // replace tile in front
+            set_map_tile(player_x + dx, player_y + dy, TARGET | SEEN_BYTE);
         }
         else
         {
-            // replace current tile with carpet
-            if (is_player_action == 0)
+            // replace tile in front
+            set_map_tile(player_x + dx, player_y + dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+        }
+        is_player_pushing = 1;
+        play_pushing();
+        return 1;
+    }
+    else if (is_player_action == 1)
+    {
+        // we might be pulling
+        tile = get_map_tile(player_x - dx, player_y - dy);
+        if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
+        {
+            // there is a block behind
+            if ((tile & BG_BYTES) == PLACED)
             {
-                // replace tile in front
-                set_map_tile(player_x + dx, player_y + dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+                // replace tile behind
+                set_map_tile(player_x - dx, player_y - dy, TARGET | SEEN_BYTE);
             }
             else
             {
                 // replace tile behind
                 set_map_tile(player_x - dx, player_y - dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
             }
+            is_player_pulling = 1;
+            play_pushing();
+            return 1;
         }
-        // flag used to show player pushing
-        is_player_pushing = 1;
-        play_pushing();
     }
-    else
-    {
-        play_footstep();
-    }    
+    play_footstep();
     return 1;
 }
 
 static inline void map_move_done(signed char dx, signed char dy)
 {
+    if (is_player_pulling)
+    {
+        is_player_pulling = 0;
+        is_player_pushing = 1;
+        // we are pulling not pushing
+        dx = dx * -1;
+        dy = dy * -1;
+    }
+
     if (is_player_pushing == 1)
     {
-        if (is_player_action == 1)
-        {
-            // we are pulling not pushing
-            dx = dx * -1;
-            dy = dy * -1;
-        }
-
         // place BLOCK
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x + dx, player_y + dy);

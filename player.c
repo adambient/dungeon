@@ -283,7 +283,7 @@ void player_draw_background_vertical(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_2);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_2);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_1, PLAYER_BODY_1);
-        if (is_player_action == 0)
+        if (is_player_pushing == 1)
         {
             block_loc = PLAYER_SQUARE - 2;
         }
@@ -297,7 +297,7 @@ void player_draw_background_vertical(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, pb_2, PLAYER_FACE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_1, PLAYER_BODY_2);
-        if (is_player_action == 0)
+        if (is_player_pushing == 1)
         {
             block_loc = PLAYER_SQUARE + 2;
         }
@@ -307,7 +307,7 @@ void player_draw_background_vertical(void)
         }
     }
 
-    if (is_player_pushing)
+    if (is_player_pushing == 1 || is_player_pulling == 1)
     {
         // draw block next to player
         fill_rectangle_attr(block_loc, PLAYER_SQUARE, 2, 2, BLOCK, BLOCK);
@@ -337,7 +337,7 @@ void player_draw_background_horizontal(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_2);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_2);
-        if (is_player_action == 0)
+        if (is_player_pushing == 1)
         {
             block_loc = PLAYER_SQUARE - 2;
         }
@@ -352,7 +352,7 @@ void player_draw_background_horizontal(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_FACE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_1);
-        if (is_player_action == 0)
+        if (is_player_pushing == 1)
         {
             block_loc = PLAYER_SQUARE + 2;
         }
@@ -362,7 +362,7 @@ void player_draw_background_horizontal(void)
         }
     }
 
-    if (is_player_pushing)
+    if (is_player_pushing == 1 || is_player_pulling == 1)
     {
         // draw block next to player
         fill_rectangle_attr(PLAYER_SQUARE, block_loc, 2, 2, BLOCK, BLOCK);
