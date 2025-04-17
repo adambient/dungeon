@@ -28,8 +28,7 @@ extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char 
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
 
-static unsigned char player_frame = 1;
-static unsigned char player_background_data; // lower bytes: player_background_1; higher bytes: player_background_2
+static unsigned char player_background_data; // player_frame,player_frame,player_background_1,player_background_1,player_background_1,player_background_2,player_background_2,player_background_2
 static unsigned char player_tile_data;       // lower bytes: player_tile; higher bytes: player_tile_next
 
 static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
@@ -59,104 +58,127 @@ static inline unsigned char get_player_tile_next(void)
 
 static inline void set_player_background_1(unsigned char player_background_1)
 {
-    player_background_data = ((player_background_data & 0b11110000) | (player_background_1 & 0b00001111));
+    player_background_data = ((player_background_data & 0b11111000) | (player_background_1 & 0b00000111));
 }
 
 static inline unsigned char get_player_background_1(void)
 {
-    return player_background_data & 0b00001111;
+    return player_background_data & 0b00000111;
 }
 
 static inline void set_player_background_2(unsigned char player_background_2)
 {
-    player_background_data = ((player_background_data & 0b00001111) | ((player_background_2 << 4) & 0b11110000));
+    player_background_data = ((player_background_data & 0b11000111) | ((player_background_2 << 3) & 0b00111000));
 }
 
 static inline unsigned char get_player_background_2(void)
 {
-    return (player_background_data >> 4) & 0b00001111;
+    return (player_background_data >> 3) & 0b00000111;
+}
+
+static inline void set_player_frame(unsigned char player_frame)
+{
+    player_background_data = ((player_background_data & 0b00111111) | ((player_frame << 6) & 0b11000000));
+}
+
+static inline unsigned char get_player_frame(void)
+{
+    return (player_background_data >> 6) & 0b00000011;
 }
 
 static inline void frame_draw_up(void)
 {
-    switch (player_frame)
+    switch (get_player_frame())
     {
     default:
-    case 1:
-    case 3:
+    case 0:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY1); // draw man
-        player_frame++;
+        set_player_frame(1);
+        break;
+    case 1:
+        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY2); // draw man
+        set_player_frame(2);
         break;
     case 2:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY2); // draw man
-        player_frame++;
-        break;
-    case 4:
+        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY1); // draw man
+        set_player_frame(3);
+        break;    
+    case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY3); // draw man
-        player_frame = 1;
+        set_player_frame(0);
         break;
     }
 }
 
 static inline void frame_draw_down(void)
 {
-    switch (player_frame)
+    switch (get_player_frame())
     {
     default:
-    case 1:
-    case 3:
+    case 0:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY1); // draw man
-        player_frame++;
+        set_player_frame(1);
+        break;
+    case 1:
+        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY2); // draw man
+        set_player_frame(2);
         break;
     case 2:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY2); // draw man
-        player_frame++;
-        break;
-    case 4:
+        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY1); // draw man
+        set_player_frame(3);
+        break;    
+    case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY3); // draw man
-        player_frame = 1;
+        set_player_frame(0);
         break;
     }
 }
 
 static inline void frame_draw_left(void)
 {
-    switch (player_frame)
+    switch (get_player_frame())
     {
     default:
-    case 1:
-    case 3:
+    case 0:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY1); // draw man
-        player_frame++;
+        set_player_frame(1);
+        break;
+    case 1:
+        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY2); // draw man
+        set_player_frame(2);
         break;
     case 2:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY2); // draw man
-        player_frame++;
-        break;
-    case 4:
+        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY1); // draw man
+        set_player_frame(3);
+        break;    
+    case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY3); // draw man
-        player_frame = 1;
+        set_player_frame(0);
         break;
     }
 }
 
 static inline void frame_draw_right(void)
 {
-    switch (player_frame)
+    switch (get_player_frame())
     {
     default:
-    case 1:
-    case 3:
+    case 0:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY1); // draw man
-        player_frame++;
+        set_player_frame(1);
+        break;
+    case 1:
+        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY2); // draw man
+        set_player_frame(2);
         break;
     case 2:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY2); // draw man
-        player_frame++;
+        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY1); // draw man
+        set_player_frame(3);
         break;
-    case 4:
+    
+    case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY3); // draw man
-        player_frame = 1;
+        set_player_frame(0);
         break;
     }
 }
