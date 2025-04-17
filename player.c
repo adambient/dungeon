@@ -28,9 +28,9 @@ extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char 
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
 
-unsigned char player_frame = 1;
-unsigned char player_background_data; // lower bytes: player_background_1; higher bytes: player_background_2
-unsigned char player_tile_data;       // lower bytes: player_tile; higher bytes: player_tile_next
+static unsigned char player_frame = 1;
+static unsigned char player_background_data; // lower bytes: player_background_1; higher bytes: player_background_2
+static unsigned char player_tile_data;       // lower bytes: player_tile; higher bytes: player_tile_next
 
 static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
 {
