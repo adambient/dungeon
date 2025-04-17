@@ -77,7 +77,7 @@ void main(void)
         }
         if (in_key_pressed(IN_KEY_SCANCODE_SPACE) ==0xFFFF)
         {
-            set_is_player_pushing(1);
+            is_player_pushing = 1;
         }
 
         play_sounds();

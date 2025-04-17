@@ -35,22 +35,12 @@ extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char 
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
 
 static unsigned char *attr_address;
-static unsigned char map_state_data; // 0,0,0,0,0,0,map_frame,map_frame
+static unsigned char map_frame;
 
 // gets the memory address of the attribute buffer so it can be populated incrementally which is faster than using the index
 static inline unsigned char *get_start_attr_address(void)
 {
     return (unsigned char *)(&attr_buffer);
-}
-
-static inline void set_map_frame(unsigned char map_frame)
-{
-    map_state_data = ((map_state_data & 0b11111100) | ((map_frame) & 0b00000011));
-}
-
-static inline unsigned char get_map_frame(void)
-{
-    return map_state_data & 0b00000011;
 }
 
 static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
@@ -102,7 +92,7 @@ static void row_draw_horizontal(signed char x, unsigned char y)
     {
         unsigned char tile = row_get_tile(x, y);
         unsigned char tile2 = tile;
-        switch (get_map_frame())
+        switch (map_frame)
         {
         case 1:
         case 3:
@@ -112,7 +102,7 @@ static void row_draw_horizontal(signed char x, unsigned char y)
 
         if (i == 0)
         {
-            switch (get_map_frame())
+            switch (map_frame)
             {
             case 1:
             case 2:
@@ -125,7 +115,7 @@ static void row_draw_horizontal(signed char x, unsigned char y)
         }
         else
         {
-            if (get_map_frame() == 0 || get_map_frame() == 3 || i < VISIBLE_BLOCKS)
+            if (map_frame == 0 || map_frame == 3 || i < VISIBLE_BLOCKS)
             {
                 // do not skip first block
                 *attr_address++ = tile | tile << 3;
@@ -145,7 +135,7 @@ static void map_draw_vertical(void)
 {
     attr_address = get_start_attr_address(); // reset shared attr_address
     unsigned char sub_frame = 0;
-    switch (get_map_frame())
+    switch (map_frame)
     {
     case 1:
     case 3:
@@ -154,7 +144,7 @@ static void map_draw_vertical(void)
     }
     signed char x = player_x - MAP_OFFSET - 1; // starting row (could be negative)
     unsigned char y = player_y - MAP_OFFSET;
-    switch (get_map_frame())
+    switch (map_frame)
     {
     case 2:
     case 3:
@@ -168,7 +158,7 @@ static void map_draw_vertical(void)
         row_draw_vertical(x, x, y);
     }
     row_draw_vertical(x - sub_frame, x, y);
-    if (get_map_frame() < 2)
+    if (map_frame < 2)
     {
         // catch up row
         row_draw_vertical(x, x, y);
@@ -179,7 +169,7 @@ static void map_draw_horizontal(void)
 {
     attr_address = get_start_attr_address(); // reset shared attr_address
     unsigned char y = player_y - MAP_OFFSET;
-    if (get_map_frame() == 2)
+    if (map_frame == 2)
     {
         y--;
     }
@@ -241,7 +231,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
 
     if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
     {
-        if (!get_is_player_pushing())
+        if (!is_player_pushing)
         {
             // not pushing so cannot move
             return 0;
@@ -251,7 +241,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
         {
             // next tile is blocked so cannot move
-            set_is_player_pushing(0);
+            is_player_pushing = 0;
             return 0;
         }
         if ((tile & BG_BYTES) == PLACED)
@@ -264,15 +254,15 @@ static unsigned char can_move_check(signed char dx, signed char dy)
             // replace tile in front
             set_map_tile(player_x + dx, player_y + dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
         }
-        set_is_player_pushing(1);
+        is_player_pushing = 1;
         play_pushing();
         return 1;
     }
-    else if (get_is_player_pushing())
+    else if (is_player_pushing)
     {
         // we're not pushing but we might be pulling
         tile = get_map_tile(player_x - dx, player_y - dy);
-        set_is_player_pushing(0);
+        is_player_pushing = 0;
         if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
         {
             // there is a block behind
@@ -286,7 +276,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
                 // replace tile behind
                 set_map_tile(player_x - dx, player_y - dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
             }
-            set_is_player_pulling(1);
+            is_player_pulling = 1;
             play_pushing();
             return 1;
         }
@@ -297,19 +287,19 @@ static unsigned char can_move_check(signed char dx, signed char dy)
 
 static void map_move_done(signed char dx, signed char dy)
 {
-    if (get_is_player_pulling())
+    if (is_player_pulling)
     {
-        set_is_player_pulling(0);
-        set_is_player_pushing(1);
+        is_player_pulling = 0;
+        is_player_pushing = 1;
         // we are pulling not pushing
         dx = dx * -1;
         dy = dy * -1;
     }
 
-    if (get_is_player_pushing())
+    if (is_player_pushing)
     {
         // place BLOCK
-        set_is_player_pushing(0);
+        is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x + dx, player_y + dy);
         if ((next_tile & BG_BYTES) == TARGET)
         {
@@ -347,14 +337,14 @@ unsigned char map_move_up(void)
 
     player_draw_up();
     // animate up
-    set_map_frame(1);
+    map_frame = 1;
     map_refresh_vertical();
-    set_map_frame(2);
+    map_frame = 2;
     map_refresh_vertical();
-    set_map_frame(3);
+    map_frame = 3;
     map_refresh_vertical();
     player_x--;
-    set_map_frame(0);
+    map_frame = 0;
     player_draw_done(); // final position
     map_move_done(-1, 0);
     map_refresh_vertical();
@@ -370,14 +360,14 @@ unsigned char map_move_down(void)
 
     player_draw_down();
     // animate down
-    set_map_frame(3);
+    map_frame = 3;
     player_x++;
     map_refresh_vertical();
-    set_map_frame(2);
+    map_frame = 2;
     map_refresh_vertical();
-    set_map_frame(1);
+    map_frame = 1;
     map_refresh_vertical();
-    set_map_frame(0);
+    map_frame = 0;
     player_draw_done(); // final position
     map_move_done(1, 0);
     map_refresh_vertical();
@@ -393,14 +383,14 @@ unsigned char map_move_left(void)
 
     player_draw_left();
     // animate left
-    set_map_frame(1);
+    map_frame = 1;
     map_refresh_horizontal();
-    set_map_frame(2);
+    map_frame = 2;
     map_refresh_horizontal();
-    set_map_frame(3);
+    map_frame = 3;
     map_refresh_horizontal();
     player_y--;
-    set_map_frame(0);
+    map_frame = 0;
     player_draw_done(); // final position
     map_move_done(0, -1);
     map_refresh_horizontal();
@@ -416,14 +406,14 @@ unsigned char map_move_right(void)
 
     player_draw_right();
     // animate right
-    set_map_frame(3);
+    map_frame = 3;
     player_y++;
     map_refresh_horizontal();
-    set_map_frame(2);
+    map_frame = 2;
     map_refresh_horizontal();
-    set_map_frame(1);
+    map_frame = 1;
     map_refresh_horizontal();
-    set_map_frame(0);
+    map_frame = 0;
     player_draw_done(); // final position
     map_move_done(0, 1);
     map_refresh_horizontal();
@@ -432,7 +422,7 @@ unsigned char map_move_right(void)
 
 void map_move_none(void)
 {
-    set_is_player_pushing(0);
+    is_player_pushing = 0;
     switch (player_facing)
     {
     default:

@@ -28,157 +28,111 @@ extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char 
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
 
-static unsigned char player_background_data; // player_frame,player_frame,player_background_1,player_background_1,player_background_1,player_background_2,player_background_2,player_background_2
-static unsigned char player_tile_data;       // lower bytes: player_tile; higher bytes: player_tile_next
+
+static unsigned char player_background_1; // player_frame,player_frame,player_background_1,player_background_1,player_background_1,player_background_2,player_background_2,player_background_2
+static unsigned char player_background_2; // player_frame,player_frame,player_background_1,player_background_1,player_background_1,player_background_2,player_background_2,player_background_2
+static unsigned char player_frame; // player_frame,player_frame,player_background_1,player_background_1,player_background_1,player_background_2,player_background_2,player_background_2
+static unsigned char player_tile;       // lower bytes: player_tile; higher bytes: player_tile_next
+static unsigned char player_tile_next;       // lower bytes: player_tile; higher bytes: player_tile_next
 
 static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
 {
     return (get_map_tile(x, y) & BG_BYTES);
 }
 
-static inline void set_player_tile(unsigned char player_tile)
-{
-    player_tile_data = ((player_tile_data & 0b11110000) | (player_tile & 0b00001111));
-}
-
-static inline unsigned char get_player_tile(void)
-{
-    return player_tile_data & 0b00001111;
-}
-
-static inline void set_player_tile_next(unsigned char player_tile_next)
-{
-    player_tile_data = ((player_tile_data & 0b00001111) | ((player_tile_next << 4) & 0b11110000));
-}
-
-static inline unsigned char get_player_tile_next(void)
-{
-    return (player_tile_data >> 4) & 0b00001111;
-}
-
-static inline void set_player_background_1(unsigned char player_background_1)
-{
-    player_background_data = ((player_background_data & 0b11111000) | (player_background_1 & 0b00000111));
-}
-
-static inline unsigned char get_player_background_1(void)
-{
-    return player_background_data & 0b00000111;
-}
-
-static inline void set_player_background_2(unsigned char player_background_2)
-{
-    player_background_data = ((player_background_data & 0b11000111) | ((player_background_2 << 3) & 0b00111000));
-}
-
-static inline unsigned char get_player_background_2(void)
-{
-    return (player_background_data >> 3) & 0b00000111;
-}
-
-static inline void set_player_frame(unsigned char player_frame)
-{
-    player_background_data = ((player_background_data & 0b00111111) | ((player_frame << 6) & 0b11000000));
-}
-
-static inline unsigned char get_player_frame(void)
-{
-    return (player_background_data >> 6) & 0b00000011;
-}
-
 static inline void frame_draw_up(void)
 {
-    switch (get_player_frame())
+    switch (player_frame)
     {
     default:
     case 0:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY1); // draw man
-        set_player_frame(1);
+        player_frame = 1;
         break;
     case 1:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY2); // draw man
-        set_player_frame(2);
+        player_frame = 2;
         break;
     case 2:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY1); // draw man
-        set_player_frame(3);
+        player_frame = 3;
         break;    
     case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY3); // draw man
-        set_player_frame(0);
+        player_frame = 0;
         break;
     }
 }
 
 static inline void frame_draw_down(void)
 {
-    switch (get_player_frame())
+    switch (player_frame)
     {
     default:
     case 0:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY1); // draw man
-        set_player_frame(1);
+        player_frame = 1;
         break;
     case 1:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY2); // draw man
-        set_player_frame(2);
+        player_frame = 2;
         break;
     case 2:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY1); // draw man
-        set_player_frame(3);
+        player_frame = 3;
         break;    
     case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY3); // draw man
-        set_player_frame(0);
+        player_frame = 0;
         break;
     }
 }
 
 static inline void frame_draw_left(void)
 {
-    switch (get_player_frame())
+    switch (player_frame)
     {
     default:
     case 0:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY1); // draw man
-        set_player_frame(1);
+        player_frame = 1;
         break;
     case 1:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY2); // draw man
-        set_player_frame(2);
+        player_frame = 2;
         break;
     case 2:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY1); // draw man
-        set_player_frame(3);
+        player_frame = 3;
         break;    
     case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY3); // draw man
-        set_player_frame(0);
+        player_frame = 0;
         break;
     }
 }
 
 static inline void frame_draw_right(void)
 {
-    switch (get_player_frame())
+    switch (player_frame)
     {
     default:
     case 0:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY1); // draw man
-        set_player_frame(1);
+        player_frame = 1;
         break;
     case 1:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY2); // draw man
-        set_player_frame(2);
+        player_frame = 2;
         break;
     case 2:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY1); // draw man
-        set_player_frame(3);
+        player_frame = 3;
         break;
     
     case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY3); // draw man
-        set_player_frame(0);
+        player_frame = 0;
         break;
     }
 }
@@ -203,10 +157,10 @@ static inline void player_map_pipes(void)
 
 void player_draw_up(void)
 {
-    set_player_tile(get_player_tile_next());
-    set_player_tile_next(player_get_tile(player_x - 1, player_y));
-    set_player_background_1(get_player_tile());
-    set_player_background_2(get_player_tile_next());
+    player_tile = player_tile_next;
+    player_tile_next = player_get_tile(player_x - 1, player_y);
+    player_background_1 = player_tile;
+    player_background_2 = player_tile_next;
     if (DIR_UP != player_facing)
     {
         switch (player_facing)
@@ -224,10 +178,10 @@ void player_draw_up(void)
 
 void player_draw_right(void)
 {
-    set_player_tile(get_player_tile_next());
-    set_player_tile_next(player_get_tile(player_x, player_y + 1));
-    set_player_background_1(get_player_tile());
-    set_player_background_2(get_player_tile_next());
+    player_tile = player_tile_next;
+    player_tile_next = player_get_tile(player_x, player_y + 1);
+    player_background_1 = player_tile;
+    player_background_2 = player_tile_next;
     if (DIR_RIGHT != player_facing)
     {
         switch (player_facing)
@@ -245,10 +199,10 @@ void player_draw_right(void)
 
 void player_draw_down(void)
 {
-    set_player_tile(get_player_tile_next());
-    set_player_tile_next(player_get_tile(player_x + 1, player_y));
-    set_player_background_1(get_player_tile_next());
-    set_player_background_2(get_player_tile());
+    player_tile = player_tile_next;
+    player_tile_next = player_get_tile(player_x + 1, player_y);
+    player_background_1 = player_tile_next;
+    player_background_2 = player_tile;
     if (DIR_DOWN != player_facing)
     {
         switch (player_facing)
@@ -266,10 +220,10 @@ void player_draw_down(void)
 
 void player_draw_left(void)
 {
-    set_player_tile(get_player_tile_next());
-    set_player_tile_next(player_get_tile(player_x, player_y - 1));
-    set_player_background_1(get_player_tile_next());
-    set_player_background_2(get_player_tile());
+    player_tile = player_tile_next;
+    player_tile_next = player_get_tile(player_x, player_y - 1);
+    player_background_1 = player_tile_next;
+    player_background_2 = player_tile;
     if (DIR_LEFT != player_facing)
     {
         switch (player_facing)
@@ -289,8 +243,8 @@ void player_draw_background_vertical(void)
 {
     unsigned char block_loc;
     // use cycled colour for target squares, store in temp var so next check works
-    unsigned char pb_1 = get_player_background_1();
-    unsigned char pb_2 = get_player_background_2();
+    unsigned char pb_1 = player_background_1;
+    unsigned char pb_2 = player_background_2;
     if (pb_1 == TARGET)
     {
         pb_1 = colour;
@@ -305,7 +259,7 @@ void player_draw_background_vertical(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_2);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_2);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_1, PLAYER_BODY_1);
-        if (get_is_player_pushing())
+        if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
         }
@@ -319,7 +273,7 @@ void player_draw_background_vertical(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, pb_2, PLAYER_FACE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_1, PLAYER_BODY_2);
-        if (get_is_player_pushing())
+        if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
         }
@@ -329,7 +283,7 @@ void player_draw_background_vertical(void)
         }
     }
 
-    if (get_is_player_pushing() || get_is_player_pulling())
+    if (is_player_pushing || is_player_pulling)
     {
         // draw block next to player
         fill_rectangle_attr(block_loc, PLAYER_SQUARE, 2, 2, BLOCK, BLOCK);
@@ -343,8 +297,8 @@ void player_draw_background_horizontal(void)
 {
     unsigned char block_loc;
     // use cycled colour for target squares, store in temp var so next check works
-    unsigned char pb_1 = get_player_background_1();
-    unsigned char pb_2 = get_player_background_2();
+    unsigned char pb_1 = player_background_1;
+    unsigned char pb_2 = player_background_2;
     if (pb_1 == TARGET)
     {
         pb_1 = colour;
@@ -359,7 +313,7 @@ void player_draw_background_horizontal(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_2);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_2);
-        if (get_is_player_pushing())
+        if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
         }
@@ -374,7 +328,7 @@ void player_draw_background_horizontal(void)
         fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_FACE);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_1);
         fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_1);
-        if (get_is_player_pushing())
+        if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
         }
@@ -384,7 +338,7 @@ void player_draw_background_horizontal(void)
         }
     }
 
-    if (get_is_player_pushing() || get_is_player_pulling())
+    if (is_player_pushing || is_player_pulling)
     {
         // draw block next to player
         fill_rectangle_attr(PLAYER_SQUARE, block_loc, 2, 2, BLOCK, BLOCK);
@@ -405,6 +359,6 @@ void player_draw_done(void)
         }
     }
     // final background draw should have solid background
-    set_player_background_1(get_player_tile_next());
-    set_player_background_2(get_player_tile_next());
+    player_background_1 = player_tile_next;
+    player_background_2 = player_tile_next;
 }
