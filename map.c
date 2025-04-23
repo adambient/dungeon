@@ -428,6 +428,7 @@ unsigned char map_move_right(void)
 void map_move_none(void)
 {
     is_player_pushing = 0;
+    player_draw_done();
     switch (player_facing)
     {
     default:
@@ -439,5 +440,5 @@ void map_move_none(void)
     case 3:
         map_refresh_horizontal();
         break;
-    }
+    }    
 }

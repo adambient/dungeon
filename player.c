@@ -362,7 +362,10 @@ void player_draw_done(void)
             set_map_tile(x, y, get_map_tile(x, y) | SEEN_BYTE);
         }
     }
-    // final background draw should have solid background
-    player_background_1 = player_tile_next;
-    player_background_2 = player_tile_next;
+    // reset all backgrounds and next tiles to current tile
+    player_background_1 =
+    player_background_2 =
+    player_tile =
+    player_tile_next =
+    player_get_tile(player_x, player_y);
 }
