@@ -13,6 +13,7 @@ SECTION bss_user: assign zero initial data to this section
 #include <input.h>
 #include "int.h"
 #include "beeps.h"
+#include "enemy.h"
 
 // imported from screen.asm
 extern void print_string(uint8_t *string) __z88dk_fastcall; // print null terminated string, accepts rst $10 control codes
@@ -35,7 +36,7 @@ void main(void)
     player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this
     do
     {
-        // loop around map
+        // player move/draw
         switch (player_dir)
         {
         case DIR_UP:
@@ -57,7 +58,7 @@ void main(void)
             map_move_none();
         }
 
-        // check for movement
+        // check for player movement
         player_dir = DIR_NONE;
         if (in_key_pressed(IN_KEY_SCANCODE_q) == 0xFFFF)
         {
@@ -79,6 +80,9 @@ void main(void)
         {
             is_player_pushing = 1;
         }
+
+        // resolve enemy movement
+        enemy_move();
 
         play_sounds();
         int_wait();

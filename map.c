@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "player.h"
+#include "enemy.h"
 #include "int.h"
 #include "beeps.h"
 
@@ -46,10 +47,14 @@ static inline unsigned char *get_start_attr_address(void)
 static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
 {
     if (x < MAP_SIZE && y < MAP_SIZE)
-    {
+    {        
         unsigned char tile = get_map_tile(x, y);
         if ((tile & SEEN_BYTE) == SEEN_BYTE)
         {
+            if (x == enemy_x && y == enemy_y)
+            {
+                return ENEMY;
+            }
             tile = tile & BG_BYTES;
             switch (tile)
             {
@@ -192,8 +197,8 @@ void map_init(void)
                 unsigned char tile = WALL; // wall
                 if ((map[x][y + 2] << i & 0b10000000) == 0b10000000)
                 {
-                    // use BLOCK data
-                    tile = BLOCK; // BLOCK
+                    // use crate data
+                    tile = CRATE;
                 }
                 else
                 {
@@ -229,7 +234,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         return 0;
     }
 
-    if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
+    if ((tile & BG_BYTES) == CRATE || (tile & BG_BYTES) == PLACED)
     {
         if (!is_player_pushing)
         {
@@ -238,7 +243,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         }
         // we are pushing so check next tile
         unsigned char next_tile = get_map_tile(player_x + dx + dx, player_y + dy + dy);
-        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == BLOCK || (next_tile & BG_BYTES) == PLACED)
+        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == CRATE || (next_tile & BG_BYTES) == PLACED)
         {
             // next tile is blocked so cannot move
             is_player_pushing = 0;
@@ -263,9 +268,9 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         // we're not pushing but we might be pulling
         tile = get_map_tile(player_x - dx, player_y - dy);
         is_player_pushing = 0;
-        if ((tile & BG_BYTES) == BLOCK || (tile & BG_BYTES) == PLACED)
+        if ((tile & BG_BYTES) == CRATE || (tile & BG_BYTES) == PLACED)
         {
-            // there is a block behind
+            // there is a crate behind
             if ((tile & BG_BYTES) == PLACED)
             {
                 // replace tile behind
@@ -298,7 +303,7 @@ static void map_move_done(signed char dx, signed char dy)
 
     if (is_player_pushing)
     {
-        // place BLOCK
+        // place crate
         is_player_pushing = 0;
         unsigned char next_tile = get_map_tile(player_x + dx, player_y + dy);
         if ((next_tile & BG_BYTES) == TARGET)
@@ -309,7 +314,7 @@ static void map_move_done(signed char dx, signed char dy)
         }
         else
         {
-            set_map_tile(player_x + dx, player_y + dy, BLOCK | SEEN_BYTE);
+            set_map_tile(player_x + dx, player_y + dy, CRATE | SEEN_BYTE);
         }
     }
 }

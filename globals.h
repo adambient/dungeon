@@ -20,12 +20,13 @@
 
 // using these constants will allow us to experiment with colours
 #define DARKNESS BLACK
-#define WALL BLUE
-#define BLOCK YELLOW
-#define PLACED GREEN
-#define TARGET CYAN
 #define CARPET_1 RED
 #define CARPET_2 MAGENTA // this will actually always be CARPET_1 plus 1
+#define ENEMY GREEN
+#define WALL BLUE
+#define CRATE YELLOW
+#define PLACED GREEN
+#define TARGET CYAN
 #define PLAYER_FACE YELLOW
 #define PLAYER_BODY_1 WHITE
 #define PLAYER_BODY_2 BLACK

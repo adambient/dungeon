@@ -3,6 +3,7 @@ screen.asm
 map.asm
 globals.c
 player.c
+enemy.c
 beeps.c
 map.c
 int.c

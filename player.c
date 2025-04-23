@@ -1,5 +1,6 @@
 #include "globals.h"
 #include "int.h"
+#include "enemy.h"
 
 #define MAN_UP_HEAD "KL"
 #define MAN_UP_BODY1 "UV"
@@ -28,15 +29,18 @@ extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char 
 extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
 
-
 static unsigned char player_background_1; // player_frame,player_frame,player_background_1,player_background_1,player_background_1,player_background_2,player_background_2,player_background_2
 static unsigned char player_background_2; // player_frame,player_frame,player_background_1,player_background_1,player_background_1,player_background_2,player_background_2,player_background_2
-static unsigned char player_frame; // player_frame,player_frame,player_background_1,player_background_1,player_background_1,player_background_2,player_background_2,player_background_2
-static unsigned char player_tile;       // lower bytes: player_tile; higher bytes: player_tile_next
-static unsigned char player_tile_next;       // lower bytes: player_tile; higher bytes: player_tile_next
+static unsigned char player_frame;        // player_frame,player_frame,player_background_1,player_background_1,player_background_1,player_background_2,player_background_2,player_background_2
+static unsigned char player_tile;         // lower bytes: player_tile; higher bytes: player_tile_next
+static unsigned char player_tile_next;    // lower bytes: player_tile; higher bytes: player_tile_next
 
-static inline unsigned char player_get_tile(unsigned char x, unsigned char y)
+static unsigned char player_get_tile(unsigned char x, unsigned char y)
 {
+    if (x == enemy_x && y == enemy_y)
+    {
+        return ENEMY;
+    }
     return (get_map_tile(x, y) & BG_BYTES);
 }
 
@@ -56,7 +60,7 @@ static inline void frame_draw_up(void)
     case 2:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY1); // draw man
         player_frame = 3;
-        break;    
+        break;
     case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY3); // draw man
         player_frame = 0;
@@ -80,7 +84,7 @@ static inline void frame_draw_down(void)
     case 2:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY1); // draw man
         player_frame = 3;
-        break;    
+        break;
     case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY3); // draw man
         player_frame = 0;
@@ -104,7 +108,7 @@ static inline void frame_draw_left(void)
     case 2:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY1); // draw man
         player_frame = 3;
-        break;    
+        break;
     case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY3); // draw man
         player_frame = 0;
@@ -129,7 +133,7 @@ static inline void frame_draw_right(void)
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY1); // draw man
         player_frame = 3;
         break;
-    
+
     case 3:
         fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY3); // draw man
         player_frame = 0;
@@ -285,8 +289,8 @@ void player_draw_background_vertical(void)
 
     if (is_player_pushing || is_player_pulling)
     {
-        // draw block next to player
-        fill_rectangle_attr(block_loc, PLAYER_SQUARE, 2, 2, BLOCK, BLOCK);
+        // draw crate next to player
+        fill_rectangle_attr(block_loc, PLAYER_SQUARE, 2, 2, CRATE, CRATE);
     }
 
     // draw torchlight
@@ -340,8 +344,8 @@ void player_draw_background_horizontal(void)
 
     if (is_player_pushing || is_player_pulling)
     {
-        // draw block next to player
-        fill_rectangle_attr(PLAYER_SQUARE, block_loc, 2, 2, BLOCK, BLOCK);
+        // draw crate next to player
+        fill_rectangle_attr(PLAYER_SQUARE, block_loc, 2, 2, CRATE, CRATE);
     }
 
     // draw torchlight
