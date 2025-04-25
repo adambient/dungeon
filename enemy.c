@@ -1,4 +1,5 @@
 #include "globals.h"
+#include "int.h"
 
 // imported from map.asm
 extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_callee;
@@ -6,8 +7,7 @@ extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_call
 unsigned char enemy_x = 3;
 unsigned char enemy_y = 3;
 static unsigned char enemy_dir = DIR_UP;
-static unsigned char enemy_move_cycle = 0;
-#define ENEMY_MOVE_CYCLE 5
+static unsigned char enemy_tick = 0;
 
 static unsigned char enemy_attempt_move(unsigned char next_dir)
 {
@@ -48,13 +48,10 @@ static unsigned char enemy_attempt_move(unsigned char next_dir)
 
 void enemy_move(void)
 {
-    if (enemy_move_cycle < ENEMY_MOVE_CYCLE)
+    // move every outer tick change
+    if (enemy_tick != int_outer_tick)
     {
-        enemy_move_cycle++;
-    }
-    else
-    {
-        enemy_move_cycle = 0;
+        enemy_tick = int_outer_tick;
         // TODO - we are just cycling around up, right, down, left until we find a direction we can go it. Should be more intelligent
         for (unsigned char dir = enemy_dir; dir < (enemy_dir + DIR_NONE); dir++)
         {

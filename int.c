@@ -1,6 +1,5 @@
 #include <im2.h>
 #include <intrinsic.h>
-#include <stdlib.h>
 #include <string.h>
 #include <z80.h>
 #include "int.h"
@@ -8,35 +7,27 @@
 extern void copy_attr_buffer(void) __z88dk_callee; // copy attribute buffer into attribute memory
 
 // timer
-unsigned char tick;
-unsigned char colour;
-unsigned char timer;
+unsigned char int_tick;
+unsigned char int_outer_tick;
+unsigned char int_colour;
+unsigned char int_timer;
 
 IM2_DEFINE_ISR(isr)
 {
     // update the clock
-    ++tick;
+    ++int_tick;
 }
 
 void int_refresh_screen(void)
 {
-    ++colour;
-    if (colour > 7)
+    ++int_colour;    
+    if (int_colour > 7)
     {
-        colour = 0;
+        int_colour = 0;
+        ++int_outer_tick;
     }
     intrinsic_halt();
     copy_attr_buffer();
-}
-
-void int_wait(void)
-{
-    while (abs(tick - timer) < WFRAMES)
-    {
-        intrinsic_halt();
-    }
-
-    timer = tick;
 }
 
 void int_init(void)

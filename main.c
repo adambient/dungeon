@@ -81,10 +81,8 @@ void main(void)
             is_player_pushing = 1;
         }
 
-        // resolve enemy movement
         enemy_move();
-
         play_sounds();
-        int_wait();
+
     } while (1);
 }

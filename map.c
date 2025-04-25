@@ -59,10 +59,10 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
             switch (tile)
             {
             case TARGET:
-                return colour;
+                return int_colour;
             case PLACED:
                 // cycle bettween yellow and white
-                return (YELLOW | (colour & 0b00000001));
+                return (YELLOW | (int_colour & 0b00000001));
             default:
                 return tile;
             }
