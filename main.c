@@ -7,30 +7,17 @@ SECTION data_user: assign non-zero initial data to this section
 SECTION bss_user: assign zero initial data to this section
 */
 
-#include <stdlib.h>
 #include "globals.h"
+#include "screen.h"
 #include "map.h"
 #include <input.h>
-#include "int.h"
 #include "beeps.h"
 #include "enemy.h"
 
-// imported from screen.asm
-extern void print_string(uint8_t *string) __z88dk_fastcall; // print null terminated string, accepts rst $10 control codes
-
-// imported from fill_rectangle.asm
-extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
-extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
-
 void main(void)
 {
-    int_init();
-    print_string("Initialising...");
-    fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern
-    fill_rectangle_attr(0, 0, 24, 32, 7, 7);
-    int_refresh_screen();
-    map_init();
-    fill_rectangle_char(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "["); // fill with pipes
+    screen_init();    
+    map_init();    
     player_x = MAP_SIZE - 1;
     player_y = 1;
     player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this

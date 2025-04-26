@@ -1,5 +1,5 @@
 #include "globals.h"
-#include "int.h"
+#include "screen.h"
 
 // imported from map.asm
 extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_callee;
@@ -49,9 +49,9 @@ static unsigned char enemy_attempt_move(unsigned char next_dir)
 void enemy_move(void)
 {
     // move every outer tick change
-    if (enemy_tick != int_outer_tick)
+    if (enemy_tick != screen_colour_cycle)
     {
-        enemy_tick = int_outer_tick;
+        enemy_tick = screen_colour_cycle;
         // TODO - we are just cycling around up, right, down, left until we find a direction we can go it. Should be more intelligent
         for (unsigned char dir = enemy_dir; dir < (enemy_dir + DIR_NONE); dir++)
         {

@@ -1,5 +1,5 @@
 #include "globals.h"
-#include "int.h"
+#include "screen.h"
 #include "enemy.h"
 
 #define MAN_UP_HEAD "KL"
@@ -251,11 +251,11 @@ void player_draw_background_vertical(void)
     unsigned char pb_2 = player_background_2;
     if (pb_1 == TARGET)
     {
-        pb_1 = int_colour;
+        pb_1 = screen_colour;
     }
     if (pb_2 == TARGET)
     {
-        pb_2 = int_colour;
+        pb_2 = screen_colour;
     }
     if (player_facing == DIR_UP)
     {
@@ -305,11 +305,11 @@ void player_draw_background_horizontal(void)
     unsigned char pb_2 = player_background_2;
     if (pb_1 == TARGET)
     {
-        pb_1 = int_colour;
+        pb_1 = screen_colour;
     }
     if (pb_2 == TARGET)
     {
-        pb_2 = int_colour;
+        pb_2 = screen_colour;
     }
     if (player_facing == DIR_LEFT)
     {

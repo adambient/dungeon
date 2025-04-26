@@ -6,5 +6,5 @@ player.c
 enemy.c
 beeps.c
 map.c
-int.c
+screen.c
 main.c

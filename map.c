@@ -1,8 +1,7 @@
-#include <stdlib.h>
 #include "globals.h"
 #include "player.h"
 #include "enemy.h"
-#include "int.h"
+#include "screen.h"
 #include "beeps.h"
 
 // TODO - this is obviously hard coded to be [16][6] so perhaps we should generate this, also is it optimal space wise?
@@ -59,10 +58,10 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
             switch (tile)
             {
             case TARGET:
-                return int_colour;
+                return screen_colour;
             case PLACED:
                 // cycle bettween yellow and white
-                return (YELLOW | (int_colour & 0b00000001));
+                return (YELLOW | (screen_colour & 0b00000001));
             default:
                 return tile;
             }
@@ -323,14 +322,14 @@ static void map_refresh_vertical(void)
 {
     map_draw_vertical();
     player_draw_background_vertical();
-    int_refresh_screen();
+    screen_refresh();
 }
 
 static void map_refresh_horizontal(void)
 {
     map_draw_horizontal();
     player_draw_background_horizontal();
-    int_refresh_screen();
+    screen_refresh();
 }
 
 unsigned char map_move_up(void)
