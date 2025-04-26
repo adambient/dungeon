@@ -30,9 +30,6 @@ extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_call
 extern void set_map_tile(unsigned char x, unsigned char y, unsigned int tile) __z88dk_callee;
 // imported from fill_rectangle.asm
 extern unsigned char *attr_buffer;
-extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
-extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
-extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
 
 static unsigned char *attr_address;
 static unsigned char map_frame;
