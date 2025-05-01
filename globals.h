@@ -44,5 +44,6 @@ extern unsigned char player_dir;        // the way the player is currently movin
 extern unsigned char player_facing;     // the way the player is currently facing 0-4
 extern unsigned char is_player_pushing;
 extern unsigned char is_player_pulling;
+extern unsigned char display_attrs;     // whether to display the colour attrs or b&w
 
 #endif

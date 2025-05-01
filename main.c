@@ -67,6 +67,14 @@ void main(void)
         {
             is_player_pushing = 1;
         }
+        if (in_key_pressed(IN_KEY_SCANCODE_g) ==0xFFFF)
+        {
+            display_attrs = 0;
+        }
+        if (in_key_pressed(IN_KEY_SCANCODE_h) ==0xFFFF)
+        {
+            display_attrs = 1;
+        }
 
         enemy_move();
         play_sounds();

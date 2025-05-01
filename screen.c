@@ -2,6 +2,7 @@
 #include <z80.h>
 #include "globals.h"
 #include "screen.h"
+#include <stdio.h>
 
 // imported from screen.asm
 extern void print_string(uint8_t *string) __z88dk_fastcall; // print null terminated string, accepts rst $10 control codes
@@ -16,12 +17,13 @@ unsigned char screen_colour_cycle;
 unsigned char screen_colour;
 
 void screen_init(void)
-{
+{    
     intrinsic_ei(); // enable interrupts
     print_string("Initialising...");
     fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern
     fill_rectangle_attr(0, 0, 24, 32, 7, 7);
     fill_rectangle_char(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "["); // fill with pipes
+    puts("\x16\x01\x17Q:up;A:down;L:left;R:right;Sp:action:G:gfx off;H:gfx on");
 }
 
 void screen_refresh(void)

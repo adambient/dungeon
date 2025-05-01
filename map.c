@@ -30,6 +30,7 @@ extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_call
 extern void set_map_tile(unsigned char x, unsigned char y, unsigned int tile) __z88dk_callee;
 // imported from fill_rectangle.asm
 extern unsigned char *attr_buffer;
+extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
 
 static unsigned char *attr_address;
 static unsigned char map_frame;
@@ -43,7 +44,7 @@ static inline unsigned char *get_start_attr_address(void)
 static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
 {
     if (x < MAP_SIZE && y < MAP_SIZE)
-    {        
+    {  
         unsigned char tile = get_map_tile(x, y);
         if ((tile & SEEN_BYTE) == SEEN_BYTE)
         {
@@ -317,14 +318,28 @@ static void map_move_done(signed char dx, signed char dy)
 
 static void map_refresh_vertical(void)
 {
-    map_draw_vertical();
+    if (display_attrs)
+    {
+        map_draw_vertical();
+    }
+    else
+    {
+        fill_rectangle_attr(0, 0, VISIBLE_AREA, VISIBLE_AREA, 0, 7);
+    }
     player_draw_background_vertical();
     screen_refresh();
 }
 
 static void map_refresh_horizontal(void)
 {
-    map_draw_horizontal();
+    if (display_attrs)
+    {
+        map_draw_horizontal();
+    }
+    else
+    {
+        fill_rectangle_attr(0, 0, VISIBLE_AREA, VISIBLE_AREA, 0, 7);
+    }
     player_draw_background_horizontal();
     screen_refresh();
 }
