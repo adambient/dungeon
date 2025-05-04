@@ -1,6 +1,6 @@
 ; used to populate attribute memory from buffer via _copy_attr_buffer
 VIDEOATT: equ $5800 ; address of attribute RAM
-VIDEOATT_L: equ $02C0 ; length of attribute RAM
+VIDEOATT_L: equ $0300 ; length of attribute RAM
 ATTR_BUFF: equ $F900 ; hard coded attribute buffer address TODO - why does this need to be hardcoded?
 
 SECTION code_user
