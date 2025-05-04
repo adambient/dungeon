@@ -37,7 +37,7 @@ static unsigned char player_tile_next;    // lower bytes: player_tile; higher by
 
 static unsigned char player_get_tile(unsigned char x, unsigned char y)
 {
-    if (x == enemy_x && y == enemy_y)
+    if (enemy_is_located(x, y))
     {
         return ENEMY;
     }
