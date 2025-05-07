@@ -76,6 +76,14 @@ void main(void)
             display_attrs = 1;
         }
 
+        if (ENEMY == player_tile)
+        {
+            // reset player position
+            player_x = MAP_SIZE - 1;
+            player_y = 1;
+            player_dir = DIR_UP;
+        }
+
         enemy_move();
         play_sounds();
 

@@ -38,6 +38,7 @@
 #define DIR_LEFT 3
 #define DIR_NONE 4
 
+extern unsigned char player_tile;
 extern unsigned char player_x;
 extern unsigned char player_y;
 extern unsigned char player_dir;        // the way the player is currently moving 0-4
