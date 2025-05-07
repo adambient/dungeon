@@ -56,11 +56,18 @@ _fill_rectangle_char_loop2:
             ld ix, iy 
             ld a, (ix) ; reset string 
 _fill_rectangle_char_print_char:
+            ; get glyph from char
             ld de, udgs
             add a, a
             add a, a
             add a, a
-            add de, a
+            push hl
+            ld l, a
+            ld h, 0
+            add hl, de
+            ex de, hl
+            pop hl
+
             ld b, 8 ; loop counter
 _fill_rectangle_char_loop3:
             ld a, (de) ; get the byte
