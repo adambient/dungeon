@@ -78,7 +78,8 @@ void main(void)
 
         if (ENEMY == player_tile)
         {
-            // reset player position
+            // reset map and player position
+            map_init();
             player_x = MAP_SIZE - 1;
             player_y = 1;
             player_dir = DIR_UP;

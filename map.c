@@ -184,6 +184,7 @@ static void map_draw_horizontal(void)
 
 void map_init(void)
 {
+    enemy_init();
     for (unsigned char x = MAP_SIZE - 1; x < 255; x--)
     {
         for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--)

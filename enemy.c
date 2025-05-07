@@ -1,5 +1,6 @@
 #include "globals.h"
 #include "screen.h"
+#include "enemy.h"
 
 #define MAX_ENEMIES 4
 
@@ -16,6 +17,12 @@ static struct enemy_data enemies[MAX_ENEMIES];
 
 static unsigned char enemy_count = 0;
 static unsigned char enemy_tick = 0;
+
+void enemy_init(void)
+{
+    enemy_count = 0;
+    enemy_tick = 0;
+}
 
 static unsigned char enemy_attempt_move(unsigned char next_dir, unsigned char enemy_index)
 {
@@ -40,6 +47,13 @@ static unsigned char enemy_attempt_move(unsigned char next_dir, unsigned char en
         next_y--;
         break;
     }
+
+    if (enemy_is_located(next_x, next_y))
+    {
+        // enemy alrady located on tile
+        return 0;
+    }
+
     unsigned char next_tile = (get_map_tile(next_x, next_y) & BG_BYTES);
     if (next_tile == CARPET_1 || next_tile == CARPET_2 || next_tile == TARGET)
     {
@@ -73,13 +87,22 @@ void enemy_move(void)
         enemy_tick = screen_colour_cycle;
         for (unsigned char enemy_index = 0; enemy_index < enemy_count; enemy_index++)
         {
-            // TODO - we are just cycling around up, right, down, left until we find a direction we can go it. Should be more intelligent
-            for (unsigned char dir = enemies[enemy_index].dir; dir < (enemies[enemy_index].dir + DIR_NONE); dir++)
+            // enemies follow the player which makes things too hard (TODO)
+            if (enemies[enemy_index].x < player_x && enemy_attempt_move(DIR_DOWN, enemy_index))
             {
-                if (enemy_attempt_move(dir, enemy_index))
-                {
-                    break;
-                }
+                continue;
+            }
+            if (enemies[enemy_index].x > player_x && enemy_attempt_move(DIR_UP, enemy_index))
+            {
+                continue;
+            }
+            if (enemies[enemy_index].y < player_y && enemy_attempt_move(DIR_RIGHT, enemy_index))
+            {
+                continue;
+            }
+            if (enemies[enemy_index].y > player_y && enemy_attempt_move(DIR_LEFT, enemy_index))
+            {
+                continue;
             }
         }
     }
