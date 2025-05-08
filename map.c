@@ -246,8 +246,8 @@ static unsigned char can_move_check(signed char dx, signed char dy)
             return 0;
         }
         // we are pushing so check next tile
-        unsigned char next_tile = get_map_tile(player_x + dx + dx, player_y + dy + dy);
-        if ((next_tile & BG_BYTES) == WALL || (next_tile & BG_BYTES) == CRATE || (next_tile & BG_BYTES) == PLACED)
+        unsigned char next_tile = get_map_tile(player_x + dx + dx, player_y + dy + dy) & BG_BYTES;
+        if (next_tile == WALL || next_tile == CRATE || next_tile == PLACED || enemy_is_located(player_x + dx + dx, player_y + dy + dy))
         {
             // next tile is blocked so cannot move
             is_player_pushing = 0;
