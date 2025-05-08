@@ -17,7 +17,7 @@ void screen_init(void)
 {    
     intrinsic_ei(); // enable interrupts
     fill_rectangle_attr(0, 0, 24, 32, 7, 7);
-    fill_rectangle_char(0, 0, 24, 32, " "); // repeating background pattern
+    fill_rectangle_char(0, 0, 24, 32, " $"); // repeating background pattern
     puts("\x16\x26\x01 ZX DUNGEON");
     puts("\x16\x26\x02 ==========");
     puts("\x16\x26\x04 You wake up in a dark and "); // max string length
@@ -44,7 +44,7 @@ void screen_init(void)
     fill_rectangle_attr(5, 24, 1, 3, GREEN, 7);
     // make the word gold, yellow
     fill_rectangle_attr(7, 27, 1, 2, YELLOW, 7);
-    fill_rectangle_char(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "["); // fill with pipes    
+    fill_rectangle_char(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "[$"); // fill with pipes    
 }
 
 void screen_refresh(void)

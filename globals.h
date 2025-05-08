@@ -38,6 +38,10 @@
 #define DIR_LEFT 3
 #define DIR_NONE 4
 
+// UDGs
+#define PIPE_PATTERN "\\$"
+#define BAR_PATTERN "[$"
+
 extern unsigned char player_tile;
 extern unsigned char player_x;
 extern unsigned char player_y;

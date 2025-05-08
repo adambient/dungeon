@@ -51,7 +51,7 @@ _fill_rectangle_char_loop2:
             push bc ; store counter 2
             push de ; store x and y
             ld a, (ix)
-            or a ; compare with null (equiv. cp $00)
+            cp '$' ; means end of string
             jr nz, _fill_rectangle_char_print_char ; if not null goto print            
             ld ix, iy 
             ld a, (ix) ; reset string 
