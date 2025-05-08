@@ -79,6 +79,7 @@ void enemy_add(unsigned char x, unsigned char y)
     }
 }
 
+#define ENEMY_FOLLOW_N 5
 void enemy_move(void)
 {
     // move every outer tick change
@@ -87,22 +88,36 @@ void enemy_move(void)
         enemy_tick = screen_colour_cycle;
         for (unsigned char enemy_index = 0; enemy_index < enemy_count; enemy_index++)
         {
-            // enemies follow the player which makes things too hard (TODO)
-            if (enemies[enemy_index].x < player_x && enemy_attempt_move(DIR_DOWN, enemy_index))
+            // enemies follow the player if within ENEMY_FOLLOW_N squares (TODO which is still too hard)
+            signed char diff = player_x - enemies[enemy_index].x;
+            if (diff > 0 && diff < ENEMY_FOLLOW_N)
             {
-                continue;
+                if (enemy_attempt_move(DIR_DOWN, enemy_index))
+                {
+                    continue;
+                }
             }
-            if (enemies[enemy_index].x > player_x && enemy_attempt_move(DIR_UP, enemy_index))
+            else if (diff < 0 && diff > -ENEMY_FOLLOW_N)
             {
-                continue;
+                if (enemy_attempt_move(DIR_UP, enemy_index))
+                {
+                    continue;
+                }
             }
-            if (enemies[enemy_index].y < player_y && enemy_attempt_move(DIR_RIGHT, enemy_index))
+            diff = player_y - enemies[enemy_index].y;
+            if (diff > 0 && diff < ENEMY_FOLLOW_N)
             {
-                continue;
+                if (enemy_attempt_move(DIR_RIGHT, enemy_index))
+                {
+                    continue;
+                }
             }
-            if (enemies[enemy_index].y > player_y && enemy_attempt_move(DIR_LEFT, enemy_index))
+            else if (diff < 0 && diff > -ENEMY_FOLLOW_N)
             {
-                continue;
+                if (enemy_attempt_move(DIR_LEFT, enemy_index))
+                {
+                    continue;
+                }
             }
         }
     }
