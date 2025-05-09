@@ -14,13 +14,19 @@ SECTION bss_user: assign zero initial data to this section
 #include "beeps.h"
 #include "enemy.h"
 
+void init(void)
+{
+    map_init();        
+    player_x = MAP_SIZE - 1;
+    player_y = 1;
+    player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this    
+    map_move_none();
+}
+
 void main(void)
 {
     screen_init();    
-    map_init();    
-    player_x = MAP_SIZE - 1;
-    player_y = 1;
-    player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this
+    init();
     do
     {
         // player move/draw
@@ -79,10 +85,7 @@ void main(void)
         if (ENEMY == player_tile)
         {
             // reset map and player position
-            map_init();
-            player_x = MAP_SIZE - 1;
-            player_y = 1;
-            player_dir = DIR_UP;
+            init();
         }
 
         enemy_move();
