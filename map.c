@@ -34,6 +34,7 @@ extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char 
 
 static unsigned char *attr_address;
 static unsigned char map_frame;
+unsigned char map_uncovered_holes;
 
 // gets the memory address of the attribute buffer so it can be populated incrementally which is faster than using the index
 static inline unsigned char *get_start_attr_address(void)
@@ -51,6 +52,11 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
             if (enemy_is_located(x, y))
             {
                 return ENEMY;
+            }
+            if (map_uncovered_holes == 0 && x == 1 && y == (MAP_SIZE - 2))
+            {
+                // uncovered secret exit, cycle between carpet colours
+                return (CARPET_1 | (screen_colour & 0b00000001));
             }
             tile = tile & BG_BYTES;
             switch (tile)
@@ -185,6 +191,7 @@ static void map_draw_horizontal(void)
 void map_init(void)
 {
     enemy_init();
+    map_uncovered_holes = 0;
     for (unsigned char x = MAP_SIZE - 1; x < 255; x--)
     {
         for (unsigned char y = (MAP_SIZE / 8) - 1; y < 255; y--)
@@ -216,6 +223,7 @@ void map_init(void)
                     if ((map[x][y + 4] << i & 0b10000000) == 0b10000000)
                     {
                         tile = TARGET;
+                        map_uncovered_holes++;
                     }
                     // colour also be an enemy
                     if ((map[x][y + 6] << i & 0b10000000) == 0b10000000)
@@ -257,6 +265,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         {
             // replace tile in front
             set_map_tile(player_x + dx, player_y + dy, TARGET | SEEN_BYTE);
+            map_uncovered_holes++;
         }
         else
         {
@@ -277,8 +286,9 @@ static unsigned char can_move_check(signed char dx, signed char dy)
             // there is a crate behind
             if ((tile & BG_BYTES) == PLACED)
             {
-                // replace tile behind
+                // replace tile behind                
                 set_map_tile(player_x - dx, player_y - dy, TARGET | SEEN_BYTE);
+                map_uncovered_holes++;
             }
             else
             {
@@ -315,6 +325,7 @@ static void map_move_done(signed char dx, signed char dy)
             // target location
             set_map_tile(player_x + dx, player_y + dy, PLACED | SEEN_BYTE);
             play_success();
+            map_uncovered_holes--;
         }
         else
         {

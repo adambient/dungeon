@@ -15,17 +15,17 @@ SECTION bss_user: assign zero initial data to this section
 #include "enemy.h"
 
 void init(void)
-{
+{        
     map_init();        
     player_x = MAP_SIZE - 1;
-    player_y = 1;
+    player_y = 1;    
     player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this    
     map_move_none();
 }
 
 void main(void)
-{
-    screen_init();    
+{    
+    screen_init();
     init();
     do
     {
@@ -83,13 +83,25 @@ void main(void)
         }
 
         if (ENEMY == player_tile)
-        {
-            // reset map and player position
+        {            
             init();
         }
 
         enemy_move();
         play_sounds();
+
+        // end game check
+        if (map_uncovered_holes == 0 && player_x == 1 && player_y == (MAP_SIZE - 2))
+        {
+            screen_success();
+            do
+            {
+            } while (in_key_pressed(IN_KEY_SCANCODE_ENTER) !=0xFFFF);
+
+            player_facing = DIR_NONE;
+            screen_init();
+            init();
+        }
 
     } while (1);
 }
