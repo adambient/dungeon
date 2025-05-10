@@ -53,10 +53,14 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
             {
                 return ENEMY;
             }
-            if (map_uncovered_holes == 0 && x == 1 && y == (MAP_SIZE - 2))
+            if (map_uncovered_holes == 0)
             {
-                // uncovered secret exit, cycle between carpet colours
-                return (CARPET_1 | (screen_colour & 0b00000001));
+                if ((x == 1 && (y == (MAP_SIZE - 2) || y == 1)) ||
+                (x == (MAP_SIZE - 2) && (y == (MAP_SIZE - 2) || y == 1)))
+                {
+                    // uncovered secret exit, cycle between carpet colours
+                    return (CARPET_1 | (screen_colour & 0b00000001));
+                }
             }
             tile = tile & BG_BYTES;
             switch (tile)

@@ -91,16 +91,20 @@ void main(void)
         play_sounds();
 
         // end game check
-        if (map_uncovered_holes == 0 && player_x == 1 && player_y == (MAP_SIZE - 2))
+        if (map_uncovered_holes == 0)
         {
-            screen_success();
-            do
+            if ((player_x == 1 && (player_y == (MAP_SIZE - 2) || player_y == 1)) ||
+                (player_x == (MAP_SIZE - 2) && (player_y == (MAP_SIZE - 2) || player_y == 1)))
             {
-            } while (in_key_pressed(IN_KEY_SCANCODE_ENTER) !=0xFFFF);
+                screen_success();
+                do
+                {
+                } while (in_key_pressed(IN_KEY_SCANCODE_ENTER) !=0xFFFF);
 
-            player_facing = DIR_NONE;
-            screen_init();
-            init();
+                player_facing = DIR_NONE;
+                screen_init();
+                init();
+            }
         }
 
     } while (1);
