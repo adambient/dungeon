@@ -22,11 +22,11 @@ void play_sounds(void)
     // we can only play one sound at a time but there are many triggers so check in priority order
     if ((sound & SUCCESS) == SUCCESS)
     {
-        bit_beepfx(BEEPFX_PICK);
+        bit_click();
     }
     else if ((sound & PUSHING) == PUSHING)
     {
-        bit_beepfx(BEEPFX_PICK);
+        bit_click();
     }
     else if ((sound & FOOTSTEP) == FOOTSTEP)
     {
