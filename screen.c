@@ -39,7 +39,7 @@ void screen_init(void)
     puts("\x16\x26\x14 Sp:action;");
     puts("\x16\x26\x15 G:gfx off;");
     puts("\x16\x26\x16 H:gfx on;");        
-    puts("\x16\x01\x14 A dark and mysterious labarynth.");
+    puts("\x16\x01\x14 A dark and mysterious labyrinth.");
         
     // default text is black on white
     fill_rectangle_attr(0, 0, 24, 32, BLACK, WHITE);
@@ -68,7 +68,7 @@ void screen_success(void)
 {    
     fill_rectangle_char(6, 6, 5, 20, " $");
     puts("\x16\x0E\x08 Congratulations you have escaped the");
-    puts("\x16\x0E\x09 dark and mysterious labarynth! Press");
+    puts("\x16\x0E\x09 dark and mysterious labyrinth! Press");
     puts("\x16\x0E\x0A Enter to try again...");
     fill_rectangle_attr(6, 6, 5, 20, BLACK, WHITE);    
     bright_rectangle_attr(6, 6, 5, 20);

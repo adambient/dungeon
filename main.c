@@ -13,6 +13,7 @@ SECTION bss_user: assign zero initial data to this section
 #include <input.h>
 #include "beeps.h"
 #include "enemy.h"
+#include "int.h"
 
 void init(void)
 {        
@@ -26,6 +27,7 @@ void init(void)
 void main(void)
 {    
     screen_init();
+    int_init();
     init();
     do
     {
