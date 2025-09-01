@@ -21,8 +21,8 @@ void screen_init(void)
     intrinsic_halt();
     copy_attr_buffer();
     fill_rectangle_char(0, 0, 24, 32, " $"); // clear screen
-    puts("\x16\x26\x01 ZX DUNGEON");
-    puts("\x16\x26\x02 ==========");
+    puts("\x16\x26\x01 The D.A.M. Labyrinth");
+    puts("\x16\x26\x02 ====================");
     puts("\x16\x26\x04 You wake up in a dark and "); // max string length
     puts("\x16\x26\x05 mysterious labarynth.");
     puts("\x16\x26\x06 Beware of green enemies.");
@@ -34,8 +34,8 @@ void screen_init(void)
     puts("\x16\x26\x0E Carried: Turnip");
     puts("\x16\x26\x10 Q:up;");
     puts("\x16\x26\x11 A:down;");
-    puts("\x16\x26\x12 L:left;");
-    puts("\x16\x26\x13 R:right;");
+    puts("\x16\x26\x12 O:left;");
+    puts("\x16\x26\x13 P:right;");
     puts("\x16\x26\x14 Sp:action;");
     puts("\x16\x26\x15 G:gfx off;");
     puts("\x16\x26\x16 H:gfx on;");        
