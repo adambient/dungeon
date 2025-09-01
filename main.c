@@ -26,8 +26,8 @@ void init(void)
 
 void main(void)
 {    
-    screen_init();
     int_init();
+    screen_init();    
     init();
     do
     {
