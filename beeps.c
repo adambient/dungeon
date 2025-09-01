@@ -34,3 +34,7 @@ void play_sounds(void)
     }
     sound = 0;
 }
+void play_death(void)
+{
+    bit_beepfx(BEEPFX_POWER_OFF);
+}

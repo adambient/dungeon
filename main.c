@@ -86,11 +86,12 @@ void main(void)
 
         if (ENEMY == player_tile)
         {            
+            play_death();
             init();
         }
 
         enemy_move();
-        play_sounds();
+        play_sounds();        
 
         // end game check
         if (map_uncovered_holes == 0)
