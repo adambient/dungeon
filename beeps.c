@@ -5,19 +5,19 @@
 #define SUCCESS 0b00000100
 
 static unsigned char sound;
-void play_footstep(void)
+void beeps_footstep(void)
 {
     sound = sound | FOOTSTEP;
 }
-void play_pushing(void)
+void beeps_pushing(void)
 {
     sound = sound | PUSHING;
 }
-void play_success(void)
+void beeps_success(void)
 {
     sound = sound | SUCCESS;
 }
-void play_sounds(void)
+void beeps_play(void)
 {
     // we can only play one sound at a time but there are many triggers so check in priority order
     if ((sound & SUCCESS) == SUCCESS)
@@ -34,7 +34,11 @@ void play_sounds(void)
     }
     sound = 0;
 }
-void play_death(void)
+void beeps_death(void)
 {
     bit_beepfx(BEEPFX_POWER_OFF);
+}
+void beeps_winner(void)
+{
+    bit_beepfx(BEEPFX_SELECT_6);
 }

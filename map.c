@@ -277,7 +277,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
             set_map_tile(player_x + dx, player_y + dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
         }
         is_player_pushing = 1;
-        play_pushing();
+        beeps_pushing();
         return 1;
     }
     else if (is_player_pushing)
@@ -300,11 +300,11 @@ static unsigned char can_move_check(signed char dx, signed char dy)
                 set_map_tile(player_x - dx, player_y - dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
             }
             is_player_pulling = 1;
-            play_pushing();
+            beeps_pushing();
             return 1;
         }
     }
-    play_footstep();
+    beeps_footstep();
     return 1;
 }
 
@@ -328,7 +328,7 @@ static void map_move_done(signed char dx, signed char dy)
         {
             // target location
             set_map_tile(player_x + dx, player_y + dy, PLACED | SEEN_BYTE);
-            play_success();
+            beeps_success();
             map_uncovered_holes--;
         }
         else

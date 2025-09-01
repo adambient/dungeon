@@ -86,12 +86,12 @@ void main(void)
 
         if (ENEMY == player_tile)
         {            
-            play_death();
+            beeps_death();
             init();
         }
 
         enemy_move();
-        play_sounds();        
+        beeps_play();        
 
         // end game check
         if (map_uncovered_holes == 0)
@@ -100,6 +100,7 @@ void main(void)
                 (player_x == (MAP_SIZE - 2) && (player_y == (MAP_SIZE - 2) || player_y == 1)))
             {
                 screen_success();
+                beeps_winner();
                 do
                 {
                 } while (in_key_pressed(IN_KEY_SCANCODE_ENTER) !=0xFFFF);
