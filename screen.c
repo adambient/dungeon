@@ -16,6 +16,7 @@ unsigned char screen_colour;
 
 void screen_init(void)
 {    
+    intrinsic_ei();
     fill_rectangle_attr(0, 0, 24, 32, 7, 7);
     intrinsic_halt();
     copy_attr_buffer();

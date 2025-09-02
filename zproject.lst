@@ -6,6 +6,4 @@ enemy.c
 beeps.c
 map.c
 screen.c
-tracker.asm
-int.c
 main.c

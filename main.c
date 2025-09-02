@@ -1,4 +1,4 @@
-#pragma output CRT_ORG_CODE = 24500
+#pragma output CRT_ORG_CODE = 32768
 
 /*
 NOTE - We are using newlib which defines sections for our ASM, not using these as appropriate seems to cause strange issues
@@ -15,7 +15,6 @@ SECTION bss_user: assign zero initial data to this section
 #include <input.h>
 #include "beeps.h"
 #include "enemy.h"
-#include "int.h"
 
 void init(void)
 {        
@@ -28,7 +27,6 @@ void init(void)
 
 void main(void)
 {    
-    int_init();
     screen_init();    
     init();
     do
