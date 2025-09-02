@@ -1,3 +1,5 @@
+#pragma output CRT_ORG_CODE = 24500
+
 /*
 NOTE - We are using newlib which defines sections for our ASM, not using these as appropriate seems to cause strange issues
 SECTION code_user: assign executable code to this section
