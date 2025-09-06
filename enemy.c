@@ -1,11 +1,9 @@
 #include "globals.h"
 #include "screen.h"
 #include "enemy.h"
+#include "grid.h"
 
 #define MAX_ENEMIES 4
-
-// imported from map.asm
-extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_callee;
 
 struct enemy_data
 {
@@ -54,7 +52,7 @@ static unsigned char enemy_attempt_move(unsigned char next_dir, unsigned char en
         return 0;
     }
 
-    unsigned char next_tile = (get_map_tile(next_x, next_y) & BG_BYTES);
+    unsigned char next_tile = (get_grid_tile_inline(next_x, next_y) & BG_BYTES);
     if (next_tile == CARPET_1 || next_tile == CARPET_2 || next_tile == TARGET)
     {
         enemies[enemy_index].x = next_x;

@@ -1,7 +1,6 @@
-; used to populate attribute memory from buffer via _copy_attr_buffer
 VIDEOATT: equ $5800 ; address of attribute RAM
 VIDEOATT_L: equ $0300 ; length of attribute RAM
-ATTR_BUFF: equ $F900 ; hard coded attribute buffer address TODO - why does this need to be hardcoded?
+ATTR_BUFF: equ 32768 ; hard coded attribute buffer address to start of uncontended memory, just before CRT_ORG_CODE
 
 SECTION code_user
 
@@ -12,27 +11,24 @@ PUBLIC _copy_attr_buffer
 
 ;----------
 ; _fill_rectangle_char
-; inputs: d = y, e = x, h = width, l = height, ix = address of first char (accepts strings and repeats full string)
+; inputs: fill_rectangle_p
 ;----------
 _fill_rectangle_char:
-            pop bc ; bc = ret address
-            pop de ; d = y, e = x
-            pop hl ; h = width, l = height
-            pop ix ; ix = address of char
-            push bc ; ret address back on stack
-            ld iy, ix
-            ld b, l ; set counter 1 to height
-            ld c, d ; store initial y in c
+            ld c, (hl) ; c = y
+            inc hl
+            ld e, (hl) ; e = x
+            ld hl, (_fill_rectangle_param+2) ; h = height, l = width            
+            ld ix, (_fill_rectangle_param+6) ; ix = address of first char
+            ld b, h ; set counter 1 to height
 _fill_rectangle_char_loop1:
             ld d, c ; retrieve initial y
-            push hl ; store width/height
             push bc ; store counter 1
-            ld b, h ; set counter 2 to width
+            ld b, l ; set counter 2 to width
             ;----------
             ; BEGIN - get_char_address (inline) - adapted from a routine by Dean Belfield
             ; inputs: d = y, e = x
             ; outputs: hl = location of screen address
-            ;----------
+            ;---------
             ld a,e
             and $07
             rra
@@ -46,14 +42,14 @@ _fill_rectangle_char_loop1:
             or $40
             ld h,a
             ; END
-_fill_rectangle_char_loop2:                                    
-            push hl ; store hl = screen address
-            push bc ; store counter 2
-            push de ; store x and y
+_fill_rectangle_char_loop2:
             ld a, (ix)
+            push hl ; store hl = screen address
+            exx ; store hl = screen address, bc = counter 2, de = xy
+            pop hl ; retrieve hl = screen address                                 
             cp '$' ; means end of string
             jr nz, _fill_rectangle_char_print_char ; if not null goto print            
-            ld ix, iy 
+            ld ix, (_fill_rectangle_param+6)
             ld a, (ix) ; reset string 
 _fill_rectangle_char_print_char:
             ; get glyph from char
@@ -67,7 +63,6 @@ _fill_rectangle_char_print_char:
             add hl, de
             ex de, hl
             pop hl
-
             ld b, 8 ; loop counter
 _fill_rectangle_char_loop3:
             ld a, (de) ; get the byte
@@ -75,15 +70,13 @@ _fill_rectangle_char_loop3:
             inc de ; goto next byte of character
             inc h ; goto next line of screen
             djnz _fill_rectangle_char_loop3 ; loop 8 times
-            pop de ; retrieve x and y
-            pop bc ; retrieve counter 2
-            pop hl ; retrieve hl = screen adresss
+            exx ; retrieve de = xy, bc = counter 2, hl = screen address
             inc hl ; goto next character
             inc d ; increase y
             inc ix ; increase char
             djnz _fill_rectangle_char_loop2                         
             pop bc ; retrieve counter 1
-            pop hl ; retrieve width/height
+            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
             inc e ; increase x
             djnz _fill_rectangle_char_loop1  
             ret
@@ -113,59 +106,54 @@ get_attr_address:
 
 ;----------
 ; _fill_rectangle_attr
-; inputs: d = y, e = x, h = width, l = height, i = paper, x = ink
+; inputs: fill_rectangle_p
 ;----------
 _fill_rectangle_attr:
-            pop bc ; ix = ret address
-            pop de ; d = y, e = x
-            pop hl ; h = width, l = height
-            pop ix ; i = paper, x = ink
-            push bc ; ret address back on stack
-            ld b, l ; set counter 1 to height
-            ld c, d ; store initial y in c
+            ld c, (hl) ; c = y
+            inc hl
+            ld e, (hl) ; e = x
+            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
+            ld b, h ; set counter 1 to height
 _fill_rectangle_attr_loop1:
             ld d, c ; retrieve initial y
-            push hl ; store width/height
             push bc ; store counter 1
-            ld b, h ; set counter 2 to width                        
+            ld b, l ; set counter 2 to width                        
             push bc ; store counter 2
             call get_attr_address
             pop bc ; retrieve counter 2
 _fill_rectangle_attr_loop2:
             push bc ; store counter 2
-            ld bc, ix ; retrieve paper/ink
-            ld a, b ; load paper
+            ld bc, (_fill_rectangle_param+4) ; retrive paper/ink
+            ld a, c; load paper
             rla 
             rla
             rla ; paper in position
-            or c ; add ink
+            or b ; add ink
             ld (hl), a ; store in location
             inc hl ; go to next location
             pop bc ; retrieve counter 2
             inc d ; increase y
             djnz _fill_rectangle_attr_loop2                         
             pop bc ; retrieve counter 1
-            pop hl ; retrieve width/height
+            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
             inc e ; increase x
             djnz _fill_rectangle_attr_loop1  
             ret
 
 ;----------
 ; _bright_rectangle_attr
-; inputs: d = y, e = x, h = width, l = height
+; inputs: fill_rectangle_p
 ;----------
 _bright_rectangle_attr:
-            pop bc ; ix = ret address
-            pop de ; d = y, e = x
-            pop hl ; h = width, l = height
-            push bc ; ret address back on stack
-            ld b, l ; set counter 1 to height
-            ld c, d ; store initial y in c
+            ld c, (hl) ; c = y
+            inc hl
+            ld e, (hl) ; e = x
+            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
+            ld b, h ; set counter 1 to height
 _bright_rectangle_attr_loop1:
             ld d, c ; retrieve initial y
-            push hl ; store width/height
             push bc ; store counter 1
-            ld b, h ; set counter 2 to width                        
+            ld b, l ; set counter 2 to width                        
             push bc ; store counter 2
             call get_attr_address
             pop bc ; retrieve counter 2
@@ -177,7 +165,7 @@ _bright_rectangle_attr_loop2:
             inc d ; increase y
             djnz _bright_rectangle_attr_loop2                         
             pop bc ; retrieve counter 1
-            pop hl ; retrieve width/height
+            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
             inc e ; increase x
             djnz _bright_rectangle_attr_loop1  
             ret
@@ -198,6 +186,17 @@ SECTION bss_user
 org ATTR_BUFF ; TODO - why does this need to be hardcoded?
 PUBLIC _attr_buffer
 _attr_buffer: ds VIDEOATT_L
+
+SECTION bss_user
+PUBLIC _fill_rectangle_param
+_fill_rectangle_param:
+db %00000000 ;y
+db %00000000 ;x
+db %00000000 ;width 
+db %00000000 ;height
+db %00000000 ;paper
+db %00000000 ;ink
+dw $0000 ;char
 
 SECTION rodata_user
 udgs: 

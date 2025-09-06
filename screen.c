@@ -3,12 +3,7 @@
 #include "globals.h"
 #include "screen.h"
 #include <stdio.h>
-
-// imported from fill_rectangle.asm
-extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
-extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
-extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
-extern void copy_attr_buffer(void) __z88dk_callee; // copy attribute buffer into attribute memory
+#include "fill_rectangle.h"
 
 // timer
 unsigned char screen_colour_cycle;
@@ -17,10 +12,10 @@ unsigned char screen_colour;
 void screen_init(void)
 {    
     intrinsic_ei();
-    fill_rectangle_attr(0, 0, 24, 32, 7, 7);
+    fill_rectangle_attr_inline(0, 0, 24, 32, 7, 7);
     intrinsic_halt();
     copy_attr_buffer();
-    fill_rectangle_char(0, 0, 24, 32, " $"); // clear screen
+    fill_rectangle_char_inline(0, 0, 24, 32, " $"); // clear screen
     puts("\x16\x26\x01 The D.A.M. Labyrinth");
     puts("\x16\x26\x02 ====================");
     puts("\x16\x26\x04 You wake up in a dark and "); // max string length
@@ -42,18 +37,18 @@ void screen_init(void)
     puts("\x16\x01\x14 A dark and mysterious labyrinth.");
         
     // default text is black on white
-    fill_rectangle_attr(0, 0, 24, 32, BLACK, WHITE);
+    fill_rectangle_attr_inline(0, 0, 24, 32, BLACK, WHITE);
     // make the word green, green
-    fill_rectangle_attr(5, 24, 1, 3, GREEN, WHITE);
+    fill_rectangle_attr_inline(5, 24, 1, 3, GREEN, WHITE);
     // make the word gold, yellow
-    fill_rectangle_attr(7, 27, 1, 2, YELLOW, WHITE);
-    fill_rectangle_char(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "[$"); // fill with pipes    
+    fill_rectangle_attr_inline(7, 27, 1, 2, YELLOW, WHITE);
+    fill_rectangle_char_inline(0, 0, VISIBLE_BLOCKS * 2, VISIBLE_BLOCKS * 2, "[$"); // fill with pipes    
 }
 
 void screen_refresh(void)
 {    
     // cycle colour for the text "holes"
-    fill_rectangle_attr(6, 22, 1, 3, screen_colour, WHITE);
+    fill_rectangle_attr_inline(6, 22, 1, 3, screen_colour, WHITE);
     ++screen_colour;    
     if (screen_colour > WHITE)
     {
@@ -66,12 +61,12 @@ void screen_refresh(void)
 
 void screen_success(void)
 {    
-    fill_rectangle_char(6, 6, 5, 20, " $");
+    fill_rectangle_char_inline(6, 6, 5, 20, " $");
     puts("\x16\x0E\x08 Congratulations you have escaped the");
     puts("\x16\x0E\x09 dark and mysterious labyrinth! Press");
     puts("\x16\x0E\x0A Enter to try again...");
-    fill_rectangle_attr(6, 6, 5, 20, BLACK, WHITE);    
-    bright_rectangle_attr(6, 6, 5, 20);
+    fill_rectangle_attr_inline(6, 6, 5, 20, BLACK, WHITE);    
+    bright_rectangle_attr_inline(6, 6, 5, 20);
     intrinsic_halt();
     copy_attr_buffer();    
 }

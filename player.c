@@ -1,6 +1,8 @@
 #include "globals.h"
 #include "screen.h"
 #include "enemy.h"
+#include "fill_rectangle.h"
+#include "grid.h"
 
 // UDGs
 #define MAN_UP_HEAD "KL$"
@@ -20,14 +22,6 @@
 #define MAN_RIGHT_BODY2 "QR$"
 #define MAN_RIGHT_BODY3 "ST$"
 
-// imported from map.asm
-extern unsigned char get_map_tile(unsigned char x, unsigned char y) __z88dk_callee;
-extern void set_map_tile(unsigned char x, unsigned char y, unsigned int tile) __z88dk_callee;
-// imported from fill_rectangle.asm
-extern void fill_rectangle_char(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char *c) __z88dk_callee;
-extern void fill_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned char ink, unsigned char paper) __z88dk_callee;
-extern void bright_rectangle_attr(unsigned char x, unsigned char y, unsigned char height, unsigned char width) __z88dk_callee;
-
 static unsigned char player_background_1;
 static unsigned char player_background_2;
 static unsigned char player_frame;
@@ -39,122 +33,62 @@ static unsigned char player_get_tile(unsigned char x, unsigned char y)
     {
         return ENEMY;
     }
-    return (get_map_tile(x, y) & BG_BYTES);
+    return (get_grid_tile_inline(x, y) & BG_BYTES);
 }
 
-static inline void frame_draw_up(void)
+static inline void frame_draw_body(unsigned const char *body1, unsigned const char *body2, unsigned const char *body3)
 {
+    // opt - deconstruct fill_rectangle_attr_inline to skip vars
+    fill_rectangle_param.x = PLAYER_SQUARE + 1;
+    fill_rectangle_param.y = PLAYER_SQUARE;
+    fill_rectangle_param.height = 1;
+    fill_rectangle_param.width = 2;
     switch (player_frame)
     {
     default:
     case 0:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY1); // draw man
+        fill_rectangle_param.c = body1;
         player_frame = 1;
         break;
     case 1:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY2); // draw man
+        fill_rectangle_param.c = body2;
         player_frame = 2;
         break;
     case 2:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY1); // draw man
+        fill_rectangle_param.c = body1;
         player_frame = 3;
         break;
     case 3:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_UP_BODY3); // draw man
+        fill_rectangle_param.c = body3;
         player_frame = 0;
         break;
     }
+    fill_rectangle_char(&fill_rectangle_param);
 }
 
-static inline void frame_draw_down(void)
+// fills in all squares around the player
+static inline void player_map_background(unsigned const char *background)
 {
-    switch (player_frame)
-    {
-    default:
-    case 0:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY1); // draw man
-        player_frame = 1;
-        break;
-    case 1:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY2); // draw man
-        player_frame = 2;
-        break;
-    case 2:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY1); // draw man
-        player_frame = 3;
-        break;
-    case 3:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_DOWN_BODY3); // draw man
-        player_frame = 0;
-        break;
-    }
-}
-
-static inline void frame_draw_left(void)
-{
-    switch (player_frame)
-    {
-    default:
-    case 0:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY1); // draw man
-        player_frame = 1;
-        break;
-    case 1:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY2); // draw man
-        player_frame = 2;
-        break;
-    case 2:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY1); // draw man
-        player_frame = 3;
-        break;
-    case 3:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_LEFT_BODY3); // draw man
-        player_frame = 0;
-        break;
-    }
-}
-
-static inline void frame_draw_right(void)
-{
-    switch (player_frame)
-    {
-    default:
-    case 0:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY1); // draw man
-        player_frame = 1;
-        break;
-    case 1:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY2); // draw man
-        player_frame = 2;
-        break;
-    case 2:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY1); // draw man
-        player_frame = 3;
-        break;
-
-    case 3:
-        fill_rectangle_char(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 2, MAN_RIGHT_BODY3); // draw man
-        player_frame = 0;
-        break;
-    }
-}
-
-static inline void player_map_bars(void)
-{
-    // fills in all squares around the player
-    fill_rectangle_char(0, 0, PLAYER_SQUARE + 2, PLAYER_SQUARE, BAR_PATTERN);
-    fill_rectangle_char(0, PLAYER_SQUARE, PLAYER_SQUARE, PLAYER_SQUARE + 2, BAR_PATTERN);
-    fill_rectangle_char(PLAYER_SQUARE + 2, 0, PLAYER_SQUARE, PLAYER_SQUARE + 2, BAR_PATTERN);
-    fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE + 2, PLAYER_SQUARE + 2, PLAYER_SQUARE, BAR_PATTERN);
-}
-
-static inline void player_map_pipes(void)
-{
-    // fills in all squares around the player
-    fill_rectangle_char(0, 0, PLAYER_SQUARE + 2, PLAYER_SQUARE, PIPE_PATTERN);
-    fill_rectangle_char(0, PLAYER_SQUARE, PLAYER_SQUARE, PLAYER_SQUARE + 2, PIPE_PATTERN);
-    fill_rectangle_char(PLAYER_SQUARE + 2, 0, PLAYER_SQUARE, PLAYER_SQUARE + 2, PIPE_PATTERN);
-    fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE + 2, PLAYER_SQUARE + 2, PLAYER_SQUARE, PIPE_PATTERN);
+    // opt - deconstruct fill_rectangle_attr_inline to skip vars
+    fill_rectangle_param.x = 0;
+    fill_rectangle_param.y = 0;
+    fill_rectangle_param.height = PLAYER_SQUARE + 2;
+    fill_rectangle_param.width = PLAYER_SQUARE;
+    fill_rectangle_param.c = background;
+    fill_rectangle_char(&fill_rectangle_param);
+    fill_rectangle_param.y = PLAYER_SQUARE;
+    fill_rectangle_param.height = PLAYER_SQUARE;
+    fill_rectangle_param.width = PLAYER_SQUARE + 2;
+    fill_rectangle_char(&fill_rectangle_param);
+    fill_rectangle_param.x = PLAYER_SQUARE + 2;
+    fill_rectangle_param.y = 0;
+    fill_rectangle_param.height = PLAYER_SQUARE;
+    fill_rectangle_char(&fill_rectangle_param);
+    fill_rectangle_param.x = PLAYER_SQUARE;
+    fill_rectangle_param.y = PLAYER_SQUARE + 2;
+    fill_rectangle_param.height = PLAYER_SQUARE + 2;
+    fill_rectangle_param.width = PLAYER_SQUARE;
+    fill_rectangle_char(&fill_rectangle_param);
 }
 
 void player_draw_up(void)
@@ -169,13 +103,13 @@ void player_draw_up(void)
         {
         case DIR_RIGHT:
         case DIR_LEFT:
-            player_map_bars();
+            player_map_background(BAR_PATTERN);
             break;
         }
         player_facing = DIR_UP;
-        fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_UP_HEAD);
+        fill_rectangle_char_inline(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_UP_HEAD);
     }
-    frame_draw_up();
+    frame_draw_body(MAN_UP_BODY1, MAN_UP_BODY2, MAN_UP_BODY3);
 }
 
 void player_draw_right(void)
@@ -190,13 +124,13 @@ void player_draw_right(void)
         {
         case DIR_UP:
         case DIR_DOWN:
-            player_map_pipes();
+            player_map_background(PIPE_PATTERN);
             break;
         }
         player_facing = DIR_RIGHT;
-        fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_RIGHT_HEAD);
+        fill_rectangle_char_inline(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_RIGHT_HEAD);
     }
-    frame_draw_right();
+    frame_draw_body(MAN_RIGHT_BODY1, MAN_RIGHT_BODY2, MAN_RIGHT_BODY3);
 }
 
 void player_draw_down(void)
@@ -211,13 +145,13 @@ void player_draw_down(void)
         {
         case DIR_RIGHT:
         case DIR_LEFT:
-            player_map_bars();
+            player_map_background(BAR_PATTERN);
             break;
         }
         player_facing = DIR_DOWN;
-        fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_DOWN_HEAD);
+        fill_rectangle_char_inline(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_DOWN_HEAD);
     }
-    frame_draw_down();
+    frame_draw_body(MAN_DOWN_BODY1, MAN_DOWN_BODY2, MAN_DOWN_BODY3);
 }
 
 void player_draw_left(void)
@@ -232,13 +166,13 @@ void player_draw_left(void)
         {
         case DIR_UP:
         case DIR_DOWN:
-            player_map_pipes();
+            player_map_background(PIPE_PATTERN);
             break;
         }
         player_facing = DIR_LEFT;
-        fill_rectangle_char(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_LEFT_HEAD);
+        fill_rectangle_char_inline(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_LEFT_HEAD);
     }
-    frame_draw_left();
+    frame_draw_body(MAN_LEFT_BODY1, MAN_LEFT_BODY2, MAN_LEFT_BODY3);
 }
 
 void player_draw_background_vertical(void)
@@ -257,10 +191,24 @@ void player_draw_background_vertical(void)
     }
     if (player_facing == DIR_UP)
     {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, pb_2, PLAYER_BODY_1);
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_2);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_2);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_1, PLAYER_BODY_1);
+        // opt - deconstruct fill_rectangle_attr_inline to skip vars
+        fill_rectangle_param.x = PLAYER_SQUARE;
+        fill_rectangle_param.y = PLAYER_SQUARE;
+        fill_rectangle_param.height = 1;
+        fill_rectangle_param.width = 1;
+        fill_rectangle_param.ink = pb_2;
+        fill_rectangle_param.paper = PLAYER_BODY_1;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.y = PLAYER_SQUARE + 1;
+        fill_rectangle_param.paper = PLAYER_BODY_2;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.x = PLAYER_SQUARE + 1;
+        fill_rectangle_param.y = PLAYER_SQUARE;
+        fill_rectangle_param.ink = pb_1;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.y = PLAYER_SQUARE + 1;
+        fill_rectangle_param.paper = PLAYER_BODY_1;
+        fill_rectangle_attr(&fill_rectangle_param);
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
@@ -272,9 +220,23 @@ void player_draw_background_vertical(void)
     }
     else
     {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, pb_2, PLAYER_FACE);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_1);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_1, PLAYER_BODY_2);
+        // opt - deconstruct fill_rectangle_attr_inline to skip vars
+        fill_rectangle_param.x = PLAYER_SQUARE;
+        fill_rectangle_param.y = PLAYER_SQUARE;
+        fill_rectangle_param.height = 1;
+        fill_rectangle_param.width = 2;
+        fill_rectangle_param.ink = pb_2;
+        fill_rectangle_param.paper = PLAYER_FACE;
+        fill_rectangle_attr(&fill_rectangle_param);        
+        fill_rectangle_param.x = PLAYER_SQUARE + 1;
+        fill_rectangle_param.width = 1;
+        fill_rectangle_param.ink = pb_1;
+        fill_rectangle_param.paper = PLAYER_BODY_1;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.y = PLAYER_SQUARE + 1;
+        fill_rectangle_param.width = 1;
+        fill_rectangle_param.paper = PLAYER_BODY_2;
+        fill_rectangle_attr(&fill_rectangle_param);
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
@@ -288,11 +250,11 @@ void player_draw_background_vertical(void)
     if (is_player_pushing || is_player_pulling)
     {
         // draw crate next to player
-        fill_rectangle_attr(block_loc, PLAYER_SQUARE, 2, 2, CRATE, CRATE);
+        fill_rectangle_attr_inline(block_loc, PLAYER_SQUARE, 2, 2, CRATE, CRATE);
     }
 
     // draw torchlight
-    bright_rectangle_attr(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
+    bright_rectangle_attr_inline(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
 }
 
 void player_draw_background_horizontal(void)
@@ -311,10 +273,26 @@ void player_draw_background_horizontal(void)
     }
     if (player_facing == DIR_LEFT)
     {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_FACE);
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_1);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_2);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_2);
+        // opt - deconstruct fill_rectangle_attr_inline to skip vars
+        fill_rectangle_param.x = PLAYER_SQUARE;
+        fill_rectangle_param.y = PLAYER_SQUARE;
+        fill_rectangle_param.height = 1;
+        fill_rectangle_param.width = 1;
+        fill_rectangle_param.ink = pb_1;
+        fill_rectangle_param.paper = PLAYER_FACE;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.y = PLAYER_SQUARE + 1;        
+        fill_rectangle_param.ink = pb_2;
+        fill_rectangle_param.paper = PLAYER_BODY_1;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.x = PLAYER_SQUARE + 1;
+        fill_rectangle_param.y = PLAYER_SQUARE;
+        fill_rectangle_param.ink = pb_1;
+        fill_rectangle_param.paper = PLAYER_BODY_2;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.y = PLAYER_SQUARE + 1;
+        fill_rectangle_param.ink = pb_2;
+        fill_rectangle_attr(&fill_rectangle_param);
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
@@ -326,10 +304,26 @@ void player_draw_background_horizontal(void)
     }
     else
     {
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_2);
-        fill_rectangle_attr(PLAYER_SQUARE, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_FACE);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE, 1, 1, pb_1, PLAYER_BODY_1);
-        fill_rectangle_attr(PLAYER_SQUARE + 1, PLAYER_SQUARE + 1, 1, 1, pb_2, PLAYER_BODY_1);
+        // opt - deconstruct fill_rectangle_attr_inline to skip vars
+        fill_rectangle_param.x = PLAYER_SQUARE;
+        fill_rectangle_param.y = PLAYER_SQUARE;
+        fill_rectangle_param.height = 1;
+        fill_rectangle_param.width = 1;
+        fill_rectangle_param.ink = pb_1;
+        fill_rectangle_param.paper = PLAYER_BODY_2;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.y = PLAYER_SQUARE + 1;
+        fill_rectangle_param.ink = pb_2;
+        fill_rectangle_param.paper = PLAYER_FACE;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.x = PLAYER_SQUARE + 1;
+        fill_rectangle_param.y = PLAYER_SQUARE;
+        fill_rectangle_param.ink = pb_1;
+        fill_rectangle_param.paper = PLAYER_BODY_1;
+        fill_rectangle_attr(&fill_rectangle_param);
+        fill_rectangle_param.y = PLAYER_SQUARE + 1;
+        fill_rectangle_param.ink = pb_2;
+        fill_rectangle_attr(&fill_rectangle_param);
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
@@ -343,11 +337,11 @@ void player_draw_background_horizontal(void)
     if (is_player_pushing || is_player_pulling)
     {
         // draw crate next to player
-        fill_rectangle_attr(PLAYER_SQUARE, block_loc, 2, 2, CRATE, CRATE);
+        fill_rectangle_attr_inline(PLAYER_SQUARE, block_loc, 2, 2, CRATE, CRATE);
     }
 
     // draw torchlight
-    bright_rectangle_attr(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
+    bright_rectangle_attr_inline(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
 }
 
 void player_draw_done(void)
@@ -357,7 +351,7 @@ void player_draw_done(void)
     {
         for (unsigned char y = player_y + 2; y >= player_y - 2 && y < 255; y--)
         {
-            set_map_tile(x, y, get_map_tile(x, y) | SEEN_BYTE);
+            set_grid_tile_inline(x, y, get_grid_tile_inline(x, y) | SEEN_BYTE);
         }
     }
     // reset all backgrounds and next tiles to current tile

@@ -1,4 +1,4 @@
-#pragma output CRT_ORG_CODE = 32768
+#pragma output CRT_ORG_CODE = 33536 // after attribute buffer
 
 /*
 NOTE - We are using newlib which defines sections for our ASM, not using these as appropriate seems to cause strange issues
