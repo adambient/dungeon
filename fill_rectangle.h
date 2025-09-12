@@ -15,7 +15,6 @@ typedef struct {
 extern fill_rectangle_p fill_rectangle_param;
 
 // imported from fill_rectangle.asm
-extern unsigned char *attr_buffer;
 extern void fill_rectangle_char(fill_rectangle_p *p) __z88dk_fastcall;
 static inline void fill_rectangle_char_inline(unsigned char x, unsigned char y, unsigned char height, unsigned char width, unsigned const char *c)
 {
@@ -50,7 +49,7 @@ extern void copy_attr_buffer(void) __z88dk_callee; // copy attribute buffer into
 // gets the memory address of the attribute buffer so it can be populated incrementally which is faster than using the index
 static inline unsigned char *fill_rectangle_buffer_address(void)
 {
-    return (unsigned char *)(&attr_buffer);
+    return (unsigned char *)(0x8000);
 }
 
 #endif

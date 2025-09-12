@@ -1,9 +1,6 @@
 VIDEOATT: equ $5800 ; address of attribute RAM
 VIDEOATT_L: equ $0300 ; length of attribute RAM
-
-org $8000 ; hard coded attribute buffer address to start of uncontended memory, just before CRT_ORG_CODE ($8300)
-PUBLIC _attr_buffer
-_attr_buffer: ds VIDEOATT_L
+ATTR_BUFF: equ $8000 ; hard coded attribute buffer address to start of uncontended memory, just before CRT_ORG_CODE ($8300)
 
 SECTION code_user
 
@@ -90,7 +87,7 @@ _fill_rectangle_char_loop3:
 ; outputs: hl = location of attribute (buffer) address
 ;----------
 get_attr_address:
-            ld bc, _attr_buffer            
+            ld bc, ATTR_BUFF            
             ld a,e
             rrca
             rrca
@@ -180,7 +177,7 @@ _bright_rectangle_attr_loop2:
 ;----------
 _copy_attr_buffer:
             ld de, VIDEOATT ; target is attribute memory
-            ld hl, _attr_buffer ; source is attribute buffer
+            ld hl, ATTR_BUFF ; source is attribute buffer
             ld bc, VIDEOATT_L ; length is size of attribute memory
             ldir ; copy
             ret
