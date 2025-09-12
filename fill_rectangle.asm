@@ -1,6 +1,9 @@
 VIDEOATT: equ $5800 ; address of attribute RAM
 VIDEOATT_L: equ $0300 ; length of attribute RAM
-ATTR_BUFF: equ 32768 ; hard coded attribute buffer address to start of uncontended memory, just before CRT_ORG_CODE
+
+org $8000 ; hard coded attribute buffer address to start of uncontended memory, just before CRT_ORG_CODE ($8300)
+PUBLIC _attr_buffer
+_attr_buffer: ds VIDEOATT_L
 
 SECTION code_user
 
@@ -181,11 +184,6 @@ _copy_attr_buffer:
             ld bc, VIDEOATT_L ; length is size of attribute memory
             ldir ; copy
             ret
-
-SECTION bss_user
-org ATTR_BUFF ; TODO - why does this need to be hardcoded?
-PUBLIC _attr_buffer
-_attr_buffer: ds VIDEOATT_L
 
 SECTION bss_user
 PUBLIC _fill_rectangle_param
