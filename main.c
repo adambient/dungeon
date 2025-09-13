@@ -32,9 +32,6 @@ void init(void)
 
 void main(void)
 {
-    // banking test
-    printf("Calling a function in bank 3 with a parameter of 24.\n");
-    exec_far_arg(bank3_function, 24, 3);
     exec_far(bank3_screen_init, 3);  
     init();
     do
