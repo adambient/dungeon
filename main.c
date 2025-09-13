@@ -1,4 +1,6 @@
 #pragma output CRT_ORG_CODE = 0x8300 // after attribute buffer
+// place the stack pointer at the top of non contented non switched memory to avoid crashing (default is FF58 so is switched out when banking)
+#pragma output REGISTER_SP = 0xBFE0
 
 /*
 NOTE - We are using newlib which defines sections for our ASM, not using these as appropriate seems to cause strange issues
@@ -15,10 +17,13 @@ SECTION bss_user: assign zero initial data to this section
 #include <input.h>
 #include "beeps.h"
 #include "enemy.h"
+#include "bank3.h"
+#include "banker.h"
+#include <stdio.h>
 
 void init(void)
-{        
-    map_init();        
+{
+    exec_far(bank3_map_init, 3);
     player_x = MAP_SIZE - 1;
     player_y = 1;    
     player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this    
@@ -26,8 +31,11 @@ void init(void)
 }
 
 void main(void)
-{    
-    screen_init();    
+{
+    // banking test
+    printf("Calling a function in bank 3 with a parameter of 24.\n");
+    exec_far_arg(bank3_function, 24, 3);
+    exec_far(bank3_screen_init, 3);  
     init();
     do
     {
@@ -99,14 +107,14 @@ void main(void)
             if ((player_x == 1 && (player_y == (MAP_SIZE - 2) || player_y == 1)) ||
                 (player_x == (MAP_SIZE - 2) && (player_y == (MAP_SIZE - 2) || player_y == 1)))
             {
-                screen_success();
+                exec_far(bank3_screen_success, 3);
                 beeps_winner();
                 do
                 {
                 } while (in_key_pressed(IN_KEY_SCANCODE_ENTER) !=0xFFFF);
 
                 player_facing = DIR_NONE;
-                screen_init();
+                exec_far(bank3_screen_init, 3);
                 init();
             }
         }

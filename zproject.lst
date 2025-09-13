@@ -1,3 +1,6 @@
+bank3.o
+banker.asm
+banker.c
 fill_rectangle.asm
 grid.asm
 globals.c

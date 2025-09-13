@@ -1,3 +1,7 @@
+DEFADD EQU 23563 ; location of parameters passed by BASIC
+BANK_M EQU $5b5c ; which bank is currently being used
+BANK_P EQU $7ffd ; port for paging banks
+
 ; -------------------------------------------------------------------
 ; AY Chip frequencies to be loaded in register 0 (lhs - fine tuning) then register 1 (rhs - course tuning)
 ; NOTE - remember Z80 is little endian so when reading bytes the rhs is read first

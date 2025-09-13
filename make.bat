@@ -1,16 +1,24 @@
 REM create basic loader .tap
-.\basic\bas2tap.exe .\basic\loader.bas -a loader.tap
-REM compile source into binary
-REM zcc +zx -vn -m -startup=5 -clib=sdcc_iy -SO3 --max-allocs-per-node200000 @zproject.lst -o main.bin
-zcc +zx -vn -m -startup=5 -clib=sdcc_iy @zproject.lst -o main.bin
-REM create code .tap file
-z88dk-appmake +zx -b main_CODE.bin --org 33536 --noloader --blockname code -o code.tap
+.\basic\zmakebas -l -a @begin -o loader.build.tap .\basic\loader.bas
+
 REM create pasmo .tap file
-.\pasmo\pasmo.exe --tap .\pasmo\main.asm pasmo.tap
-REM cat .tap files to create loadable .tap
-type loader.tap pasmo.tap code.tap > labyrinth.tap
+.\pasmo\pasmo.exe --tap .\pasmo\main.asm pasmo.build.tap
+
+REM build o files using segments
+zcc +zx -vn -m -startup=31 -clib=sdcc_iy bank3.c --codesegBANK_3 --constsegBANK_3 --datasegBANK_3 -c
+
+REM build output binaries
+zcc +zx -vn -m -startup=5 -clib=sdcc_iy @zproject.lst -o build
+
+REM build .tap files to load using loader
+z88dk-appmake +zx -b build_BANK_3.bin --org 49152 --noloader --blockname bank3 -o bank3.build.tap
+z88dk-appmake +zx -b build_CODE.bin --org 32768 --noloader --blockname clang -o main.build.tap
+
+REM create final .tap file
+type loader.build.tap pasmo.build.tap main.build.tap bank3.build.tap > labyrinth.tap
+
 REM tidy up
-del loader.tap
-del code.tap
-del pasmo.tap
 del *.bin
+del *.o
+del *.build.tap
+del build
