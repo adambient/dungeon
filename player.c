@@ -35,7 +35,8 @@ static unsigned char player_get_tile(unsigned char x, unsigned char y)
     }
     grid.x = x;
     grid.y = y;
-    return (grid_get(&grid) & BG_BYTES);
+    grid_get();
+    return (grid.tile & BG_BYTES);
 }
 
 static inline void frame_draw_body(unsigned const char *body1, unsigned const char *body2, unsigned const char *body3)
@@ -65,7 +66,7 @@ static inline void frame_draw_body(unsigned const char *body1, unsigned const ch
         player_frame = 0;
         break;
     }
-    gfx_char(&gfx);
+    gfx_char();
 }
 
 // fills in all squares around the player
@@ -77,20 +78,20 @@ static inline void player_map_background(unsigned const char *background)
     gfx.height = PLAYER_SQUARE + 2;
     gfx.width = PLAYER_SQUARE;
     gfx.c = background;
-    gfx_char(&gfx);
+    gfx_char();
     gfx.y = PLAYER_SQUARE;
     gfx.height = PLAYER_SQUARE;
     gfx.width = PLAYER_SQUARE + 2;
-    gfx_char(&gfx);
+    gfx_char();
     gfx.x = PLAYER_SQUARE + 2;
     gfx.y = 0;
     gfx.height = PLAYER_SQUARE;
-    gfx_char(&gfx);
+    gfx_char();
     gfx.x = PLAYER_SQUARE;
     gfx.y = PLAYER_SQUARE + 2;
     gfx.height = PLAYER_SQUARE + 2;
     gfx.width = PLAYER_SQUARE;
-    gfx_char(&gfx);
+    gfx_char();
 }
 
 void player_draw_up(void)
@@ -114,7 +115,7 @@ void player_draw_up(void)
         gfx.height = 1;
         gfx.width = 2;
         gfx.c = MAN_UP_HEAD;
-        gfx_char(&gfx);
+        gfx_char();
     }
     frame_draw_body(MAN_UP_BODY1, MAN_UP_BODY2, MAN_UP_BODY3);
 }
@@ -140,7 +141,7 @@ void player_draw_right(void)
         gfx.height = 1;
         gfx.width = 2;
         gfx.c = MAN_RIGHT_HEAD;
-        gfx_char(&gfx);
+        gfx_char();
     }
     frame_draw_body(MAN_RIGHT_BODY1, MAN_RIGHT_BODY2, MAN_RIGHT_BODY3);
 }
@@ -166,7 +167,7 @@ void player_draw_down(void)
         gfx.height = 1;
         gfx.width = 2;
         gfx.c = MAN_DOWN_HEAD;
-        gfx_char(&gfx);
+        gfx_char();
     }
     frame_draw_body(MAN_DOWN_BODY1, MAN_DOWN_BODY2, MAN_DOWN_BODY3);
 }
@@ -192,7 +193,7 @@ void player_draw_left(void)
         gfx.height = 1;
         gfx.width = 2;
         gfx.c = MAN_LEFT_HEAD;
-        gfx_char(&gfx);
+        gfx_char();
     }
     frame_draw_body(MAN_LEFT_BODY1, MAN_LEFT_BODY2, MAN_LEFT_BODY3);
 }
@@ -220,17 +221,17 @@ void player_draw_background_vertical(void)
         gfx.width = 1;
         gfx.ink = pb_2;
         gfx.paper = PLAYER_BODY_1;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.y = PLAYER_SQUARE + 1;
         gfx.paper = PLAYER_BODY_2;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.x = PLAYER_SQUARE + 1;
         gfx.y = PLAYER_SQUARE;
         gfx.ink = pb_1;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.y = PLAYER_SQUARE + 1;
         gfx.paper = PLAYER_BODY_1;
-        gfx_attr(&gfx);
+        gfx_attr();
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
@@ -249,16 +250,16 @@ void player_draw_background_vertical(void)
         gfx.width = 2;
         gfx.ink = pb_2;
         gfx.paper = PLAYER_FACE;
-        gfx_attr(&gfx);        
+        gfx_attr();        
         gfx.x = PLAYER_SQUARE + 1;
         gfx.width = 1;
         gfx.ink = pb_1;
         gfx.paper = PLAYER_BODY_1;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.y = PLAYER_SQUARE + 1;
         gfx.width = 1;
         gfx.paper = PLAYER_BODY_2;
-        gfx_attr(&gfx);
+        gfx_attr();
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
@@ -278,7 +279,7 @@ void player_draw_background_vertical(void)
         gfx.width = 2;
         gfx.ink = CRATE;
         gfx.paper = CRATE;
-        gfx_attr(&gfx);
+        gfx_attr();
     }
 
     // draw torchlight
@@ -286,7 +287,7 @@ void player_draw_background_vertical(void)
     gfx.y = PLAYER_SQUARE - 1;
     gfx.height = 4;
     gfx.width = 4;
-    gfx_bright(&gfx);
+    gfx_bright();
 }
 
 void player_draw_background_horizontal(void)
@@ -312,19 +313,19 @@ void player_draw_background_horizontal(void)
         gfx.width = 1;
         gfx.ink = pb_1;
         gfx.paper = PLAYER_FACE;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.y = PLAYER_SQUARE + 1;        
         gfx.ink = pb_2;
         gfx.paper = PLAYER_BODY_1;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.x = PLAYER_SQUARE + 1;
         gfx.y = PLAYER_SQUARE;
         gfx.ink = pb_1;
         gfx.paper = PLAYER_BODY_2;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.y = PLAYER_SQUARE + 1;
         gfx.ink = pb_2;
-        gfx_attr(&gfx);
+        gfx_attr();
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
@@ -343,19 +344,19 @@ void player_draw_background_horizontal(void)
         gfx.width = 1;
         gfx.ink = pb_1;
         gfx.paper = PLAYER_BODY_2;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.y = PLAYER_SQUARE + 1;
         gfx.ink = pb_2;
         gfx.paper = PLAYER_FACE;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.x = PLAYER_SQUARE + 1;
         gfx.y = PLAYER_SQUARE;
         gfx.ink = pb_1;
         gfx.paper = PLAYER_BODY_1;
-        gfx_attr(&gfx);
+        gfx_attr();
         gfx.y = PLAYER_SQUARE + 1;
         gfx.ink = pb_2;
-        gfx_attr(&gfx);
+        gfx_attr();
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
@@ -375,7 +376,7 @@ void player_draw_background_horizontal(void)
         gfx.width = 2;
         gfx.ink = CRATE;
         gfx.paper = CRATE;
-        gfx_attr(&gfx);
+        gfx_attr();
     }
 
     // draw torchlight
@@ -383,7 +384,7 @@ void player_draw_background_horizontal(void)
     gfx.y = PLAYER_SQUARE - 1;
     gfx.height = 4;
     gfx.width = 4;
-    gfx_bright(&gfx);
+    gfx_bright();
 }
 
 void player_draw_done(void)
@@ -393,8 +394,9 @@ void player_draw_done(void)
     {
         for (grid.y = player_y + 2; grid.y >= player_y - 2 && grid.y < 255; grid.y--)
         {
-            grid.tile = grid_get(&grid) | SEEN_BYTE;
-            grid_set(&grid);
+            grid_get();
+            grid.tile = grid.tile | SEEN_BYTE;
+            grid_set();
         }
     }
     // reset all backgrounds and next tiles to current tile

@@ -18,7 +18,7 @@ void screen_refresh(void)
     gfx.width = 3;
     gfx.ink = screen_colour;
     gfx.paper = WHITE;
-    gfx_attr(&gfx);
+    gfx_attr();
     ++screen_colour;    
     if (screen_colour > WHITE)
     {

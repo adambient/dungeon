@@ -12,9 +12,7 @@ PUBLIC _grid_set
 ; outputs: hl = grid value
 ;----------
 _grid_get:
-            ld b, (hl) ; b = x
-            inc hl
-            ld c, (hl) ; c = y
+            ld bc, (_grid) ; b = x, c = y
             call load_cell_location            
             ld a, (hl) ; load 8 bit value into a
             bit $00, c ; is x even?
@@ -26,8 +24,7 @@ _grid_get:
             rra ; rotate the last 4 bits to the first 4
 grid_get_end:
             and $0f ; blank out the last 4 bits
-            ld h, $00
-            ld l, a ; hl = grid value
+            ld (_grid+2), a ; set grid value
             ret
 
 ;----------
@@ -35,11 +32,8 @@ grid_get_end:
 ; inputs: grid
 ;----------
 _grid_set:
-            ld b, (hl) ; b = x
-            inc hl
-            ld c, (hl) ; c = y
-            inc hl
-            ld a, (hl) ; a = grid value             
+            ld bc, (_grid) ; b = x, c = y
+            ld a, (_grid+2) ; a = grid value             
             ex af, af' ; store a
             call load_cell_location ; load cell location bc into hl
             ex af, af' ; retrieve a            
@@ -92,8 +86,8 @@ SECTION bss_user
 PUBLIC _grid
 
 _grid:
-db %00000000 ;x
 db %00000000 ;y
+db %00000000 ;x
 db %00000000 ;tile
 
 _map: ds MAP_SIZE*(COMPRESSED_MAP_WIDTH + 1)

@@ -3,15 +3,15 @@
 
 // args for subroutines
 typedef struct {
-    unsigned char x;
     unsigned char y;
+    unsigned char x;
     unsigned char tile;
-} grid_p;
+} grid_t;
 
-extern grid_p grid;
+extern grid_t grid;
 
 // imported from grid.asm
-extern unsigned char grid_get(grid_p *p) __z88dk_fastcall;
-extern void grid_set(grid_p *p) __z88dk_fastcall;
+extern void grid_get(void) __z88dk_callee;
+extern void grid_set(void) __z88dk_callee;
 
 #endif

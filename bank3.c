@@ -46,14 +46,14 @@ void bank3_screen_init(void)
     gfx.width = 32;
     gfx.ink = WHITE;
     gfx.paper = WHITE;
-    gfx_attr(&gfx);
+    gfx_attr();
     intrinsic_halt();
     gfx_flush();
     // clear screen
     gfx.height = 24;
     gfx.width = 32;
     gfx.c = " $";
-    gfx_char(&gfx); 
+    gfx_char(); 
     puts("\x16\x26\x01 The D.A.M. Labyrinth");
     puts("\x16\x26\x02 ====================");
     puts("\x16\x26\x04 You wake up in a dark and "); // max string length
@@ -81,25 +81,25 @@ void bank3_screen_init(void)
     gfx.width = 32;
     gfx.ink = BLACK;
     gfx.paper = WHITE;
-    gfx_attr(&gfx);
+    gfx_attr();
     // fill the playable area with pipes
     gfx.height = VISIBLE_BLOCKS * 2;
     gfx.width = VISIBLE_BLOCKS * 2;
     gfx.c = "[$";
-    gfx_char(&gfx); 
+    gfx_char(); 
     // make the word green, green
     gfx.x = 5;
     gfx.y = 24;
     gfx.height = 1;
     gfx.width = 3;
     gfx.ink = GREEN;
-    gfx_attr(&gfx);
+    gfx_attr();
     // make the word gold, yellow
     gfx.x = 7;
     gfx.y = 27;
     gfx.width = 2;
     gfx.ink = YELLOW;
-    gfx_attr(&gfx);
+    gfx_attr();
 }
 
 void bank3_screen_success(void)
@@ -109,14 +109,14 @@ void bank3_screen_success(void)
     gfx.height = 5;
     gfx.width = 20;
     gfx.c = " $";
-    gfx_char(&gfx);
+    gfx_char();
     puts("\x16\x0E\x08 Congratulations you have escaped the");
     puts("\x16\x0E\x09 dark and mysterious labyrinth! Press");
     puts("\x16\x0E\x0A Enter to try again...");
     gfx.ink = BLACK;
     gfx.paper = WHITE;
-    gfx_attr(&gfx);
-    gfx_bright(&gfx);
+    gfx_attr();
+    gfx_bright();
     intrinsic_halt();
     gfx_flush();    
 }
@@ -165,7 +165,7 @@ void bank3_map_init(void)
                     }
                 }
                 grid.y = i + (8 * y);
-                grid_set(&grid);
+                grid_set();
             }
         }
     }

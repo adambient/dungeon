@@ -16,8 +16,8 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
     {  
         grid.x = x;
         grid.y = y;
-        unsigned char tile = grid_get(&grid);
-        if ((tile & SEEN_BYTE) == SEEN_BYTE)
+        grid_get();
+        if ((grid.tile & SEEN_BYTE) == SEEN_BYTE)
         {
             if (enemy_is_located(x, y))
             {
@@ -32,8 +32,8 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
                     return (CARPET_1 | (screen_colour & 0b00000001));
                 }
             }
-            tile = tile & BG_BYTES;
-            switch (tile)
+            grid.tile = grid.tile & BG_BYTES;
+            switch (grid.tile)
             {
             case TARGET:
                 return screen_colour;
@@ -41,7 +41,7 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
                 // cycle bettween yellow and white
                 return (YELLOW | (screen_colour & 0b00000001));
             default:
-                return tile;
+                return grid.tile;
             }
         }
     }
@@ -115,7 +115,7 @@ static void row_draw_horizontal(signed char x, unsigned char y)
 
 static void map_draw_vertical(void)
 {
-    attr_address = gfx_buffer(); // reset shared attr_address
+    attr_address = (unsigned char *)(ATTR_BUFF); // reset shared attr_address
     unsigned char sub_frame = 0;
     switch (map_frame)
     {
@@ -149,7 +149,7 @@ static void map_draw_vertical(void)
 
 static void map_draw_horizontal(void)
 {
-    attr_address = gfx_buffer(); // reset shared attr_address
+    attr_address = (unsigned char *)(ATTR_BUFF); // reset shared attr_address
     unsigned char y = player_y - MAP_OFFSET;
     if (map_frame == 2)
     {
@@ -166,7 +166,8 @@ static unsigned char can_move_check(signed char dx, signed char dy)
 {
     grid.x = player_x + dx;
     grid.y = player_y + dy;
-    unsigned char tile = grid_get(&grid);
+    grid_get();
+    unsigned char tile = grid.tile;
     if ((tile & BG_BYTES) == WALL)
     {
         // tile is inaccessible
@@ -183,7 +184,8 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         // we are pushing so check next tile
         grid.x = grid.x + dx;
         grid.y = grid.y + dy;
-        unsigned char next_tile = grid_get(&grid) & BG_BYTES;
+        grid_get();
+        unsigned char next_tile = grid.tile & BG_BYTES;
         if (next_tile == WALL || next_tile == CRATE || next_tile == PLACED || enemy_is_located(player_x + dx + dx, player_y + dy + dy))
         {
             // next tile is blocked so cannot move
@@ -203,7 +205,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
             // replace tile in front
             grid.tile = (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE;
         }
-        grid_set(&grid);
+        grid_set();
         is_player_pushing = 1;
         beeps_pushing();
         return 1;
@@ -213,7 +215,8 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         // we're not pushing but we might be pulling
         grid.x = player_x - dx;
         grid.y = player_y - dy;
-        tile = grid_get(&grid);
+        grid_get();
+        tile = grid.tile;
         is_player_pushing = 0;
         if ((tile & BG_BYTES) == CRATE || (tile & BG_BYTES) == PLACED)
         {
@@ -229,7 +232,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
                 // replace tile behind
                 grid.tile = (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE;
             }
-            grid_set(&grid);
+            grid_set();
             is_player_pulling = 1;
             beeps_pushing();
             return 1;
@@ -256,7 +259,8 @@ static void map_move_done(signed char dx, signed char dy)
         is_player_pushing = 0;
         grid.x = player_x + dx;
         grid.y = player_y + dy;
-        unsigned char next_tile = grid_get(&grid);
+        grid_get();
+        unsigned char next_tile = grid.tile;
         if ((next_tile & BG_BYTES) == TARGET)
         {
             // target location
@@ -268,7 +272,7 @@ static void map_move_done(signed char dx, signed char dy)
         {
             grid.tile = CRATE | SEEN_BYTE;
         }
-        grid_set(&grid);
+        grid_set();
     }
 }
 
@@ -286,7 +290,7 @@ static void map_refresh_vertical(void)
         gfx.width = VISIBLE_AREA;
         gfx.ink = 0;
         gfx.paper = 7;
-        gfx_attr(&gfx);
+        gfx_attr();
     }
     player_draw_background_vertical();
     screen_refresh();
@@ -306,7 +310,7 @@ static void map_refresh_horizontal(void)
         gfx.width = VISIBLE_AREA;
         gfx.ink = 0;
         gfx.paper = 7;
-        gfx_attr(&gfx);
+        gfx_attr();
     }
     player_draw_background_horizontal();
     screen_refresh();

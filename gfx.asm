@@ -11,9 +11,10 @@ PUBLIC _gfx_flush
 
 ;----------
 ; _gfx_char
-; inputs: gfx_p
+; inputs: gfx_t
 ;----------
 _gfx_char:
+            ld hl, _gfx
             ld c, (hl) ; c = y
             inc hl
             ld e, (hl) ; e = x
@@ -106,9 +107,10 @@ get_attr_address:
 
 ;----------
 ; _gfx_attr
-; inputs: gfx_p
+; inputs: gfx_t
 ;----------
 _gfx_attr:
+            ld hl, _gfx
             ld c, (hl) ; c = y
             inc hl
             ld e, (hl) ; e = x
@@ -142,9 +144,10 @@ _gfx_attr_loop2:
 
 ;----------
 ; _gfx_bright
-; inputs: gfx_p
+; inputs: gfx_t
 ;----------
 _gfx_bright:
+            ld hl, _gfx
             ld c, (hl) ; c = y
             inc hl
             ld e, (hl) ; e = x
