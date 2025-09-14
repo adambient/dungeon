@@ -1,7 +1,7 @@
 bank3.o
 banker.asm
 banker.c
-fill_rectangle.asm
+gfx.asm
 grid.asm
 globals.c
 player.c

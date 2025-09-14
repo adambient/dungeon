@@ -1,7 +1,7 @@
 #include "globals.h"
 #include "screen.h"
 #include "enemy.h"
-#include "fill_rectangle.h"
+#include "gfx.h"
 #include "grid.h"
 
 // UDGs
@@ -33,62 +33,64 @@ static unsigned char player_get_tile(unsigned char x, unsigned char y)
     {
         return ENEMY;
     }
-    return (get_grid_tile_inline(x, y) & BG_BYTES);
+    grid.x = x;
+    grid.y = y;
+    return (grid_get(&grid) & BG_BYTES);
 }
 
 static inline void frame_draw_body(unsigned const char *body1, unsigned const char *body2, unsigned const char *body3)
 {
-    // opt - deconstruct fill_rectangle_attr_inline to skip vars
-    fill_rectangle_param.x = PLAYER_SQUARE + 1;
-    fill_rectangle_param.y = PLAYER_SQUARE;
-    fill_rectangle_param.height = 1;
-    fill_rectangle_param.width = 2;
+    // opt - deconstruct gfx_attr_inline to skip vars
+    gfx.x = PLAYER_SQUARE + 1;
+    gfx.y = PLAYER_SQUARE;
+    gfx.height = 1;
+    gfx.width = 2;
     switch (player_frame)
     {
     default:
     case 0:
-        fill_rectangle_param.c = body1;
+        gfx.c = body1;
         player_frame = 1;
         break;
     case 1:
-        fill_rectangle_param.c = body2;
+        gfx.c = body2;
         player_frame = 2;
         break;
     case 2:
-        fill_rectangle_param.c = body1;
+        gfx.c = body1;
         player_frame = 3;
         break;
     case 3:
-        fill_rectangle_param.c = body3;
+        gfx.c = body3;
         player_frame = 0;
         break;
     }
-    fill_rectangle_char(&fill_rectangle_param);
+    gfx_char(&gfx);
 }
 
 // fills in all squares around the player
 static inline void player_map_background(unsigned const char *background)
 {
-    // opt - deconstruct fill_rectangle_attr_inline to skip vars
-    fill_rectangle_param.x = 0;
-    fill_rectangle_param.y = 0;
-    fill_rectangle_param.height = PLAYER_SQUARE + 2;
-    fill_rectangle_param.width = PLAYER_SQUARE;
-    fill_rectangle_param.c = background;
-    fill_rectangle_char(&fill_rectangle_param);
-    fill_rectangle_param.y = PLAYER_SQUARE;
-    fill_rectangle_param.height = PLAYER_SQUARE;
-    fill_rectangle_param.width = PLAYER_SQUARE + 2;
-    fill_rectangle_char(&fill_rectangle_param);
-    fill_rectangle_param.x = PLAYER_SQUARE + 2;
-    fill_rectangle_param.y = 0;
-    fill_rectangle_param.height = PLAYER_SQUARE;
-    fill_rectangle_char(&fill_rectangle_param);
-    fill_rectangle_param.x = PLAYER_SQUARE;
-    fill_rectangle_param.y = PLAYER_SQUARE + 2;
-    fill_rectangle_param.height = PLAYER_SQUARE + 2;
-    fill_rectangle_param.width = PLAYER_SQUARE;
-    fill_rectangle_char(&fill_rectangle_param);
+    // opt - deconstruct gfx_attr_inline to skip vars
+    gfx.x = 0;
+    gfx.y = 0;
+    gfx.height = PLAYER_SQUARE + 2;
+    gfx.width = PLAYER_SQUARE;
+    gfx.c = background;
+    gfx_char(&gfx);
+    gfx.y = PLAYER_SQUARE;
+    gfx.height = PLAYER_SQUARE;
+    gfx.width = PLAYER_SQUARE + 2;
+    gfx_char(&gfx);
+    gfx.x = PLAYER_SQUARE + 2;
+    gfx.y = 0;
+    gfx.height = PLAYER_SQUARE;
+    gfx_char(&gfx);
+    gfx.x = PLAYER_SQUARE;
+    gfx.y = PLAYER_SQUARE + 2;
+    gfx.height = PLAYER_SQUARE + 2;
+    gfx.width = PLAYER_SQUARE;
+    gfx_char(&gfx);
 }
 
 void player_draw_up(void)
@@ -107,7 +109,12 @@ void player_draw_up(void)
             break;
         }
         player_facing = DIR_UP;
-        fill_rectangle_char_inline(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_UP_HEAD);
+        gfx.x = PLAYER_SQUARE;
+        gfx.y = PLAYER_SQUARE;
+        gfx.height = 1;
+        gfx.width = 2;
+        gfx.c = MAN_UP_HEAD;
+        gfx_char(&gfx);
     }
     frame_draw_body(MAN_UP_BODY1, MAN_UP_BODY2, MAN_UP_BODY3);
 }
@@ -128,7 +135,12 @@ void player_draw_right(void)
             break;
         }
         player_facing = DIR_RIGHT;
-        fill_rectangle_char_inline(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_RIGHT_HEAD);
+        gfx.x = PLAYER_SQUARE;
+        gfx.y = PLAYER_SQUARE;
+        gfx.height = 1;
+        gfx.width = 2;
+        gfx.c = MAN_RIGHT_HEAD;
+        gfx_char(&gfx);
     }
     frame_draw_body(MAN_RIGHT_BODY1, MAN_RIGHT_BODY2, MAN_RIGHT_BODY3);
 }
@@ -149,7 +161,12 @@ void player_draw_down(void)
             break;
         }
         player_facing = DIR_DOWN;
-        fill_rectangle_char_inline(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_DOWN_HEAD);
+        gfx.x = PLAYER_SQUARE;
+        gfx.y = PLAYER_SQUARE;
+        gfx.height = 1;
+        gfx.width = 2;
+        gfx.c = MAN_DOWN_HEAD;
+        gfx_char(&gfx);
     }
     frame_draw_body(MAN_DOWN_BODY1, MAN_DOWN_BODY2, MAN_DOWN_BODY3);
 }
@@ -170,7 +187,12 @@ void player_draw_left(void)
             break;
         }
         player_facing = DIR_LEFT;
-        fill_rectangle_char_inline(PLAYER_SQUARE, PLAYER_SQUARE, 1, 2, MAN_LEFT_HEAD);
+        gfx.x = PLAYER_SQUARE;
+        gfx.y = PLAYER_SQUARE;
+        gfx.height = 1;
+        gfx.width = 2;
+        gfx.c = MAN_LEFT_HEAD;
+        gfx_char(&gfx);
     }
     frame_draw_body(MAN_LEFT_BODY1, MAN_LEFT_BODY2, MAN_LEFT_BODY3);
 }
@@ -191,24 +213,24 @@ void player_draw_background_vertical(void)
     }
     if (player_facing == DIR_UP)
     {
-        // opt - deconstruct fill_rectangle_attr_inline to skip vars
-        fill_rectangle_param.x = PLAYER_SQUARE;
-        fill_rectangle_param.y = PLAYER_SQUARE;
-        fill_rectangle_param.height = 1;
-        fill_rectangle_param.width = 1;
-        fill_rectangle_param.ink = pb_2;
-        fill_rectangle_param.paper = PLAYER_BODY_1;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.y = PLAYER_SQUARE + 1;
-        fill_rectangle_param.paper = PLAYER_BODY_2;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.x = PLAYER_SQUARE + 1;
-        fill_rectangle_param.y = PLAYER_SQUARE;
-        fill_rectangle_param.ink = pb_1;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.y = PLAYER_SQUARE + 1;
-        fill_rectangle_param.paper = PLAYER_BODY_1;
-        fill_rectangle_attr(&fill_rectangle_param);
+        // opt - deconstruct gfx_attr_inline to skip vars
+        gfx.x = PLAYER_SQUARE;
+        gfx.y = PLAYER_SQUARE;
+        gfx.height = 1;
+        gfx.width = 1;
+        gfx.ink = pb_2;
+        gfx.paper = PLAYER_BODY_1;
+        gfx_attr(&gfx);
+        gfx.y = PLAYER_SQUARE + 1;
+        gfx.paper = PLAYER_BODY_2;
+        gfx_attr(&gfx);
+        gfx.x = PLAYER_SQUARE + 1;
+        gfx.y = PLAYER_SQUARE;
+        gfx.ink = pb_1;
+        gfx_attr(&gfx);
+        gfx.y = PLAYER_SQUARE + 1;
+        gfx.paper = PLAYER_BODY_1;
+        gfx_attr(&gfx);
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
@@ -220,23 +242,23 @@ void player_draw_background_vertical(void)
     }
     else
     {
-        // opt - deconstruct fill_rectangle_attr_inline to skip vars
-        fill_rectangle_param.x = PLAYER_SQUARE;
-        fill_rectangle_param.y = PLAYER_SQUARE;
-        fill_rectangle_param.height = 1;
-        fill_rectangle_param.width = 2;
-        fill_rectangle_param.ink = pb_2;
-        fill_rectangle_param.paper = PLAYER_FACE;
-        fill_rectangle_attr(&fill_rectangle_param);        
-        fill_rectangle_param.x = PLAYER_SQUARE + 1;
-        fill_rectangle_param.width = 1;
-        fill_rectangle_param.ink = pb_1;
-        fill_rectangle_param.paper = PLAYER_BODY_1;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.y = PLAYER_SQUARE + 1;
-        fill_rectangle_param.width = 1;
-        fill_rectangle_param.paper = PLAYER_BODY_2;
-        fill_rectangle_attr(&fill_rectangle_param);
+        // opt - deconstruct gfx_attr_inline to skip vars
+        gfx.x = PLAYER_SQUARE;
+        gfx.y = PLAYER_SQUARE;
+        gfx.height = 1;
+        gfx.width = 2;
+        gfx.ink = pb_2;
+        gfx.paper = PLAYER_FACE;
+        gfx_attr(&gfx);        
+        gfx.x = PLAYER_SQUARE + 1;
+        gfx.width = 1;
+        gfx.ink = pb_1;
+        gfx.paper = PLAYER_BODY_1;
+        gfx_attr(&gfx);
+        gfx.y = PLAYER_SQUARE + 1;
+        gfx.width = 1;
+        gfx.paper = PLAYER_BODY_2;
+        gfx_attr(&gfx);
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
@@ -250,11 +272,21 @@ void player_draw_background_vertical(void)
     if (is_player_pushing || is_player_pulling)
     {
         // draw crate next to player
-        fill_rectangle_attr_inline(block_loc, PLAYER_SQUARE, 2, 2, CRATE, CRATE);
+        gfx.x = block_loc;
+        gfx.y = PLAYER_SQUARE;
+        gfx.height = 2;
+        gfx.width = 2;
+        gfx.ink = CRATE;
+        gfx.paper = CRATE;
+        gfx_attr(&gfx);
     }
 
     // draw torchlight
-    bright_rectangle_attr_inline(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
+    gfx.x = PLAYER_SQUARE - 1;
+    gfx.y = PLAYER_SQUARE - 1;
+    gfx.height = 4;
+    gfx.width = 4;
+    gfx_bright(&gfx);
 }
 
 void player_draw_background_horizontal(void)
@@ -273,26 +305,26 @@ void player_draw_background_horizontal(void)
     }
     if (player_facing == DIR_LEFT)
     {
-        // opt - deconstruct fill_rectangle_attr_inline to skip vars
-        fill_rectangle_param.x = PLAYER_SQUARE;
-        fill_rectangle_param.y = PLAYER_SQUARE;
-        fill_rectangle_param.height = 1;
-        fill_rectangle_param.width = 1;
-        fill_rectangle_param.ink = pb_1;
-        fill_rectangle_param.paper = PLAYER_FACE;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.y = PLAYER_SQUARE + 1;        
-        fill_rectangle_param.ink = pb_2;
-        fill_rectangle_param.paper = PLAYER_BODY_1;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.x = PLAYER_SQUARE + 1;
-        fill_rectangle_param.y = PLAYER_SQUARE;
-        fill_rectangle_param.ink = pb_1;
-        fill_rectangle_param.paper = PLAYER_BODY_2;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.y = PLAYER_SQUARE + 1;
-        fill_rectangle_param.ink = pb_2;
-        fill_rectangle_attr(&fill_rectangle_param);
+        // opt - deconstruct gfx_attr_inline to skip vars
+        gfx.x = PLAYER_SQUARE;
+        gfx.y = PLAYER_SQUARE;
+        gfx.height = 1;
+        gfx.width = 1;
+        gfx.ink = pb_1;
+        gfx.paper = PLAYER_FACE;
+        gfx_attr(&gfx);
+        gfx.y = PLAYER_SQUARE + 1;        
+        gfx.ink = pb_2;
+        gfx.paper = PLAYER_BODY_1;
+        gfx_attr(&gfx);
+        gfx.x = PLAYER_SQUARE + 1;
+        gfx.y = PLAYER_SQUARE;
+        gfx.ink = pb_1;
+        gfx.paper = PLAYER_BODY_2;
+        gfx_attr(&gfx);
+        gfx.y = PLAYER_SQUARE + 1;
+        gfx.ink = pb_2;
+        gfx_attr(&gfx);
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
@@ -304,26 +336,26 @@ void player_draw_background_horizontal(void)
     }
     else
     {
-        // opt - deconstruct fill_rectangle_attr_inline to skip vars
-        fill_rectangle_param.x = PLAYER_SQUARE;
-        fill_rectangle_param.y = PLAYER_SQUARE;
-        fill_rectangle_param.height = 1;
-        fill_rectangle_param.width = 1;
-        fill_rectangle_param.ink = pb_1;
-        fill_rectangle_param.paper = PLAYER_BODY_2;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.y = PLAYER_SQUARE + 1;
-        fill_rectangle_param.ink = pb_2;
-        fill_rectangle_param.paper = PLAYER_FACE;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.x = PLAYER_SQUARE + 1;
-        fill_rectangle_param.y = PLAYER_SQUARE;
-        fill_rectangle_param.ink = pb_1;
-        fill_rectangle_param.paper = PLAYER_BODY_1;
-        fill_rectangle_attr(&fill_rectangle_param);
-        fill_rectangle_param.y = PLAYER_SQUARE + 1;
-        fill_rectangle_param.ink = pb_2;
-        fill_rectangle_attr(&fill_rectangle_param);
+        // opt - deconstruct gfx_attr_inline to skip vars
+        gfx.x = PLAYER_SQUARE;
+        gfx.y = PLAYER_SQUARE;
+        gfx.height = 1;
+        gfx.width = 1;
+        gfx.ink = pb_1;
+        gfx.paper = PLAYER_BODY_2;
+        gfx_attr(&gfx);
+        gfx.y = PLAYER_SQUARE + 1;
+        gfx.ink = pb_2;
+        gfx.paper = PLAYER_FACE;
+        gfx_attr(&gfx);
+        gfx.x = PLAYER_SQUARE + 1;
+        gfx.y = PLAYER_SQUARE;
+        gfx.ink = pb_1;
+        gfx.paper = PLAYER_BODY_1;
+        gfx_attr(&gfx);
+        gfx.y = PLAYER_SQUARE + 1;
+        gfx.ink = pb_2;
+        gfx_attr(&gfx);
         if (is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
@@ -337,21 +369,32 @@ void player_draw_background_horizontal(void)
     if (is_player_pushing || is_player_pulling)
     {
         // draw crate next to player
-        fill_rectangle_attr_inline(PLAYER_SQUARE, block_loc, 2, 2, CRATE, CRATE);
+        gfx.x = PLAYER_SQUARE;
+        gfx.y = block_loc;
+        gfx.height = 2;
+        gfx.width = 2;
+        gfx.ink = CRATE;
+        gfx.paper = CRATE;
+        gfx_attr(&gfx);
     }
 
     // draw torchlight
-    bright_rectangle_attr_inline(PLAYER_SQUARE - 1, PLAYER_SQUARE - 1, 4, 4);
+    gfx.x = PLAYER_SQUARE - 1;
+    gfx.y = PLAYER_SQUARE - 1;
+    gfx.height = 4;
+    gfx.width = 4;
+    gfx_bright(&gfx);
 }
 
 void player_draw_done(void)
 {
     // mark area around player as seen
-    for (unsigned char x = player_x + 2; x >= player_x - 2 && x < 255; x--)
+    for (grid.x = player_x + 2; grid.x >= player_x - 2 && grid.x < 255; grid.x--)
     {
-        for (unsigned char y = player_y + 2; y >= player_y - 2 && y < 255; y--)
+        for (grid.y = player_y + 2; grid.y >= player_y - 2 && grid.y < 255; grid.y--)
         {
-            set_grid_tile_inline(x, y, get_grid_tile_inline(x, y) | SEEN_BYTE);
+            grid.tile = grid_get(&grid) | SEEN_BYTE;
+            grid_set(&grid);
         }
     }
     // reset all backgrounds and next tiles to current tile

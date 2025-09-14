@@ -3,7 +3,7 @@
 #include "globals.h"
 #include "screen.h"
 #include <stdio.h>
-#include "fill_rectangle.h"
+#include "gfx.h"
 
 // timer
 unsigned char screen_colour_cycle;
@@ -12,7 +12,13 @@ unsigned char screen_colour;
 void screen_refresh(void)
 {    
     // cycle colour for the text "holes"
-    fill_rectangle_attr_inline(6, 22, 1, 3, screen_colour, WHITE);
+    gfx.x = 6;
+    gfx.y = 22;
+    gfx.height = 1;
+    gfx.width = 3;
+    gfx.ink = screen_colour;
+    gfx.paper = WHITE;
+    gfx_attr(&gfx);
     ++screen_colour;    
     if (screen_colour > WHITE)
     {
@@ -20,5 +26,5 @@ void screen_refresh(void)
         ++screen_colour_cycle;
     }
     intrinsic_halt();
-    copy_attr_buffer();
+    gfx_flush();
 }

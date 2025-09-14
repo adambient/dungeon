@@ -4,23 +4,23 @@ ATTR_BUFF: equ $8000 ; hard coded attribute buffer address to start of uncontend
 
 SECTION code_user
 
-PUBLIC _fill_rectangle_char
-PUBLIC _fill_rectangle_attr
-PUBLIC _bright_rectangle_attr
-PUBLIC _copy_attr_buffer
+PUBLIC _gfx_char
+PUBLIC _gfx_attr
+PUBLIC _gfx_bright
+PUBLIC _gfx_flush
 
 ;----------
-; _fill_rectangle_char
-; inputs: fill_rectangle_p
+; _gfx_char
+; inputs: gfx_p
 ;----------
-_fill_rectangle_char:
+_gfx_char:
             ld c, (hl) ; c = y
             inc hl
             ld e, (hl) ; e = x
-            ld hl, (_fill_rectangle_param+2) ; h = height, l = width            
-            ld ix, (_fill_rectangle_param+6) ; ix = address of first char
+            ld hl, (_gfx+2) ; h = height, l = width            
+            ld ix, (_gfx+6) ; ix = address of first char
             ld b, h ; set counter 1 to height
-_fill_rectangle_char_loop1:
+_gfx_char_loop1:
             ld d, c ; retrieve initial y
             push bc ; store counter 1
             ld b, l ; set counter 2 to width
@@ -42,16 +42,16 @@ _fill_rectangle_char_loop1:
             or $40
             ld h,a
             ; END
-_fill_rectangle_char_loop2:
+_gfx_char_loop2:
             ld a, (ix)
             push hl ; store hl = screen address
             exx ; store hl = screen address, bc = counter 2, de = xy
             pop hl ; retrieve hl = screen address                                 
             cp '$' ; means end of string
-            jr nz, _fill_rectangle_char_print_char ; if not null goto print            
-            ld ix, (_fill_rectangle_param+6)
+            jr nz, _gfx_char_print_char ; if not null goto print            
+            ld ix, (_gfx+6)
             ld a, (ix) ; reset string 
-_fill_rectangle_char_print_char:
+_gfx_char_print_char:
             ; get glyph from char
             ld de, udgs
             add a, a
@@ -64,21 +64,21 @@ _fill_rectangle_char_print_char:
             ex de, hl
             pop hl
             ld b, 8 ; loop counter
-_fill_rectangle_char_loop3:
+_gfx_char_loop3:
             ld a, (de) ; get the byte
             ld (hl), a ; print to screen
             inc de ; goto next byte of character
             inc h ; goto next line of screen
-            djnz _fill_rectangle_char_loop3 ; loop 8 times
+            djnz _gfx_char_loop3 ; loop 8 times
             exx ; retrieve de = xy, bc = counter 2, hl = screen address
             inc hl ; goto next character
             inc d ; increase y
             inc ix ; increase char
-            djnz _fill_rectangle_char_loop2                         
+            djnz _gfx_char_loop2                         
             pop bc ; retrieve counter 1
-            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
+            ld hl, (_gfx+2) ; h = height, l = width
             inc e ; increase x
-            djnz _fill_rectangle_char_loop1  
+            djnz _gfx_char_loop1  
             ret
 
 ;----------
@@ -105,25 +105,25 @@ get_attr_address:
             ret
 
 ;----------
-; _fill_rectangle_attr
-; inputs: fill_rectangle_p
+; _gfx_attr
+; inputs: gfx_p
 ;----------
-_fill_rectangle_attr:
+_gfx_attr:
             ld c, (hl) ; c = y
             inc hl
             ld e, (hl) ; e = x
-            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
+            ld hl, (_gfx+2) ; h = height, l = width
             ld b, h ; set counter 1 to height
-_fill_rectangle_attr_loop1:
+_gfx_attr_loop1:
             ld d, c ; retrieve initial y
             push bc ; store counter 1
             ld b, l ; set counter 2 to width                        
             push bc ; store counter 2
             call get_attr_address
             pop bc ; retrieve counter 2
-_fill_rectangle_attr_loop2:
+_gfx_attr_loop2:
             push bc ; store counter 2
-            ld bc, (_fill_rectangle_param+4) ; retrive paper/ink
+            ld bc, (_gfx+4) ; retrive paper/ink
             ld a, c; load paper
             rla 
             rla
@@ -133,49 +133,49 @@ _fill_rectangle_attr_loop2:
             inc hl ; go to next location
             pop bc ; retrieve counter 2
             inc d ; increase y
-            djnz _fill_rectangle_attr_loop2                         
+            djnz _gfx_attr_loop2                         
             pop bc ; retrieve counter 1
-            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
+            ld hl, (_gfx+2) ; h = height, l = width
             inc e ; increase x
-            djnz _fill_rectangle_attr_loop1  
+            djnz _gfx_attr_loop1  
             ret
 
 ;----------
-; _bright_rectangle_attr
-; inputs: fill_rectangle_p
+; _gfx_bright
+; inputs: gfx_p
 ;----------
-_bright_rectangle_attr:
+_gfx_bright:
             ld c, (hl) ; c = y
             inc hl
             ld e, (hl) ; e = x
-            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
+            ld hl, (_gfx+2) ; h = height, l = width
             ld b, h ; set counter 1 to height
-_bright_rectangle_attr_loop1:
+_gfx_bright_loop1:
             ld d, c ; retrieve initial y
             push bc ; store counter 1
             ld b, l ; set counter 2 to width                        
             push bc ; store counter 2
             call get_attr_address
             pop bc ; retrieve counter 2
-_bright_rectangle_attr_loop2:
+_gfx_bright_loop2:
             ld a, (hl)
             or %01000000
             ld (hl), a ; store in location
             inc hl ; go to next location
             inc d ; increase y
-            djnz _bright_rectangle_attr_loop2                         
+            djnz _gfx_bright_loop2                         
             pop bc ; retrieve counter 1
-            ld hl, (_fill_rectangle_param+2) ; h = height, l = width
+            ld hl, (_gfx+2) ; h = height, l = width
             inc e ; increase x
-            djnz _bright_rectangle_attr_loop1  
+            djnz _gfx_bright_loop1  
             ret
 
 ;----------
-; copy_attr_buffer
+; gfx_flush
 ; copy attribute buffer into attribute memory
 ; alters: hl, de, bc
 ;----------
-_copy_attr_buffer:
+_gfx_flush:
             ld de, VIDEOATT ; target is attribute memory
             ld hl, ATTR_BUFF ; source is attribute buffer
             ld bc, VIDEOATT_L ; length is size of attribute memory
@@ -183,8 +183,8 @@ _copy_attr_buffer:
             ret
 
 SECTION bss_user
-PUBLIC _fill_rectangle_param
-_fill_rectangle_param:
+PUBLIC _gfx
+_gfx:
 db %00000000 ;y
 db %00000000 ;x
 db %00000000 ;width 

@@ -52,7 +52,9 @@ static unsigned char enemy_attempt_move(unsigned char next_dir, unsigned char en
         return 0;
     }
 
-    unsigned char next_tile = (get_grid_tile_inline(next_x, next_y) & BG_BYTES);
+    grid.x = next_x;
+    grid.y = next_y;
+    unsigned char next_tile = (grid_get(&grid) & BG_BYTES);
     if (next_tile == CARPET_1 || next_tile == CARPET_2 || next_tile == TARGET)
     {
         enemies[enemy_index].x = next_x;

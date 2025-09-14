@@ -3,7 +3,7 @@
 #include "enemy.h"
 #include "screen.h"
 #include "beeps.h"
-#include "fill_rectangle.h"
+#include "gfx.h"
 #include "grid.h"
 
 static unsigned char *attr_address;
@@ -14,7 +14,9 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
 {
     if (x < MAP_SIZE && y < MAP_SIZE)
     {  
-        unsigned char tile = get_grid_tile_inline(x, y);
+        grid.x = x;
+        grid.y = y;
+        unsigned char tile = grid_get(&grid);
         if ((tile & SEEN_BYTE) == SEEN_BYTE)
         {
             if (enemy_is_located(x, y))
@@ -113,7 +115,7 @@ static void row_draw_horizontal(signed char x, unsigned char y)
 
 static void map_draw_vertical(void)
 {
-    attr_address = fill_rectangle_buffer_address(); // reset shared attr_address
+    attr_address = gfx_buffer(); // reset shared attr_address
     unsigned char sub_frame = 0;
     switch (map_frame)
     {
@@ -147,7 +149,7 @@ static void map_draw_vertical(void)
 
 static void map_draw_horizontal(void)
 {
-    attr_address = fill_rectangle_buffer_address(); // reset shared attr_address
+    attr_address = gfx_buffer(); // reset shared attr_address
     unsigned char y = player_y - MAP_OFFSET;
     if (map_frame == 2)
     {
@@ -162,7 +164,9 @@ static void map_draw_horizontal(void)
 
 static unsigned char can_move_check(signed char dx, signed char dy)
 {
-    unsigned char tile = get_grid_tile_inline(player_x + dx, player_y + dy);
+    grid.x = player_x + dx;
+    grid.y = player_y + dy;
+    unsigned char tile = grid_get(&grid);
     if ((tile & BG_BYTES) == WALL)
     {
         // tile is inaccessible
@@ -177,24 +181,29 @@ static unsigned char can_move_check(signed char dx, signed char dy)
             return 0;
         }
         // we are pushing so check next tile
-        unsigned char next_tile = get_grid_tile_inline(player_x + dx + dx, player_y + dy + dy) & BG_BYTES;
+        grid.x = grid.x + dx;
+        grid.y = grid.y + dy;
+        unsigned char next_tile = grid_get(&grid) & BG_BYTES;
         if (next_tile == WALL || next_tile == CRATE || next_tile == PLACED || enemy_is_located(player_x + dx + dx, player_y + dy + dy))
         {
             // next tile is blocked so cannot move
             is_player_pushing = 0;
             return 0;
         }
+        grid.x = grid.x - dx;
+        grid.y = grid.y - dy;
         if ((tile & BG_BYTES) == PLACED)
         {
             // replace tile in front
-            set_grid_tile_inline(player_x + dx, player_y + dy, TARGET | SEEN_BYTE);
+            grid.tile = TARGET | SEEN_BYTE;
             map_uncovered_holes++;
         }
         else
         {
             // replace tile in front
-            set_grid_tile_inline(player_x + dx, player_y + dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+            grid.tile = (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE;
         }
+        grid_set(&grid);
         is_player_pushing = 1;
         beeps_pushing();
         return 1;
@@ -202,22 +211,25 @@ static unsigned char can_move_check(signed char dx, signed char dy)
     else if (is_player_pushing)
     {
         // we're not pushing but we might be pulling
-        tile = get_grid_tile_inline(player_x - dx, player_y - dy);
+        grid.x = player_x - dx;
+        grid.y = player_y - dy;
+        tile = grid_get(&grid);
         is_player_pushing = 0;
         if ((tile & BG_BYTES) == CRATE || (tile & BG_BYTES) == PLACED)
         {
             // there is a crate behind
             if ((tile & BG_BYTES) == PLACED)
             {
-                // replace tile behind                
-                set_grid_tile_inline(player_x - dx, player_y - dy, TARGET | SEEN_BYTE);
+                // replace tile behind 
+                grid.tile = TARGET | SEEN_BYTE;
                 map_uncovered_holes++;
             }
             else
             {
                 // replace tile behind
-                set_grid_tile_inline(player_x - dx, player_y - dy, (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE);
+                grid.tile = (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE;
             }
+            grid_set(&grid);
             is_player_pulling = 1;
             beeps_pushing();
             return 1;
@@ -242,18 +254,21 @@ static void map_move_done(signed char dx, signed char dy)
     {
         // place crate
         is_player_pushing = 0;
-        unsigned char next_tile = get_grid_tile_inline(player_x + dx, player_y + dy);
+        grid.x = player_x + dx;
+        grid.y = player_y + dy;
+        unsigned char next_tile = grid_get(&grid);
         if ((next_tile & BG_BYTES) == TARGET)
         {
             // target location
-            set_grid_tile_inline(player_x + dx, player_y + dy, PLACED | SEEN_BYTE);
+            grid.tile = PLACED | SEEN_BYTE;
             beeps_success();
             map_uncovered_holes--;
         }
         else
         {
-            set_grid_tile_inline(player_x + dx, player_y + dy, CRATE | SEEN_BYTE);
+            grid.tile = CRATE | SEEN_BYTE;
         }
+        grid_set(&grid);
     }
 }
 
@@ -265,7 +280,13 @@ static void map_refresh_vertical(void)
     }
     else
     {
-        fill_rectangle_attr_inline(0, 0, VISIBLE_AREA, VISIBLE_AREA, 0, 7);
+        gfx.x = 0;
+        gfx.y = 0;
+        gfx.height = VISIBLE_AREA;
+        gfx.width = VISIBLE_AREA;
+        gfx.ink = 0;
+        gfx.paper = 7;
+        gfx_attr(&gfx);
     }
     player_draw_background_vertical();
     screen_refresh();
@@ -279,7 +300,13 @@ static void map_refresh_horizontal(void)
     }
     else
     {
-        fill_rectangle_attr_inline(0, 0, VISIBLE_AREA, VISIBLE_AREA, 0, 7);
+        gfx.x = 0;
+        gfx.y = 0;
+        gfx.height = VISIBLE_AREA;
+        gfx.width = VISIBLE_AREA;
+        gfx.ink = 0;
+        gfx.paper = 7;
+        gfx_attr(&gfx);
     }
     player_draw_background_horizontal();
     screen_refresh();
