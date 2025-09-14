@@ -185,8 +185,8 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         grid.x = grid.x + dx;
         grid.y = grid.y + dy;
         grid_get();
-        unsigned char next_tile = grid.tile & BG_BYTES;
-        if (next_tile == WALL || next_tile == CRATE || next_tile == PLACED || enemy_is_located(player_x + dx + dx, player_y + dy + dy))
+        grid.tile = grid.tile & BG_BYTES;
+        if (grid.tile == WALL || grid.tile == CRATE || grid.tile == PLACED || enemy_is_located(player_x + dx + dx, player_y + dy + dy))
         {
             // next tile is blocked so cannot move
             is_player_pushing = 0;
@@ -249,8 +249,8 @@ static void map_move_done(signed char dx, signed char dy)
         is_player_pulling = 0;
         is_player_pushing = 1;
         // we are pulling not pushing
-        dx = dx * -1;
-        dy = dy * -1;
+        dx = -dx;
+        dy = -dy;
     }
 
     if (is_player_pushing)
@@ -260,8 +260,7 @@ static void map_move_done(signed char dx, signed char dy)
         grid.x = player_x + dx;
         grid.y = player_y + dy;
         grid_get();
-        unsigned char next_tile = grid.tile;
-        if ((next_tile & BG_BYTES) == TARGET)
+        if ((grid.tile & BG_BYTES) == TARGET)
         {
             // target location
             grid.tile = PLACED | SEEN_BYTE;

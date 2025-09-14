@@ -39,11 +39,10 @@ _grid_set:
             ex af, af' ; retrieve a            
             bit $00, c ; is x even?
             jr z, grid_set_even
-            or a ; clear carry so doesn't get rotated into number
-            rla ; x not even
-            rla
-            rla
-            rla ; rotate the first 4 bits to the last 4
+            rlca ; x not even
+            rlca
+            rlca
+            rlca ; rotate the first 4 bits to the last 4
             ld e, a ; e = given value on rhs
             ld a, (hl)            
             and $0f ; a = current lhs value
