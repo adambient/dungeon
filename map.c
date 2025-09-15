@@ -277,40 +277,14 @@ static void map_move_done(signed char dx, signed char dy)
 
 static void map_refresh_vertical(void)
 {
-    if (display_attrs)
-    {
-        map_draw_vertical();
-    }
-    else
-    {
-        gfx.x = 0;
-        gfx.y = 0;
-        gfx.height = VISIBLE_AREA;
-        gfx.width = VISIBLE_AREA;
-        gfx.ink = 0;
-        gfx.paper = 7;
-        gfx_attr();
-    }
+    map_draw_vertical();
     player_draw_background_vertical();
     screen_refresh();
 }
 
 static void map_refresh_horizontal(void)
 {
-    if (display_attrs)
-    {
-        map_draw_horizontal();
-    }
-    else
-    {
-        gfx.x = 0;
-        gfx.y = 0;
-        gfx.height = VISIBLE_AREA;
-        gfx.width = VISIBLE_AREA;
-        gfx.ink = 0;
-        gfx.paper = 7;
-        gfx_attr();
-    }
+    map_draw_horizontal();
     player_draw_background_horizontal();
     screen_refresh();
 }

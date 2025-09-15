@@ -70,9 +70,7 @@ void bank3_screen_init(void)
     puts("\x16\x26\x11 A:down;");
     puts("\x16\x26\x12 O:left;");
     puts("\x16\x26\x13 P:right;");
-    puts("\x16\x26\x14 Sp:action;");
-    puts("\x16\x26\x15 G:gfx off;");
-    puts("\x16\x26\x16 H:gfx on;");        
+    puts("\x16\x26\x14 Sp:action;");     
     puts("\x16\x01\x14 A dark and mysterious labyrinth.");
         
     // default text is black on white
