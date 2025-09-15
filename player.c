@@ -66,6 +66,7 @@ static inline void frame_draw_body(unsigned const char *body1, unsigned const ch
         player_frame = 0;
         break;
     }
+    gfx.bank = &gfx_bank0;
     gfx_char();
 }
 
@@ -78,6 +79,7 @@ static inline void player_map_background(unsigned const char *background)
     gfx.height = PLAYER_SQUARE + 2;
     gfx.width = PLAYER_SQUARE;
     gfx.c = background;
+    gfx.bank = &gfx_bank0;
     gfx_char();
     gfx.y = PLAYER_SQUARE;
     gfx.height = PLAYER_SQUARE;
@@ -115,6 +117,7 @@ void player_draw_up(void)
         gfx.height = 1;
         gfx.width = 2;
         gfx.c = MAN_UP_HEAD;
+        gfx.bank = &gfx_bank0;
         gfx_char();
     }
     frame_draw_body(MAN_UP_BODY1, MAN_UP_BODY2, MAN_UP_BODY3);
@@ -141,6 +144,7 @@ void player_draw_right(void)
         gfx.height = 1;
         gfx.width = 2;
         gfx.c = MAN_RIGHT_HEAD;
+        gfx.bank = &gfx_bank0;
         gfx_char();
     }
     frame_draw_body(MAN_RIGHT_BODY1, MAN_RIGHT_BODY2, MAN_RIGHT_BODY3);
@@ -167,6 +171,7 @@ void player_draw_down(void)
         gfx.height = 1;
         gfx.width = 2;
         gfx.c = MAN_DOWN_HEAD;
+        gfx.bank = &gfx_bank0;
         gfx_char();
     }
     frame_draw_body(MAN_DOWN_BODY1, MAN_DOWN_BODY2, MAN_DOWN_BODY3);
@@ -193,6 +198,7 @@ void player_draw_left(void)
         gfx.height = 1;
         gfx.width = 2;
         gfx.c = MAN_LEFT_HEAD;
+        gfx.bank = &gfx_bank0;
         gfx_char();
     }
     frame_draw_body(MAN_LEFT_BODY1, MAN_LEFT_BODY2, MAN_LEFT_BODY3);

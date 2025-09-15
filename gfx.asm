@@ -50,11 +50,11 @@ _gfx_char_loop2:
             pop hl ; retrieve hl = screen address                                 
             cp '$' ; means end of string
             jr nz, _gfx_char_print_char ; if not null goto print            
-            ld ix, (_gfx+6)
+            ld ix, (_gfx+6) ; load characters
             ld a, (ix) ; reset string 
 _gfx_char_print_char:
             ; get glyph from char
-            ld de, udgs
+            ld de, (_gfx+8) ; load bank
             add a, a
             add a, a
             add a, a
@@ -195,9 +195,11 @@ db %00000000 ;height
 db %00000000 ;paper
 db %00000000 ;ink
 dw $0000 ;char
+dw $0000 ;bank 
 
 SECTION rodata_user
-udgs: 
+PUBLIC _gfx_bank0
+_gfx_bank0: 
 defb 0,0,0,0,0,0,0,0 ; @ - space
 defb 126,129,189,189,129,189,165,231 ; A
 defb 254,131,189,131,189,189,129,254 ; B

@@ -53,6 +53,7 @@ void bank3_screen_init(void)
     gfx.height = 24;
     gfx.width = 32;
     gfx.c = " $";
+    gfx.bank = &gfx_bank0;
     gfx_char(); 
     puts("\x16\x26\x01 The D.A.M. Labyrinth");
     puts("\x16\x26\x02 ====================");
@@ -86,6 +87,7 @@ void bank3_screen_init(void)
     gfx.height = VISIBLE_BLOCKS * 2;
     gfx.width = VISIBLE_BLOCKS * 2;
     gfx.c = "[$";
+    gfx.bank = &gfx_bank0;
     gfx_char(); 
     // make the word green, green
     gfx.x = 5;
@@ -109,6 +111,7 @@ void bank3_screen_success(void)
     gfx.height = 5;
     gfx.width = 20;
     gfx.c = " $";
+    gfx.bank = &gfx_bank0;
     gfx_char();
     puts("\x16\x0E\x08 Congratulations you have escaped the");
     puts("\x16\x0E\x09 dark and mysterious labyrinth! Press");

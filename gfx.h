@@ -10,9 +10,11 @@ typedef struct {
     unsigned char paper;
     unsigned char ink;
     unsigned const char *c;
+    unsigned const char *bank; // which character bank to use
 } gfx_t;
 
 extern gfx_t gfx;
+extern const char *gfx_bank0; // default character bank
 
 // imported from gfx.asm
 extern void gfx_char(void) __z88dk_callee;
