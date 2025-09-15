@@ -24,9 +24,9 @@ SECTION bss_user: assign zero initial data to this section
 void init(void)
 {
     exec_far(bank3_map_init, 3);
-    player_x = MAP_SIZE - 1;
-    player_y = 1;    
-    player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this    
+    globals.player_x = MAP_SIZE - 1;
+    globals.player_y = 1;    
+    globals.player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this    
     map_move_none();
 }
 
@@ -37,51 +37,51 @@ void main(void)
     do
     {
         // player move/draw
-        switch (player_dir)
+        switch (globals.player_dir)
         {
         case DIR_UP:
-            player_dir = map_move_up();
+            globals.player_dir = map_move_up();
             break;
         case DIR_RIGHT:
-            player_dir = map_move_right();
+            globals.player_dir = map_move_right();
             break;
         case DIR_DOWN:
-            player_dir = map_move_down();
+            globals.player_dir = map_move_down();
             break;
         case DIR_LEFT:
-            player_dir = map_move_left();
+            globals.player_dir = map_move_left();
             break;
         }
 
-        if (player_dir == DIR_NONE)
+        if (globals.player_dir == DIR_NONE)
         {
             map_move_none();
         }
 
         // check for player movement
-        player_dir = DIR_NONE;
+        globals.player_dir = DIR_NONE;
         if (in_key_pressed(IN_KEY_SCANCODE_q) == 0xFFFF)
         {
-            player_dir = DIR_UP;
+            globals.player_dir = DIR_UP;
         }
         if (in_key_pressed(IN_KEY_SCANCODE_p) == 0xFFFF)
         {
-            player_dir = DIR_RIGHT;
+            globals.player_dir = DIR_RIGHT;
         }
         if (in_key_pressed(IN_KEY_SCANCODE_a) == 0xFFFF)
         {
-            player_dir = DIR_DOWN;
+            globals.player_dir = DIR_DOWN;
         }
         if (in_key_pressed(IN_KEY_SCANCODE_o) == 0xFFFF)
         {
-            player_dir = DIR_LEFT;
+            globals.player_dir = DIR_LEFT;
         }
         if (in_key_pressed(IN_KEY_SCANCODE_SPACE) ==0xFFFF)
         {
-            is_player_pushing = 1;
+            globals.is_player_pushing = 1;
         }
 
-        if (ENEMY == player_tile)
+        if (ENEMY == globals.player_tile)
         {            
             beeps_death();
             init();
@@ -93,8 +93,8 @@ void main(void)
         // end game check
         if (map_uncovered_holes == 0)
         {
-            if ((player_x == 1 && (player_y == (MAP_SIZE - 2) || player_y == 1)) ||
-                (player_x == (MAP_SIZE - 2) && (player_y == (MAP_SIZE - 2) || player_y == 1)))
+            if ((globals.player_x == 1 && (globals.player_y == (MAP_SIZE - 2) || globals.player_y == 1)) ||
+                (globals.player_x == (MAP_SIZE - 2) && (globals.player_y == (MAP_SIZE - 2) || globals.player_y == 1)))
             {
                 exec_far(bank3_screen_success, 3);
                 beeps_winner();
@@ -102,7 +102,7 @@ void main(void)
                 {
                 } while (in_key_pressed(IN_KEY_SCANCODE_ENTER) !=0xFFFF);
 
-                player_facing = DIR_NONE;
+                globals.player_facing = DIR_NONE;
                 exec_far(bank3_screen_init, 3);
                 init();
             }

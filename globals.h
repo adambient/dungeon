@@ -44,12 +44,16 @@
 #define PIPE_PATTERN "\\$"
 #define BAR_PATTERN "[$"
 
-extern unsigned char player_tile;
-extern unsigned char player_x;
-extern unsigned char player_y;
-extern unsigned char player_dir;        // the way the player is currently moving 0-4
-extern unsigned char player_facing;     // the way the player is currently facing 0-4
-extern unsigned char is_player_pushing;
-extern unsigned char is_player_pulling;
+typedef struct {
+    unsigned char player_tile;
+    unsigned char player_x;
+    unsigned char player_y;
+    unsigned char player_dir;        // the way the player is currently moving 0-4
+    unsigned char player_facing;     // the way the player is currently facing 0-4
+    unsigned char is_player_pushing;
+    unsigned char is_player_pulling;
+} globals_t;
+
+extern globals_t globals;
 
 #endif

@@ -98,20 +98,20 @@ static inline void player_map_background(unsigned const char *background)
 
 void player_draw_up(void)
 {
-    player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x - 1, player_y);
-    player_background_1 = player_tile;
+    globals.player_tile = player_tile_next;
+    player_tile_next = player_get_tile(globals.player_x - 1, globals.player_y);
+    player_background_1 = globals.player_tile;
     player_background_2 = player_tile_next;
-    if (DIR_UP != player_facing)
+    if (DIR_UP != globals.player_facing)
     {
-        switch (player_facing)
+        switch (globals.player_facing)
         {
         case DIR_RIGHT:
         case DIR_LEFT:
             player_map_background(BAR_PATTERN);
             break;
         }
-        player_facing = DIR_UP;
+        globals.player_facing = DIR_UP;
         gfx.x = PLAYER_SQUARE;
         gfx.y = PLAYER_SQUARE;
         gfx.height = 1;
@@ -125,20 +125,20 @@ void player_draw_up(void)
 
 void player_draw_right(void)
 {
-    player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x, player_y + 1);
-    player_background_1 = player_tile;
+    globals.player_tile = player_tile_next;
+    player_tile_next = player_get_tile(globals.player_x, globals.player_y + 1);
+    player_background_1 = globals.player_tile;
     player_background_2 = player_tile_next;
-    if (DIR_RIGHT != player_facing)
+    if (DIR_RIGHT != globals.player_facing)
     {
-        switch (player_facing)
+        switch (globals.player_facing)
         {
         case DIR_UP:
         case DIR_DOWN:
             player_map_background(PIPE_PATTERN);
             break;
         }
-        player_facing = DIR_RIGHT;
+        globals.player_facing = DIR_RIGHT;
         gfx.x = PLAYER_SQUARE;
         gfx.y = PLAYER_SQUARE;
         gfx.height = 1;
@@ -152,20 +152,20 @@ void player_draw_right(void)
 
 void player_draw_down(void)
 {
-    player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x + 1, player_y);
+    globals.player_tile = player_tile_next;
+    player_tile_next = player_get_tile(globals.player_x + 1, globals.player_y);
     player_background_1 = player_tile_next;
-    player_background_2 = player_tile;
-    if (DIR_DOWN != player_facing)
+    player_background_2 = globals.player_tile;
+    if (DIR_DOWN != globals.player_facing)
     {
-        switch (player_facing)
+        switch (globals.player_facing)
         {
         case DIR_RIGHT:
         case DIR_LEFT:
             player_map_background(BAR_PATTERN);
             break;
         }
-        player_facing = DIR_DOWN;
+        globals.player_facing = DIR_DOWN;
         gfx.x = PLAYER_SQUARE;
         gfx.y = PLAYER_SQUARE;
         gfx.height = 1;
@@ -179,20 +179,20 @@ void player_draw_down(void)
 
 void player_draw_left(void)
 {
-    player_tile = player_tile_next;
-    player_tile_next = player_get_tile(player_x, player_y - 1);
+    globals.player_tile = player_tile_next;
+    player_tile_next = player_get_tile(globals.player_x, globals.player_y - 1);
     player_background_1 = player_tile_next;
-    player_background_2 = player_tile;
-    if (DIR_LEFT != player_facing)
+    player_background_2 = globals.player_tile;
+    if (DIR_LEFT != globals.player_facing)
     {
-        switch (player_facing)
+        switch (globals.player_facing)
         {
         case DIR_UP:
         case DIR_DOWN:
             player_map_background(PIPE_PATTERN);
             break;
         }
-        player_facing = DIR_LEFT;
+        globals.player_facing = DIR_LEFT;
         gfx.x = PLAYER_SQUARE;
         gfx.y = PLAYER_SQUARE;
         gfx.height = 1;
@@ -218,7 +218,7 @@ void player_draw_background_vertical(void)
     {
         pb_2 = screen_colour;
     }
-    if (player_facing == DIR_UP)
+    if (globals.player_facing == DIR_UP)
     {
         // opt - deconstruct gfx_attr_inline to skip vars
         gfx.x = PLAYER_SQUARE;
@@ -238,7 +238,7 @@ void player_draw_background_vertical(void)
         gfx.y = PLAYER_SQUARE + 1;
         gfx.paper = PLAYER_BODY_1;
         gfx_attr();
-        if (is_player_pushing)
+        if (globals.is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
         }
@@ -266,7 +266,7 @@ void player_draw_background_vertical(void)
         gfx.width = 1;
         gfx.paper = PLAYER_BODY_2;
         gfx_attr();
-        if (is_player_pushing)
+        if (globals.is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
         }
@@ -276,7 +276,7 @@ void player_draw_background_vertical(void)
         }
     }
 
-    if (is_player_pushing || is_player_pulling)
+    if (globals.is_player_pushing || globals.is_player_pulling)
     {
         // draw crate next to player
         gfx.x = block_loc;
@@ -310,7 +310,7 @@ void player_draw_background_horizontal(void)
     {
         pb_2 = screen_colour;
     }
-    if (player_facing == DIR_LEFT)
+    if (globals.player_facing == DIR_LEFT)
     {
         // opt - deconstruct gfx_attr_inline to skip vars
         gfx.x = PLAYER_SQUARE;
@@ -332,7 +332,7 @@ void player_draw_background_horizontal(void)
         gfx.y = PLAYER_SQUARE + 1;
         gfx.ink = pb_2;
         gfx_attr();
-        if (is_player_pushing)
+        if (globals.is_player_pushing)
         {
             block_loc = PLAYER_SQUARE - 2;
         }
@@ -363,7 +363,7 @@ void player_draw_background_horizontal(void)
         gfx.y = PLAYER_SQUARE + 1;
         gfx.ink = pb_2;
         gfx_attr();
-        if (is_player_pushing)
+        if (globals.is_player_pushing)
         {
             block_loc = PLAYER_SQUARE + 2;
         }
@@ -373,7 +373,7 @@ void player_draw_background_horizontal(void)
         }
     }
 
-    if (is_player_pushing || is_player_pulling)
+    if (globals.is_player_pushing || globals.is_player_pulling)
     {
         // draw crate next to player
         gfx.x = PLAYER_SQUARE;
@@ -396,9 +396,9 @@ void player_draw_background_horizontal(void)
 void player_draw_done(void)
 {
     // mark area around player as seen
-    for (grid.x = player_x + 2; grid.x >= player_x - 2 && grid.x < 255; grid.x--)
+    for (grid.x = globals.player_x + 2; grid.x >= globals.player_x - 2 && grid.x < 255; grid.x--)
     {
-        for (grid.y = player_y + 2; grid.y >= player_y - 2 && grid.y < 255; grid.y--)
+        for (grid.y = globals.player_y + 2; grid.y >= globals.player_y - 2 && grid.y < 255; grid.y--)
         {
             grid_get();
             grid.tile = grid.tile | SEEN_BYTE;
@@ -408,7 +408,7 @@ void player_draw_done(void)
     // reset all backgrounds and next tiles to current tile
     player_background_1 =
     player_background_2 =
-    player_tile =
+    globals.player_tile =
     player_tile_next =
-    player_get_tile(player_x, player_y);
+    player_get_tile(globals.player_x, globals.player_y);
 }

@@ -124,8 +124,8 @@ static void map_draw_vertical(void)
         sub_frame++;
         break;
     }
-    signed char x = player_x - MAP_OFFSET - 1; // starting row (could be negative)
-    unsigned char y = player_y - MAP_OFFSET;
+    signed char x = globals.player_x - MAP_OFFSET - 1; // starting row (could be negative)
+    unsigned char y = globals.player_y - MAP_OFFSET;
     switch (map_frame)
     {
     case 2:
@@ -133,7 +133,7 @@ static void map_draw_vertical(void)
         row_draw_vertical(x, x, y);
         break;
     }
-    signed char rows = player_x + MAP_OFFSET;
+    signed char rows = globals.player_x + MAP_OFFSET;
     for (x = x + 1; x < rows; x++)
     {
         row_draw_vertical(x - sub_frame, x, y);
@@ -150,12 +150,12 @@ static void map_draw_vertical(void)
 static void map_draw_horizontal(void)
 {
     attr_address = (unsigned char *)(ATTR_BUFF); // reset shared attr_address
-    unsigned char y = player_y - MAP_OFFSET;
+    unsigned char y = globals.player_y - MAP_OFFSET;
     if (map_frame == 2)
     {
         y--;
     }
-    for (signed char x = player_x - MAP_OFFSET; x <= player_x + MAP_OFFSET; x++)
+    for (signed char x = globals.player_x - MAP_OFFSET; x <= globals.player_x + MAP_OFFSET; x++)
     {
         row_draw_horizontal(x, y);
         row_draw_horizontal(x, y);
@@ -164,8 +164,8 @@ static void map_draw_horizontal(void)
 
 static unsigned char can_move_check(signed char dx, signed char dy)
 {
-    grid.x = player_x + dx;
-    grid.y = player_y + dy;
+    grid.x = globals.player_x + dx;
+    grid.y = globals.player_y + dy;
     grid_get();
     unsigned char tile = grid.tile;
     if ((tile & BG_BYTES) == WALL)
@@ -176,7 +176,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
 
     if ((tile & BG_BYTES) == CRATE || (tile & BG_BYTES) == PLACED)
     {
-        if (!is_player_pushing)
+        if (!globals.is_player_pushing)
         {
             // not pushing so cannot move
             return 0;
@@ -186,10 +186,10 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         grid.y = grid.y + dy;
         grid_get();
         grid.tile = grid.tile & BG_BYTES;
-        if (grid.tile == WALL || grid.tile == CRATE || grid.tile == PLACED || enemy_is_located(player_x + dx + dx, player_y + dy + dy))
+        if (grid.tile == WALL || grid.tile == CRATE || grid.tile == PLACED || enemy_is_located(globals.player_x + dx + dx, globals.player_y + dy + dy))
         {
             // next tile is blocked so cannot move
-            is_player_pushing = 0;
+            globals.is_player_pushing = 0;
             return 0;
         }
         grid.x = grid.x - dx;
@@ -203,21 +203,21 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         else
         {
             // replace tile in front
-            grid.tile = (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE;
+            grid.tile = (CARPET_1 | (globals.player_x + globals.player_y & 0b00000001)) | SEEN_BYTE;
         }
         grid_set();
-        is_player_pushing = 1;
+        globals.is_player_pushing = 1;
         beeps_pushing();
         return 1;
     }
-    else if (is_player_pushing)
+    else if (globals.is_player_pushing)
     {
         // we're not pushing but we might be pulling
-        grid.x = player_x - dx;
-        grid.y = player_y - dy;
+        grid.x = globals.player_x - dx;
+        grid.y = globals.player_y - dy;
         grid_get();
         tile = grid.tile;
-        is_player_pushing = 0;
+        globals.is_player_pushing = 0;
         if ((tile & BG_BYTES) == CRATE || (tile & BG_BYTES) == PLACED)
         {
             // there is a crate behind
@@ -230,10 +230,10 @@ static unsigned char can_move_check(signed char dx, signed char dy)
             else
             {
                 // replace tile behind
-                grid.tile = (CARPET_1 | (player_x + player_y & 0b00000001)) | SEEN_BYTE;
+                grid.tile = (CARPET_1 | (globals.player_x + globals.player_y & 0b00000001)) | SEEN_BYTE;
             }
             grid_set();
-            is_player_pulling = 1;
+            globals.is_player_pulling = 1;
             beeps_pushing();
             return 1;
         }
@@ -244,21 +244,21 @@ static unsigned char can_move_check(signed char dx, signed char dy)
 
 static void map_move_done(signed char dx, signed char dy)
 {
-    if (is_player_pulling)
+    if (globals.is_player_pulling)
     {
-        is_player_pulling = 0;
-        is_player_pushing = 1;
+        globals.is_player_pulling = 0;
+        globals.is_player_pushing = 1;
         // we are pulling not pushing
         dx = -dx;
         dy = -dy;
     }
 
-    if (is_player_pushing)
+    if (globals.is_player_pushing)
     {
         // place crate
-        is_player_pushing = 0;
-        grid.x = player_x + dx;
-        grid.y = player_y + dy;
+        globals.is_player_pushing = 0;
+        grid.x = globals.player_x + dx;
+        grid.y = globals.player_y + dy;
         grid_get();
         if ((grid.tile & BG_BYTES) == TARGET)
         {
@@ -291,7 +291,7 @@ static void map_refresh_horizontal(void)
 
 unsigned char map_move_up(void)
 {
-    if (player_x == 0 || !can_move_check(-1, 0))
+    if (globals.player_x == 0 || !can_move_check(-1, 0))
     {
         return DIR_NONE;
     }
@@ -304,7 +304,7 @@ unsigned char map_move_up(void)
     map_refresh_vertical();
     map_frame = 3;
     map_refresh_vertical();
-    player_x--;
+    globals.player_x--;
     map_frame = 0;
     player_draw_done(); // final position
     map_move_done(-1, 0);
@@ -314,7 +314,7 @@ unsigned char map_move_up(void)
 
 unsigned char map_move_down(void)
 {
-    if (player_x == MAP_SIZE - 1 || !can_move_check(1, 0))
+    if (globals.player_x == MAP_SIZE - 1 || !can_move_check(1, 0))
     {
         return DIR_NONE;
     }
@@ -322,7 +322,7 @@ unsigned char map_move_down(void)
     player_draw_down();
     // animate down
     map_frame = 3;
-    player_x++;
+    globals.player_x++;
     map_refresh_vertical();
     map_frame = 2;
     map_refresh_vertical();
@@ -337,7 +337,7 @@ unsigned char map_move_down(void)
 
 unsigned char map_move_left(void)
 {
-    if (player_y == 0 || !can_move_check(0, -1))
+    if (globals.player_y == 0 || !can_move_check(0, -1))
     {
         return DIR_NONE;
     }
@@ -350,7 +350,7 @@ unsigned char map_move_left(void)
     map_refresh_horizontal();
     map_frame = 3;
     map_refresh_horizontal();
-    player_y--;
+    globals.player_y--;
     map_frame = 0;
     player_draw_done(); // final position
     map_move_done(0, -1);
@@ -360,7 +360,7 @@ unsigned char map_move_left(void)
 
 unsigned char map_move_right(void)
 {
-    if (player_y == MAP_SIZE - 1 || !can_move_check(0, 1))
+    if (globals.player_y == MAP_SIZE - 1 || !can_move_check(0, 1))
     {
         return DIR_NONE;
     }
@@ -368,7 +368,7 @@ unsigned char map_move_right(void)
     player_draw_right();
     // animate right
     map_frame = 3;
-    player_y++;
+    globals.player_y++;
     map_refresh_horizontal();
     map_frame = 2;
     map_refresh_horizontal();
@@ -383,9 +383,9 @@ unsigned char map_move_right(void)
 
 void map_move_none(void)
 {
-    is_player_pushing = 0;
+    globals.is_player_pushing = 0;
     player_draw_done();
-    switch (player_facing)
+    switch (globals.player_facing)
     {
     default:
     case 0:

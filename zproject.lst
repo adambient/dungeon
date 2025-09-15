@@ -3,7 +3,7 @@ banker.asm
 banker.c
 gfx.asm
 grid.asm
-globals.c
+globals.asm
 player.c
 enemy.c
 beeps.c

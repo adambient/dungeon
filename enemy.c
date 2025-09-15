@@ -90,7 +90,7 @@ void enemy_move(void)
         for (unsigned char enemy_index = 0; enemy_index < enemy_count; enemy_index++)
         {
             // enemies follow the player if within ENEMY_FOLLOW_N squares (TODO which is still too hard)
-            signed char diff = player_x - enemies[enemy_index].x;
+            signed char diff = globals.player_x - enemies[enemy_index].x;
             if (diff > 0 && diff < ENEMY_FOLLOW_N)
             {
                 if (enemy_attempt_move(DIR_DOWN, enemy_index))
@@ -105,7 +105,7 @@ void enemy_move(void)
                     continue;
                 }
             }
-            diff = player_y - enemies[enemy_index].y;
+            diff = globals.player_y - enemies[enemy_index].y;
             if (diff > 0 && diff < ENEMY_FOLLOW_N)
             {
                 if (enemy_attempt_move(DIR_RIGHT, enemy_index))
