@@ -11,15 +11,23 @@ struct enemy_data
     unsigned char y;
     unsigned char dir;
 };
+
 static struct enemy_data enemies[MAX_ENEMIES];
 
-static unsigned char enemy_count = 0;
-static unsigned char enemy_tick = 0;
+typedef struct {
+    unsigned char count;
+    unsigned char tick;
+} enemy_t;
+
+static enemy_t enemy;
+
+
+
 
 void enemy_init(void)
 {
-    enemy_count = 0;
-    enemy_tick = 0;
+    enemy.count = 0;
+    enemy.tick = 0;
 }
 
 static unsigned char enemy_attempt_move(unsigned char next_dir, unsigned char enemy_index)
@@ -71,12 +79,12 @@ static unsigned char enemy_attempt_move(unsigned char next_dir, unsigned char en
 
 void enemy_add(unsigned char x, unsigned char y)
 {
-    if (enemy_count < MAX_ENEMIES)
+    if (enemy.count < MAX_ENEMIES)
     {
-        enemies[enemy_count].x = x;
-        enemies[enemy_count].y = y;
-        enemies[enemy_count].dir = DIR_UP;
-        enemy_count++;
+        enemies[enemy.count].x = x;
+        enemies[enemy.count].y = y;
+        enemies[enemy.count].dir = DIR_UP;
+        enemy.count++;
     }
 }
 
@@ -84,10 +92,10 @@ void enemy_add(unsigned char x, unsigned char y)
 void enemy_move(void)
 {
     // move every outer tick change
-    if (enemy_tick != screen_colour_cycle)
+    if (enemy.tick != screen_colour_cycle)
     {
-        enemy_tick = screen_colour_cycle;
-        for (unsigned char enemy_index = 0; enemy_index < enemy_count; enemy_index++)
+        enemy.tick = screen_colour_cycle;
+        for (unsigned char enemy_index = 0; enemy_index < enemy.count; enemy_index++)
         {
             // enemies follow the player if within ENEMY_FOLLOW_N squares (TODO which is still too hard)
             signed char diff = globals.player_x - enemies[enemy_index].x;
@@ -126,7 +134,7 @@ void enemy_move(void)
 
 unsigned char enemy_is_located(unsigned char x, unsigned char y)
 {
-    for (unsigned char enemy_index = 0; enemy_index < enemy_count; enemy_index++)
+    for (unsigned char enemy_index = 0; enemy_index < enemy.count; enemy_index++)
     {
         if (x == enemies[enemy_index].x && y == enemies[enemy_index].y)
         {
