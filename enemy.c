@@ -5,24 +5,19 @@
 
 #define MAX_ENEMIES 4
 
-struct enemy_data
-{
+typedef struct {
     unsigned char x;
     unsigned char y;
     unsigned char dir;
-};
-
-static struct enemy_data enemies[MAX_ENEMIES];
+} enemies_t;
 
 typedef struct {
     unsigned char count;
     unsigned char tick;
+    enemies_t enemies[MAX_ENEMIES];
 } enemy_t;
 
 static enemy_t enemy;
-
-
-
 
 void enemy_init(void)
 {
@@ -36,8 +31,8 @@ static unsigned char enemy_attempt_move(unsigned char next_dir, unsigned char en
     {
         next_dir = next_dir - DIR_NONE;
     }
-    unsigned char next_x = enemies[enemy_index].x;
-    unsigned char next_y = enemies[enemy_index].y;
+    unsigned char next_x = enemy.enemies[enemy_index].x;
+    unsigned char next_y = enemy.enemies[enemy_index].y;
     switch (next_dir)
     {
     case DIR_UP:
@@ -66,9 +61,9 @@ static unsigned char enemy_attempt_move(unsigned char next_dir, unsigned char en
     unsigned char next_tile = (grid.tile & BG_BYTES);
     if (next_tile == CARPET_1 || next_tile == CARPET_2 || next_tile == TARGET)
     {
-        enemies[enemy_index].x = next_x;
-        enemies[enemy_index].y = next_y;
-        enemies[enemy_index].dir = next_dir;
+        enemy.enemies[enemy_index].x = next_x;
+        enemy.enemies[enemy_index].y = next_y;
+        enemy.enemies[enemy_index].dir = next_dir;
         return 1;
     }
     else
@@ -81,9 +76,9 @@ void enemy_add(unsigned char x, unsigned char y)
 {
     if (enemy.count < MAX_ENEMIES)
     {
-        enemies[enemy.count].x = x;
-        enemies[enemy.count].y = y;
-        enemies[enemy.count].dir = DIR_UP;
+        enemy.enemies[enemy.count].x = x;
+        enemy.enemies[enemy.count].y = y;
+        enemy.enemies[enemy.count].dir = DIR_UP;
         enemy.count++;
     }
 }
@@ -98,7 +93,7 @@ void enemy_move(void)
         for (unsigned char enemy_index = 0; enemy_index < enemy.count; enemy_index++)
         {
             // enemies follow the player if within ENEMY_FOLLOW_N squares (TODO which is still too hard)
-            signed char diff = globals.player_x - enemies[enemy_index].x;
+            signed char diff = globals.player_x - enemy.enemies[enemy_index].x;
             if (diff > 0 && diff < ENEMY_FOLLOW_N)
             {
                 if (enemy_attempt_move(DIR_DOWN, enemy_index))
@@ -113,7 +108,7 @@ void enemy_move(void)
                     continue;
                 }
             }
-            diff = globals.player_y - enemies[enemy_index].y;
+            diff = globals.player_y - enemy.enemies[enemy_index].y;
             if (diff > 0 && diff < ENEMY_FOLLOW_N)
             {
                 if (enemy_attempt_move(DIR_RIGHT, enemy_index))
@@ -136,7 +131,7 @@ unsigned char enemy_is_located(unsigned char x, unsigned char y)
 {
     for (unsigned char enemy_index = 0; enemy_index < enemy.count; enemy_index++)
     {
-        if (x == enemies[enemy_index].x && y == enemies[enemy_index].y)
+        if (x == enemy.enemies[enemy_index].x && y == enemy.enemies[enemy_index].y)
         {
             return 1;
         }
