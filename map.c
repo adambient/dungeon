@@ -29,17 +29,17 @@ static inline unsigned char row_get_tile(unsigned char x, unsigned char y)
                 (x == (MAP_SIZE - 2) && (y == (MAP_SIZE - 2) || y == 1)))
                 {
                     // uncovered secret exit, cycle between carpet colours
-                    return (CARPET_1 | (screen_colour & 0b00000001));
+                    return (CARPET_1 | (screen.colour & 0b00000001));
                 }
             }
             grid.tile = grid.tile & BG_BYTES;
             switch (grid.tile)
             {
             case TARGET:
-                return screen_colour;
+                return screen.colour;
             case PLACED:
                 // cycle bettween yellow and white
-                return (YELLOW | (screen_colour & 0b00000001));
+                return (YELLOW | (screen.colour & 0b00000001));
             default:
                 return grid.tile;
             }

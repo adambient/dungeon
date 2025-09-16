@@ -87,9 +87,9 @@ void enemy_add(unsigned char x, unsigned char y)
 void enemy_move(void)
 {
     // move every outer tick change
-    if (enemy.tick != screen_colour_cycle)
+    if (enemy.tick != screen.colour_cycle)
     {
-        enemy.tick = screen_colour_cycle;
+        enemy.tick = screen.colour_cycle;
         for (unsigned char enemy_index = 0; enemy_index < enemy.count; enemy_index++)
         {
             // enemies follow the player if within ENEMY_FOLLOW_N squares (TODO which is still too hard)

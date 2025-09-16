@@ -5,9 +5,7 @@
 #include <stdio.h>
 #include "gfx.h"
 
-// timer
-unsigned char screen_colour_cycle;
-unsigned char screen_colour;
+screen_t screen;
 
 void screen_refresh(void)
 {    
@@ -16,14 +14,14 @@ void screen_refresh(void)
     gfx.y = 22;
     gfx.height = 1;
     gfx.width = 3;
-    gfx.ink = screen_colour;
+    gfx.ink = screen.colour;
     gfx.paper = WHITE;
     gfx_attr();
-    ++screen_colour;    
-    if (screen_colour > WHITE)
+    ++screen.colour;    
+    if (screen.colour > WHITE)
     {
-        screen_colour = BLACK;
-        ++screen_colour_cycle;
+        screen.colour = BLACK;
+        ++screen.colour_cycle;
     }
     intrinsic_halt();
     gfx_flush();

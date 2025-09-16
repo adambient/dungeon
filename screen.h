@@ -1,8 +1,12 @@
 #ifndef _SCREEN_H
 #define _SCREEN_H
 
-extern unsigned char screen_colour_cycle;
-extern unsigned char screen_colour;
+typedef struct {
+    unsigned char colour_cycle;
+    unsigned char colour;
+} screen_t;
+
+extern screen_t screen;
 
 extern void screen_refresh(void);
 extern void screen_success(void);
