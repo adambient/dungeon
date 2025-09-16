@@ -22,10 +22,14 @@
 #define MAN_RIGHT_BODY2 "QR$"
 #define MAN_RIGHT_BODY3 "ST$"
 
-static unsigned char player_background_1;
-static unsigned char player_background_2;
-static unsigned char player_frame;
-static unsigned char player_tile_next;
+typedef struct {
+    unsigned char background_1;
+    unsigned char background_2;
+    unsigned char frame;
+    unsigned char tile_next;
+} player_t;
+
+static player_t player;
 
 static unsigned char player_get_tile(unsigned char x, unsigned char y)
 {
@@ -46,24 +50,24 @@ static inline void frame_draw_body(unsigned const char *body1, unsigned const ch
     gfx.y = PLAYER_SQUARE;
     gfx.height = 1;
     gfx.width = 2;
-    switch (player_frame)
+    switch (player.frame)
     {
     default:
     case 0:
         gfx.c = body1;
-        player_frame = 1;
+        player.frame = 1;
         break;
     case 1:
         gfx.c = body2;
-        player_frame = 2;
+        player.frame = 2;
         break;
     case 2:
         gfx.c = body1;
-        player_frame = 3;
+        player.frame = 3;
         break;
     case 3:
         gfx.c = body3;
-        player_frame = 0;
+        player.frame = 0;
         break;
     }
     gfx.bank = &gfx_bank0;
@@ -98,10 +102,10 @@ static inline void player_map_background(unsigned const char *background)
 
 void player_draw_up(void)
 {
-    globals.player_tile = player_tile_next;
-    player_tile_next = player_get_tile(globals.player_x - 1, globals.player_y);
-    player_background_1 = globals.player_tile;
-    player_background_2 = player_tile_next;
+    globals.player_tile = player.tile_next;
+    player.tile_next = player_get_tile(globals.player_x - 1, globals.player_y);
+    player.background_1 = globals.player_tile;
+    player.background_2 = player.tile_next;
     if (DIR_UP != globals.player_facing)
     {
         switch (globals.player_facing)
@@ -125,10 +129,10 @@ void player_draw_up(void)
 
 void player_draw_right(void)
 {
-    globals.player_tile = player_tile_next;
-    player_tile_next = player_get_tile(globals.player_x, globals.player_y + 1);
-    player_background_1 = globals.player_tile;
-    player_background_2 = player_tile_next;
+    globals.player_tile = player.tile_next;
+    player.tile_next = player_get_tile(globals.player_x, globals.player_y + 1);
+    player.background_1 = globals.player_tile;
+    player.background_2 = player.tile_next;
     if (DIR_RIGHT != globals.player_facing)
     {
         switch (globals.player_facing)
@@ -152,10 +156,10 @@ void player_draw_right(void)
 
 void player_draw_down(void)
 {
-    globals.player_tile = player_tile_next;
-    player_tile_next = player_get_tile(globals.player_x + 1, globals.player_y);
-    player_background_1 = player_tile_next;
-    player_background_2 = globals.player_tile;
+    globals.player_tile = player.tile_next;
+    player.tile_next = player_get_tile(globals.player_x + 1, globals.player_y);
+    player.background_1 = player.tile_next;
+    player.background_2 = globals.player_tile;
     if (DIR_DOWN != globals.player_facing)
     {
         switch (globals.player_facing)
@@ -179,10 +183,10 @@ void player_draw_down(void)
 
 void player_draw_left(void)
 {
-    globals.player_tile = player_tile_next;
-    player_tile_next = player_get_tile(globals.player_x, globals.player_y - 1);
-    player_background_1 = player_tile_next;
-    player_background_2 = globals.player_tile;
+    globals.player_tile = player.tile_next;
+    player.tile_next = player_get_tile(globals.player_x, globals.player_y - 1);
+    player.background_1 = player.tile_next;
+    player.background_2 = globals.player_tile;
     if (DIR_LEFT != globals.player_facing)
     {
         switch (globals.player_facing)
@@ -208,8 +212,8 @@ void player_draw_background_vertical(void)
 {
     unsigned char block_loc;
     // use cycled colour for target squares, store in temp var so next check works
-    unsigned char pb_1 = player_background_1;
-    unsigned char pb_2 = player_background_2;
+    unsigned char pb_1 = player.background_1;
+    unsigned char pb_2 = player.background_2;
     if (pb_1 == TARGET)
     {
         pb_1 = screen_colour;
@@ -300,8 +304,8 @@ void player_draw_background_horizontal(void)
 {
     unsigned char block_loc;
     // use cycled colour for target squares, store in temp var so next check works
-    unsigned char pb_1 = player_background_1;
-    unsigned char pb_2 = player_background_2;
+    unsigned char pb_1 = player.background_1;
+    unsigned char pb_2 = player.background_2;
     if (pb_1 == TARGET)
     {
         pb_1 = screen_colour;
@@ -406,9 +410,9 @@ void player_draw_done(void)
         }
     }
     // reset all backgrounds and next tiles to current tile
-    player_background_1 =
-    player_background_2 =
+    player.background_1 =
+    player.background_2 =
     globals.player_tile =
-    player_tile_next =
+    player.tile_next =
     player_get_tile(globals.player_x, globals.player_y);
 }

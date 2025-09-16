@@ -1,7 +1,6 @@
 #ifndef _GRID_H
 #define _GRID_H
 
-// args for subroutines
 typedef struct {
     unsigned char y;
     unsigned char x;

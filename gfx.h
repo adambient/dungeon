@@ -1,7 +1,6 @@
 #ifndef _gfx_H
 #define _gfx_H
 
-// args for subroutines
 typedef struct {
     unsigned char y;
     unsigned char x;
