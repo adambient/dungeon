@@ -8,8 +8,7 @@
 screen_t screen;
 
 void screen_init(void)
-{    
-    intrinsic_ei();
+{
     // hide screen
     gfx.x = 0;
     gfx.y = 0;
