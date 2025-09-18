@@ -1,6 +1,5 @@
-#pragma output CRT_ORG_CODE = 0x8300 // after attribute buffer
-// place the stack pointer at the top of non contented non switched memory to avoid crashing (default is FF58 so is switched out when banking)
-#pragma output REGISTER_SP = 0xBFE0
+#pragma output CRT_ORG_CODE = 0x8000 // start of uncontended memory
+#pragma output REGISTER_SP = 0xBFE0 // end of uncontended memory, so not switched out by banking
 
 /*
 NOTE - We are using newlib which defines sections for our ASM, not using these as appropriate seems to cause strange issues
@@ -21,8 +20,12 @@ SECTION bss_user: assign zero initial data to this section
 #include "banker.h"
 #include <stdio.h>
 
+extern void pager_set(unsigned char bank) __z88dk_fastcall;
+
 void init(void)
 {
+    pager_set(7); // default to bank 7
+    screen_init(); 
     exec_far(bank3_map_init, 3);
     globals.player_x = MAP_SIZE - 1;
     globals.player_y = 1;    
@@ -32,7 +35,6 @@ void init(void)
 
 void main(void)
 {
-    exec_far(bank3_screen_init, 3);  
     init();
     do
     {
@@ -96,14 +98,13 @@ void main(void)
             if ((globals.player_x == 1 && (globals.player_y == (MAP_SIZE - 2) || globals.player_y == 1)) ||
                 (globals.player_x == (MAP_SIZE - 2) && (globals.player_y == (MAP_SIZE - 2) || globals.player_y == 1)))
             {
-                exec_far(bank3_screen_success, 3);
+                screen_success();
                 beeps_winner();
                 do
                 {
                 } while (in_key_pressed(IN_KEY_SCANCODE_ENTER) !=0xFFFF);
 
                 globals.player_facing = DIR_NONE;
-                exec_far(bank3_screen_init, 3);
                 init();
             }
         }

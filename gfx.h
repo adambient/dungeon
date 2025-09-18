@@ -13,7 +13,10 @@ typedef struct {
 } gfx_t;
 
 extern gfx_t gfx;
-extern const char *gfx_bank0; // default character bank
+
+extern const unsigned char *gfx_char_buffer; // default character bank
+extern const unsigned char *gfx_attr_buffer; // default character bank
+extern const unsigned char *gfx_bank0; // default character bank
 
 // imported from gfx.asm
 extern void gfx_char(void) __z88dk_callee;

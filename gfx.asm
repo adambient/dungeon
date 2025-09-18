@@ -1,13 +1,19 @@
 VIDEOATT: equ $5800 ; address of attribute RAM
 VIDEOATT_L: equ $0300 ; length of attribute RAM
-ATTR_BUFF: equ $8000 ; hard coded attribute buffer address to start of uncontended memory, just before CRT_ORG_CODE ($8300)
 
-SECTION code_user
+SECTION BANK_7
 
+PUBLIC _gfx_char_buffer
+PUBLIC _gfx_attr_buffer
 PUBLIC _gfx_char
 PUBLIC _gfx_attr
 PUBLIC _gfx_bright
 PUBLIC _gfx_flush
+
+_gfx_char_buffer:
+ds $1800
+_gfx_attr_buffer:
+ds $0300
 
 ;----------
 ; _gfx_char
@@ -88,7 +94,7 @@ _gfx_char_loop3:
 ; outputs: hl = location of attribute (buffer) address
 ;----------
 get_attr_address:
-            ld bc, ATTR_BUFF            
+            ld bc, _gfx_attr_buffer            
             ld a,e
             rrca
             rrca
@@ -180,12 +186,11 @@ _gfx_bright_loop2:
 ;----------
 _gfx_flush:
             ld de, VIDEOATT ; target is attribute memory
-            ld hl, ATTR_BUFF ; source is attribute buffer
+            ld hl, _gfx_attr_buffer ; source is attribute buffer
             ld bc, VIDEOATT_L ; length is size of attribute memory
             ldir ; copy
             ret
 
-SECTION bss_user
 PUBLIC _gfx
 _gfx:
 db %00000000 ;y
@@ -197,7 +202,6 @@ db %00000000 ;ink
 dw $0000 ;char
 dw $0000 ;bank 
 
-SECTION rodata_user
 PUBLIC _gfx_bank0
 _gfx_bank0: 
 defb 0,0,0,0,0,0,0,0 ; @ - space

@@ -1,7 +1,7 @@
 bank3.o
 banker.asm
 banker.c
-gfx.asm
+gfx.o
 grid.asm
 globals.asm
 player.c
