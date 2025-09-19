@@ -111,15 +111,7 @@ gs8:   equ $0008
 
 PUBLIC _tracker_init
 PUBLIC _tracker_play
-PUBLIC _tracker_note_wait
-PUBLIC _tracker_channel1_note
-PUBLIC _tracker_channel2_note
-PUBLIC _tracker_channel3_note
-PUBLIC _tracker_note
-PUBLIC _tracker_channel1_start
-PUBLIC _tracker_channel2_start
-PUBLIC _tracker_channel3_start
-PUBLIC _tracker_start
+PUBLIC _tracker
 PUBLIC _clotho_channel1_score
 PUBLIC _clotho_channel2_score
 PUBLIC _clotho_channel3_score
@@ -146,42 +138,42 @@ _tracker_play:
             ; opt - c never changes, weirdly (used in psg calls only)
             ld c, $fd
             ; load tracker
-            ld hl, (_tracker_note)
+            ld hl, (tracker_note)
             ld a, (hl) ; a = tracker
             or a ; populate flags
             jr nz, tracker_play_continue ; if empty then reset, else jump to continue
             ; set all current notes to beginning of scores
-            ld hl, (_tracker_channel1_start)
-            ld (_tracker_channel1_note), hl
-            ld hl, (_tracker_channel2_start)
-            ld (_tracker_channel2_note), hl
-            ld hl, (_tracker_channel3_start)
-            ld (_tracker_channel3_note), hl
-            ld hl, (_tracker_start)
-            ld (_tracker_note), hl
+            ld hl, (tracker_channel1_start)
+            ld (tracker_channel1_note), hl
+            ld hl, (tracker_channel2_start)
+            ld (tracker_channel2_note), hl
+            ld hl, (tracker_channel3_start)
+            ld (tracker_channel3_note), hl
+            ld hl, (tracker_start)
+            ld (tracker_note), hl
             ld a, (hl) ; a = tracker
 tracker_play_continue:
             ; play notes based on tracker in a
             ld de, $0800 ; d = channel 1 volume regiser (8), e = channel 1 fine tune register (0)
-            ld hl, _tracker_channel1_note ; hl = channel 1 current note
+            ld hl, tracker_channel1_note ; hl = channel 1 current note
             call tracker_play_note
             ; channel 2
-            ld hl, (_tracker_note)
+            ld hl, (tracker_note)
             ld a, (hl) ; a = tracker
             rrca
             rrca ; ch2 into position 0
             ld de, $0902 ; d = channel 2 volume regiser (9), e = channel 2 fine tune register (2)
-            ld hl, _tracker_channel2_note ; hl = channel 2 current note
+            ld hl, tracker_channel2_note ; hl = channel 2 current note
             call tracker_play_note
             ; channel 3
-            ld hl, (_tracker_note)
+            ld hl, (tracker_note)
             ld a, (hl) ; a = tracker
             rrca
             rrca
             rrca
             rrca ; ch3 into position 0
             ld de, $0a04 ; d = channel 3 volume regiser (10), e = channel 3 fine tune register (4)
-            ld hl, _tracker_channel3_note ; hl = channel 3 current note
+            ld hl, tracker_channel3_note ; hl = channel 3 current note
             call tracker_play_note
             ; overall envelope settings
             ld a,11
@@ -202,7 +194,7 @@ tracker_play_continue:
             ld b,$bf
             out (c),h ; psg
             ; move tracker to next memory location
-            ld hl, _tracker_note
+            ld hl, tracker_note
             inc (hl)
             ret nz
             inc hl
@@ -264,25 +256,24 @@ tracker_play_note_continue_2:            ; load values
             out (c), e ; psg
             ret
 
-_tracker_note_wait:
-db 10 ; wait 0.2 seconds between notes (PAL)
-_tracker_channel1_note:
-dw $0000
-_tracker_channel2_note:
-dw $0000
-_tracker_channel3_note:
-dw $0000
-_tracker_note:
-dw _clotho_score_end
-
-_tracker_channel1_start:
-dw _clotho_channel1_score - 2 ; first new note moves into position
-_tracker_channel2_start:
-dw _clotho_channel2_score - 2 ; first new note moves into position
-_tracker_channel3_start:
-dw _clotho_channel3_score - 2 ; first new note moves into position
-_tracker_start:
-dw _clotho_score
+_tracker:
+db 10 ; tracker.note_wait
+tracker_channel1_note:
+dw $0000 ; tracker.channel1_note
+tracker_channel2_note:
+dw $0000 ; tracker.channel2_note
+tracker_channel3_note:
+dw $0000 ; tracker.channel3_note
+tracker_note:
+dw _clotho_score_end ; tracker.note
+tracker_channel1_start:
+dw _clotho_channel1_score - 2 ; tracker.channel1_start - first new note moves into position
+tracker_channel2_start:
+dw _clotho_channel2_score - 2 ; tracker.channel2_start - first new note moves into position
+tracker_channel3_start:
+dw _clotho_channel3_score - 2 ; tracker.channel3_start - first new note moves into position
+tracker_start:
+dw _clotho_score ; tracker.start
 
 _clotho_channel1_score:
 dw a3

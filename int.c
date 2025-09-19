@@ -15,7 +15,7 @@ void my_isr_body(void) {
     ++tick;
     unsigned char current_bank = pager_get();
     pager_set(6);
-    if (tick == tracker_note_wait)
+    if (tick == tracker.note_wait)
     {
         tracker_play();
         tick = 0;
