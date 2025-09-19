@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <z80.h>
-#include "sfx.h"
+#include "tracker.h"
 
 // imported from banker.asm
 extern unsigned int pager_get(void) __z88dk_fastcall;
@@ -15,9 +15,9 @@ void my_isr_body(void) {
     ++tick;
     unsigned char current_bank = pager_get();
     pager_set(6);
-    if (tick == sfx_note_wait)
+    if (tick == tracker_note_wait)
     {
-        sfx_play();
+        tracker_play();
         tick = 0;
     }
     pager_set(current_bank);
@@ -46,7 +46,7 @@ void int_init(void)
 {
     unsigned char current_bank = pager_get();
     pager_set(6);
-    sfx_init();
+    tracker_init();
     pager_set(current_bank);
     im2_init((void *)0xbd00);
     memset((void *)0xbd00, 0xbe, 257);

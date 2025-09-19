@@ -109,26 +109,26 @@ fs8:   equ $0009
 g8:    equ $0009
 gs8:   equ $0008
 
-PUBLIC _sfx_init
-PUBLIC _sfx_play
-PUBLIC _sfx_note_wait
-PUBLIC _sfx_channel1_note
-PUBLIC _sfx_channel2_note
-PUBLIC _sfx_channel3_note
-PUBLIC _sfx_note
-PUBLIC _sfx_channel1_start
-PUBLIC _sfx_channel2_start
-PUBLIC _sfx_channel3_start
-PUBLIC _sfx_start
-PUBLIC _sfx_channel1_score
-PUBLIC _sfx_channel2_score
-PUBLIC _sfx_channel3_score
-PUBLIC _sfx_score
+PUBLIC _tracker_init
+PUBLIC _tracker_play
+PUBLIC _tracker_note_wait
+PUBLIC _tracker_channel1_note
+PUBLIC _tracker_channel2_note
+PUBLIC _tracker_channel3_note
+PUBLIC _tracker_note
+PUBLIC _tracker_channel1_start
+PUBLIC _tracker_channel2_start
+PUBLIC _tracker_channel3_start
+PUBLIC _tracker_start
+PUBLIC _clotho_channel1_score
+PUBLIC _clotho_channel2_score
+PUBLIC _clotho_channel3_score
+PUBLIC _clotho_score
 
 ;-------------
-; sfx_init
+; tracker_init
 ;-------------
-_sfx_init:
+_tracker_init:
             ; initialize ay mixer to all notes but no noises
             ld a, 7
             ld h, %00111000
@@ -140,49 +140,49 @@ _sfx_init:
             ret
 
 ;-------------
-; sfx_play
+; tracker_play
 ;-------------
-_sfx_play:
+_tracker_play:
             ; opt - c never changes, weirdly (used in psg calls only)
             ld c, $fd
             ; load tracker
-            ld hl, (_sfx_note)
+            ld hl, (_tracker_note)
             ld a, (hl) ; a = tracker
             or a ; populate flags
-            jr nz, sfx_play_continue ; if empty then reset, else jump to continue
+            jr nz, tracker_play_continue ; if empty then reset, else jump to continue
             ; set all current notes to beginning of scores
-            ld hl, (_sfx_channel1_start)
-            ld (_sfx_channel1_note), hl
-            ld hl, (_sfx_channel2_start)
-            ld (_sfx_channel2_note), hl
-            ld hl, (_sfx_channel3_start)
-            ld (_sfx_channel3_note), hl
-            ld hl, (_sfx_start)
-            ld (_sfx_note), hl
+            ld hl, (_tracker_channel1_start)
+            ld (_tracker_channel1_note), hl
+            ld hl, (_tracker_channel2_start)
+            ld (_tracker_channel2_note), hl
+            ld hl, (_tracker_channel3_start)
+            ld (_tracker_channel3_note), hl
+            ld hl, (_tracker_start)
+            ld (_tracker_note), hl
             ld a, (hl) ; a = tracker
-sfx_play_continue:
+tracker_play_continue:
             ; play notes based on tracker in a
             ld de, $0800 ; d = channel 1 volume regiser (8), e = channel 1 fine tune register (0)
-            ld hl, _sfx_channel1_note ; hl = channel 1 current note
-            call sfx_play_note
+            ld hl, _tracker_channel1_note ; hl = channel 1 current note
+            call tracker_play_note
             ; channel 2
-            ld hl, (_sfx_note)
+            ld hl, (_tracker_note)
             ld a, (hl) ; a = tracker
             rrca
             rrca ; ch2 into position 0
             ld de, $0902 ; d = channel 2 volume regiser (9), e = channel 2 fine tune register (2)
-            ld hl, _sfx_channel2_note ; hl = channel 2 current note
-            call sfx_play_note
+            ld hl, _tracker_channel2_note ; hl = channel 2 current note
+            call tracker_play_note
             ; channel 3
-            ld hl, (_sfx_note)
+            ld hl, (_tracker_note)
             ld a, (hl) ; a = tracker
             rrca
             rrca
             rrca
             rrca ; ch3 into position 0
             ld de, $0a04 ; d = channel 3 volume regiser (10), e = channel 3 fine tune register (4)
-            ld hl, _sfx_channel3_note ; hl = channel 3 current note
-            call sfx_play_note
+            ld hl, _tracker_channel3_note ; hl = channel 3 current note
+            call tracker_play_note
             ; overall envelope settings
             ld a,11
             ld h,32 ; 11 and 12 govern duration of envelope
@@ -202,19 +202,19 @@ sfx_play_continue:
             ld b,$bf
             out (c),h ; psg
             ; move tracker to next memory location
-            ld hl, _sfx_note
+            ld hl, _tracker_note
             inc (hl)
             ret nz
             inc hl
             inc (hl)
             ret
 ;-------------
-; sfx_play_note
+; tracker_play_note
 ; inputs - a: tracker, d: channel volume register, e: channel fine tune register, hl: channel current note
 ;-------------
-sfx_play_note:
+tracker_play_note:
             and %00000011 ; only keep bits 0 and 1 of tracker so can check against 0-3
-            jr nz, sfx_play_note_continue_1 ; if result of and is non zero then jump to continue
+            jr nz, tracker_play_note_continue_1 ; if result of and is non zero then jump to continue
             ld a, d ; no - silence note
             ld h, 0
             ld b,$ff
@@ -222,7 +222,7 @@ sfx_play_note:
             ld b,$bf
             out (c),h ; psg
             ret
-sfx_play_note_continue_1:
+tracker_play_note_continue_1:
             ; a is 1-3, quick calc to get relative volume
             inc a ; 2,3,4
             add a, a ; 4,6,8
@@ -232,16 +232,16 @@ sfx_play_note_continue_1:
             ld b,$bf
             out (c), a ; psg
             cp 16 ; use envelope?
-            jr nz, sfx_play_note_continue_2 ; use envelope? no, continue using default volume
+            jr nz, tracker_play_note_continue_2 ; use envelope? no, continue using default volume
             ; yes, also progress note to next
             ld a, (hl)
             add a, 2
             ld (hl), a
-            jr nc, sfx_play_note_continue_2
+            jr nc, tracker_play_note_continue_2
             inc hl
             inc (hl)
             dec hl ; reset pointer to current note
-sfx_play_note_continue_2:            ; load values
+tracker_play_note_continue_2:            ; load values
             ld a, e ; a = fine tune register
             ; retrieve current note...
             ld e, (hl)
@@ -264,27 +264,27 @@ sfx_play_note_continue_2:            ; load values
             out (c), e ; psg
             ret
 
-_sfx_note_wait:
+_tracker_note_wait:
 db 10 ; wait 0.2 seconds between notes (PAL)
-_sfx_channel1_note:
+_tracker_channel1_note:
 dw $0000
-_sfx_channel2_note:
+_tracker_channel2_note:
 dw $0000
-_sfx_channel3_note:
+_tracker_channel3_note:
 dw $0000
-_sfx_note:
-dw _sfx_score_end
+_tracker_note:
+dw _clotho_score_end
 
-_sfx_channel1_start:
-dw _sfx_channel1_score - 2 ; first new note moves into position
-_sfx_channel2_start:
-dw _sfx_channel2_score - 2 ; first new note moves into position
-_sfx_channel3_start:
-dw _sfx_channel3_score - 2 ; first new note moves into position
-_sfx_start:
-dw _sfx_score
+_tracker_channel1_start:
+dw _clotho_channel1_score - 2 ; first new note moves into position
+_tracker_channel2_start:
+dw _clotho_channel2_score - 2 ; first new note moves into position
+_tracker_channel3_start:
+dw _clotho_channel3_score - 2 ; first new note moves into position
+_tracker_start:
+dw _clotho_score
 
-_sfx_channel1_score:
+_clotho_channel1_score:
 dw a3
 dw e3
 dw c4
@@ -530,7 +530,7 @@ dw gs2
 dw a2
 dw a2
 
-_sfx_channel2_score:
+_clotho_channel2_score:
 dw a1
 dw e1
 dw a1
@@ -683,7 +683,7 @@ dw gs1
 dw a1
 dw a1
 
-_sfx_channel3_score:
+_clotho_channel3_score:
 dw g2
 dw a2
 dw b2
@@ -737,7 +737,7 @@ dw a2
 dw g2
 dw e2
 
-_sfx_score:
+_clotho_score:
 db %10000011
 db %10000011
 db %10000011
@@ -1080,5 +1080,5 @@ db %10001010
 db %10001010
 db %10001010
 db %10001010
-_sfx_score_end:
+_clotho_score_end:
 db %00000000 ; end
