@@ -1,4 +1,4 @@
-#pragma output CRT_ORG_CODE = 24550 // just after basic loader and pasmo bank switcher
+#pragma output CRT_ORG_CODE = 0x8000 // just after basic loader and pasmo bank switcher
 #pragma output REGISTER_SP = 0xBFE0 // end of uncontended memory, so not switched out by banking
 
 /*
