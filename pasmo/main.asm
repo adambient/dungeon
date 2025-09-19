@@ -1,23 +1,8 @@
-include "pasmo\consts.asm"
+DEFADD EQU 23563 ; location of parameters passed by BASIC
+BANK_M EQU $5b5c ; which bank is currently being used
+BANK_P EQU $7ffd ; port for paging banks
 
 org 24500
-; initialize ay mixer to all notes but no noises
-ld a, 7
-ld h, %00111000
-ld c, $fd
-ld b, $ff
-out (c), a
-ld b, $bf
-out (c), h ; psg
-; initialize interrupts
-di ; disables interrupts
-ld a, $28 ; a = 40 (specifies address)
-ld i, a ; i = a
-im 2 ; mode 2 interrupts
-ei ; enable interrupts
-ret
-
-org 24550
 ;----------
 ; bank_set
 ; inputs (order of and target register): d = bank to switch to
@@ -41,8 +26,3 @@ org 24550
             ld b, 0
             ld c, 0 ; return value is 0
             ret
-
-include "pasmo\clotho.asm"
-
-org 32348
-include "pasmo\int.asm"

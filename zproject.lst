@@ -1,6 +1,7 @@
 bank3.o
 banker.asm
 banker.c
+tracker.o
 gfx.o
 grid.asm
 globals.asm
@@ -9,4 +10,5 @@ enemy.c
 beeps.c
 map.c
 screen.c
+int.c
 main.c

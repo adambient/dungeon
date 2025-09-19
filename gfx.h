@@ -18,7 +18,6 @@ extern const unsigned char *gfx_char_buffer; // default character bank
 extern const unsigned char *gfx_attr_buffer; // default character bank
 extern const unsigned char *gfx_bank0; // default character bank
 
-// imported from gfx.asm
 extern void gfx_char(void) __z88dk_callee;
 extern void gfx_attr(void) __z88dk_callee;
 extern void gfx_bright(void) __z88dk_callee;

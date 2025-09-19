@@ -1,4 +1,4 @@
-#pragma output CRT_ORG_CODE = 0x8000 // start of uncontended memory
+#pragma output CRT_ORG_CODE = 24550 // just after basic loader and pasmo bank switcher
 #pragma output REGISTER_SP = 0xBFE0 // end of uncontended memory, so not switched out by banking
 
 /*
@@ -19,22 +19,24 @@ SECTION bss_user: assign zero initial data to this section
 #include "bank3.h"
 #include "banker.h"
 #include <stdio.h>
+#include "int.h"
 
 extern void pager_set(unsigned char bank) __z88dk_fastcall;
 
 void init(void)
 {
-    pager_set(7); // default to bank 7
     screen_init(); 
     exec_far(bank3_map_init, 3);
     globals.player_x = MAP_SIZE - 1;
-    globals.player_y = 1;    
+    globals.player_y = 1;
+    globals.player_facing = DIR_NONE;
     globals.player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this    
     map_move_none();
 }
 
 void main(void)
 {
+    int_init();
     init();
     do
     {
@@ -90,7 +92,7 @@ void main(void)
         }
 
         enemy_move();
-        beeps_play();        
+        beeps_play();
 
         // end game check
         if (map_uncovered_holes == 0)
