@@ -2,7 +2,7 @@ VIDEOATT: equ $5800 ; address of attribute RAM
 VIDEOATT_L: equ $0300 ; length of attribute RAM
 ATTR_BUFF: equ $FC00 ; 768 bytes at the top of RAM
 
-SECTION BANK_7
+SECTION BANK_0
 
 PUBLIC _gfx_char
 PUBLIC _gfx_attr

@@ -14,7 +14,7 @@ unsigned char tick;
 void my_isr_body(void) {
     ++tick;
     unsigned char current_bank = pager_get();
-    pager_set(6);
+    pager_set(4);
     if (tick == tracker.note_wait)
     {
         tracker_play();
@@ -45,7 +45,7 @@ void my_isr(void) __interrupt __naked {
 void int_init(void)
 {
     unsigned char current_bank = pager_get();
-    pager_set(6);
+    pager_set(4);
     tracker_init();
     pager_set(current_bank);
     im2_init((void *)0xbd00);

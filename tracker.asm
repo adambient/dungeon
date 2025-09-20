@@ -1,4 +1,4 @@
-SECTION BANK_6
+SECTION BANK_4
 
 ; -------------------------------------------------------------------
 ; AY Chip frequencies to be loaded in register 0 (lhs - fine tuning) then register 1 (rhs - course tuning)

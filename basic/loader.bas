@@ -11,11 +11,11 @@ LOAD "" CODE 32768
 RANDOMIZE FN M(3)
 # load bank 3
 LOAD "" CODE 49152
-# load bank 6 (sfx)
-RANDOMIZE FN M(6)
+# load bank 4 (sfx)
+RANDOMIZE FN M(4)
 LOAD "" CODE 49152
-# load bank 7 (gfx)
-RANDOMIZE FN M(7)
+# load bank 0 (gfx)
+RANDOMIZE FN M(0)
 LOAD "" CODE 49152
 # call clang start
 CLS

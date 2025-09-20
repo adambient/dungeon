@@ -208,7 +208,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         }
         grid_set();
         globals.is_player_pushing = 1;
-        exec_far(beeps_pushing, 6);
+        exec_far(beeps_pushing, 4);
         return 1;
     }
     else if (globals.is_player_pushing)
@@ -235,11 +235,11 @@ static unsigned char can_move_check(signed char dx, signed char dy)
             }
             grid_set();
             globals.is_player_pulling = 1;
-            exec_far(beeps_pushing, 6);
+            exec_far(beeps_pushing, 4);
             return 1;
         }
     }
-    exec_far(beeps_footstep, 6);
+    exec_far(beeps_footstep, 4);
     return 1;
 }
 
@@ -265,7 +265,7 @@ static void map_move_done(signed char dx, signed char dy)
         {
             // target location
             grid.tile = PLACED | SEEN_BYTE;
-            exec_far(beeps_success, 6);
+            exec_far(beeps_success, 4);
             map_uncovered_holes--;
         }
         else

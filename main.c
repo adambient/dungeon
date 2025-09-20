@@ -87,12 +87,12 @@ void main(void)
 
         if (ENEMY == globals.player_tile)
         {            
-            exec_far(beeps_death, 6);
+            exec_far(beeps_death, 4);
             init();
         }
 
         enemy_move();
-        exec_far(beeps_play, 6);
+        exec_far(beeps_play, 4);
 
         // end game check
         if (map_uncovered_holes == 0)
@@ -101,7 +101,7 @@ void main(void)
                 (globals.player_x == (MAP_SIZE - 2) && (globals.player_y == (MAP_SIZE - 2) || globals.player_y == 1)))
             {
                 screen_success();
-                exec_far(beeps_winner, 6);
+                exec_far(beeps_winner, 4);
                 do
                 {
                 } while (in_key_pressed(IN_KEY_SCANCODE_ENTER) !=0xFFFF);
