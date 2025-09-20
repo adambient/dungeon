@@ -5,6 +5,7 @@
 #include "beeps.h"
 #include "gfx.h"
 #include "grid.h"
+#include "banker.h"
 
 static unsigned char *attr_address;
 static unsigned char map_frame;
@@ -207,7 +208,7 @@ static unsigned char can_move_check(signed char dx, signed char dy)
         }
         grid_set();
         globals.is_player_pushing = 1;
-        beeps_pushing();
+        exec_far(beeps_pushing, 6);
         return 1;
     }
     else if (globals.is_player_pushing)
@@ -234,11 +235,11 @@ static unsigned char can_move_check(signed char dx, signed char dy)
             }
             grid_set();
             globals.is_player_pulling = 1;
-            beeps_pushing();
+            exec_far(beeps_pushing, 6);
             return 1;
         }
     }
-    beeps_footstep();
+    exec_far(beeps_footstep, 6);
     return 1;
 }
 
@@ -264,7 +265,7 @@ static void map_move_done(signed char dx, signed char dy)
         {
             // target location
             grid.tile = PLACED | SEEN_BYTE;
-            beeps_success();
+            exec_far(beeps_success, 6);
             map_uncovered_holes--;
         }
         else

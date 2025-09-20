@@ -11,7 +11,7 @@ LOAD "" CODE 32768
 RANDOMIZE FN M(3)
 # load bank 3
 LOAD "" CODE 49152
-# load bank 6 (tracker)
+# load bank 6 (sfx)
 RANDOMIZE FN M(6)
 LOAD "" CODE 49152
 # load bank 7 (gfx)

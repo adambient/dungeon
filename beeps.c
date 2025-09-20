@@ -1,38 +1,42 @@
+#include "beeps.h"
 #include "sound.h"
+#include "globals.h"
 
-#define FOOTSTEP 0b00000001
-#define PUSHING 0b00000010
-#define SUCCESS 0b00000100
+#define BEEPS_FOOTSTEP 0b00000001
+#define BEEPS_PUSHING 0b00000010
+#define BEEPS_SUCCESS 0b00000100
 
-static unsigned char sound;
+static unsigned char beeps_next;
+
 void beeps_footstep(void)
 {
-    sound = sound | FOOTSTEP;
+    beeps_next = beeps_next | BEEPS_FOOTSTEP;
 }
 void beeps_pushing(void)
 {
-    sound = sound | PUSHING;
+    beeps_next = beeps_next | BEEPS_PUSHING;
 }
 void beeps_success(void)
 {
-    sound = sound | SUCCESS;
+    beeps_next = beeps_next | BEEPS_SUCCESS;
 }
+
 void beeps_play(void)
 {
     // we can only play one sound at a time but there are many triggers so check in priority order
-    if ((sound & SUCCESS) == SUCCESS)
+    if ((beeps_next & BEEPS_SUCCESS) == BEEPS_SUCCESS)
     {
         bit_beepfx(BEEPFX_SWITCH_2);
     }
-    else if ((sound & PUSHING) == PUSHING)
+    else if ((beeps_next & BEEPS_PUSHING) == BEEPS_PUSHING)
     {
         bit_beepfx(BEEPFX_SWITCH_1);
     }
-    else if ((sound & FOOTSTEP) == FOOTSTEP)
+    else if ((beeps_next & BEEPS_FOOTSTEP) == BEEPS_FOOTSTEP)
     {
         bit_click();
     }
-    sound = 0;
+    beeps_next = 0;
 }
 void beeps_death(void)
 {
