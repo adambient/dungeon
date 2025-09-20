@@ -20,8 +20,7 @@ SECTION bss_user: assign zero initial data to this section
 #include "banker.h"
 #include <stdio.h>
 #include "int.h"
-
-extern void pager_set(unsigned char bank) __z88dk_fastcall;
+#include "tracker.h"
 
 void init(void)
 {
@@ -88,7 +87,7 @@ void main(void)
         if (ENEMY == globals.player_tile)
         {            
             exec_far(beeps_death, 4);
-            init();
+            break;
         }
 
         enemy_move();
@@ -112,4 +111,10 @@ void main(void)
         }
 
     } while (1);
+
+    unsigned char current_bank = banker_get();
+    banker_set(4);
+    tracker_stop();
+    banker_set(current_bank);
+    return; // return to BASIC
 }

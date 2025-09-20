@@ -3,14 +3,14 @@ BANK_P EQU $7ffd ; port for paging banks
 
 SECTION code_user
 
-PUBLIC _pager_get
-PUBLIC _pager_set
+PUBLIC _banker_get
+PUBLIC _banker_set
 
 ;----------
-; _pager_get
+; _banker_get
 ; returns which bank is currently paged into slot 3
 ;----------
-_pager_get:
+_banker_get:
             ld h, 0
             ld a, (BANK_M) ; read BANK_M
             and %00000111 ; onlt load first 3 bytes
@@ -18,10 +18,10 @@ _pager_get:
             ret
 
 ;----------
-; _pager_set
+; _banker_set
 ; inputs: l = bank to page to (fastcall)
 ;----------
-_pager_set:
+_banker_set:
             ld a, (BANK_M) ; read BANK_M
             and %11111000 ; reset first 3 bytes
             or l ; adjust first 3 bytes with the value of "bank"

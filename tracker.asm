@@ -111,6 +111,7 @@ gs8:   equ $0008
 
 PUBLIC _tracker_init
 PUBLIC _tracker_play
+PUBLIC _tracker_stop
 PUBLIC _tracker
 PUBLIC _clotho_channel1_score
 PUBLIC _clotho_channel2_score
@@ -124,6 +125,19 @@ _tracker_init:
             ; initialize ay mixer to all notes but no noises
             ld a, 7
             ld h, %00111000
+            ld c, $fd
+            ld b, $ff
+            out (c), a
+            ld b, $bf
+            out (c), h ; psg
+            ld hl, clotho_score_end
+            ld (tracker_note), hl ; reset track
+            ret
+
+_tracker_stop:
+            ; initialize ay mixer to no notes and no noises
+            ld a, 7
+            ld h, %00111111
             ld c, $fd
             ld b, $ff
             out (c), a
@@ -265,7 +279,7 @@ dw $0000 ; tracker.channel2_note
 tracker_channel3_note:
 dw $0000 ; tracker.channel3_note
 tracker_note:
-dw _clotho_score_end ; tracker.note
+dw clotho_score_end ; tracker.note
 tracker_channel1_start:
 dw _clotho_channel1_score - 2 ; tracker.channel1_start - first new note moves into position
 tracker_channel2_start:
@@ -1071,5 +1085,5 @@ db %10001010
 db %10001010
 db %10001010
 db %10001010
-_clotho_score_end:
+clotho_score_end:
 db %00000000 ; end

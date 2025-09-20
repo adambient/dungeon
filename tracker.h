@@ -22,5 +22,6 @@ extern unsigned const char *clotho_score; // clotho tracker score
 
 extern void tracker_init(void) __z88dk_callee;
 extern void tracker_play(void) __z88dk_callee;
+extern void tracker_stop(void) __z88dk_callee;
 
 #endif

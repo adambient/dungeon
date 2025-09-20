@@ -4,23 +4,20 @@
 #include <string.h>
 #include <z80.h>
 #include "tracker.h"
-
-// imported from banker.asm
-extern unsigned int pager_get(void) __z88dk_fastcall;
-extern void pager_set(unsigned char bank) __z88dk_fastcall;
+#include "banker.h"
 
 unsigned char tick;
 
 void my_isr_body(void) {
     ++tick;
-    unsigned char current_bank = pager_get();
-    pager_set(4);
+    unsigned char current_bank = banker_get();
+    banker_set(4);
     if (tick == tracker.note_wait)
     {
         tracker_play();
         tick = 0;
     }
-    pager_set(current_bank);
+    banker_set(current_bank);
 }
 
 // opt - we know that we only update these registers so can avoid some push/pops by using __interrupt __naked
@@ -44,10 +41,10 @@ void my_isr(void) __interrupt __naked {
 
 void int_init(void)
 {
-    unsigned char current_bank = pager_get();
-    pager_set(4);
+    unsigned char current_bank = banker_get();
+    banker_set(4);
     tracker_init();
-    pager_set(current_bank);
+    banker_set(current_bank);
     im2_init((void *)0xbd00);
     memset((void *)0xbd00, 0xbe, 257);
     z80_bpoke(0xbebe, 0xc3);

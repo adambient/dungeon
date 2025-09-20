@@ -18,5 +18,11 @@ LOAD "" CODE 49152
 RANDOMIZE FN M(0)
 LOAD "" CODE 49152
 # call clang start
+@mainloop:
 CLS
+# TODO - welcome screen
+PRINT "The Dark & Mysterious Labyrinth"
+PRINT "Press any key..."
+PAUSE 0
 RANDOMIZE USR 32768
+GOTO @mainloop
