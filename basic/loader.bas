@@ -1,10 +1,10 @@
 
 @begin:
-CLEAR 32511
+CLEAR 31231
 # load pasmo code
-LOAD "" CODE 32512
+LOAD "" CODE 31232
 # load bank switch code
-DEF FN M(b)=USR 32512
+DEF FN M(b)=USR 32000
 # load clang code
 LOAD "" CODE 32768
 # switch to bank 3
@@ -17,6 +17,9 @@ LOAD "" CODE 49152
 # load bank 0 (gfx)
 RANDOMIZE FN M(0)
 LOAD "" CODE 49152
+# load custom font at 31232
+POKE 23606, 0
+POKE 23607, 121
 # call clang start
 @mainloop:
 CLS

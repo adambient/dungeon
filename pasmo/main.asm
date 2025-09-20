@@ -2,7 +2,10 @@ DEFADD EQU 23563 ; location of parameters passed by BASIC
 BANK_M EQU $5b5c ; which bank is currently being used
 BANK_P EQU $7ffd ; port for paging banks
 
-org 32512
+org 31232
+include ".\pasmo\font.asm"
+
+org 32000
 ;----------
 ; bank_set
 ; inputs (order of and target register): d = bank to switch to

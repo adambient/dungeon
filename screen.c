@@ -25,8 +25,8 @@ void screen_init(void)
     gfx.c = " $";
     gfx.bank = &gfx_bank0;
     gfx_char(); 
-    puts("\x16\x26\x01 The D.A.M. Labyrinth");
-    puts("\x16\x26\x02 ====================");
+    puts("\x16\x26\x01 The D & M Labyrinth");
+    puts("\x16\x26\x02 ===================");
     puts("\x16\x26\x04 You wake up in a dark and "); // max string length
     puts("\x16\x26\x05 mysterious labarynth.");
     puts("\x16\x26\x06 Beware of green enemies.");
