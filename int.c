@@ -41,10 +41,7 @@ void my_isr(void) __interrupt __naked {
 
 void int_init(void)
 {
-    unsigned char current_bank = banker_get();
-    banker_set(4);
-    tracker_init();
-    banker_set(current_bank);
+    exec_far_asm(tracker_init, 4);
     im2_init((void *)0xbd00);
     memset((void *)0xbd00, 0xbe, 257);
     z80_bpoke(0xbebe, 0xc3);

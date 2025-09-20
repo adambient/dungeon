@@ -112,9 +112,6 @@ void main(void)
 
     } while (1);
 
-    unsigned char current_bank = banker_get();
-    banker_set(4);
-    tracker_stop();
-    banker_set(current_bank);
+    exec_far_asm(tracker_stop, 4);
     return; // return to BASIC
 }
