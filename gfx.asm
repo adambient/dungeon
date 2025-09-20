@@ -1,19 +1,13 @@
 VIDEOATT: equ $5800 ; address of attribute RAM
 VIDEOATT_L: equ $0300 ; length of attribute RAM
+ATTR_BUFF: equ $FC00 ; 768 bytes at the top of RAM
 
 SECTION BANK_7
 
-PUBLIC _gfx_char_buffer
-PUBLIC _gfx_attr_buffer
 PUBLIC _gfx_char
 PUBLIC _gfx_attr
 PUBLIC _gfx_bright
 PUBLIC _gfx_flush
-
-_gfx_char_buffer:
-ds $1800
-_gfx_attr_buffer:
-ds $0300
 
 ;----------
 ; _gfx_char
@@ -94,7 +88,7 @@ _gfx_char_loop3:
 ; outputs: hl = location of attribute (buffer) address
 ;----------
 get_attr_address:
-            ld bc, _gfx_attr_buffer            
+            ld bc, ATTR_BUFF            
             ld a,e
             rrca
             rrca
@@ -186,7 +180,7 @@ _gfx_bright_loop2:
 ;----------
 _gfx_flush:
             ld de, VIDEOATT ; target is attribute memory
-            ld hl, _gfx_attr_buffer ; source is attribute buffer
+            ld hl, ATTR_BUFF ; source is attribute buffer
             ld bc, VIDEOATT_L ; length is size of attribute memory
             ldir ; copy
             ret

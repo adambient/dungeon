@@ -116,7 +116,7 @@ static void row_draw_horizontal(signed char x, unsigned char y)
 
 static void map_draw_vertical(void)
 {
-    attr_address = (unsigned char *)(&gfx_attr_buffer); // reset shared attr_address
+    attr_address = (unsigned char *)(ATTR_BUFF); // reset shared attr_address
     unsigned char sub_frame = 0;
     switch (map_frame)
     {
@@ -150,7 +150,7 @@ static void map_draw_vertical(void)
 
 static void map_draw_horizontal(void)
 {
-    attr_address = (unsigned char *)(&gfx_attr_buffer); // reset shared attr_address
+    attr_address = (unsigned char *)(ATTR_BUFF); // reset shared attr_address
     unsigned char y = globals.player_y - MAP_OFFSET;
     if (map_frame == 2)
     {
