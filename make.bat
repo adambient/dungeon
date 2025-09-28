@@ -6,7 +6,7 @@ REM create pasmo .tap file
 
 REM build o files using segments
 zcc +zx -vn -m -startup=31 -clib=sdcc_iy .\bank3\bank3.c --codesegBANK_3 --constsegBANK_3 --datasegBANK_3 -c
-zcc +zx -vn -m -startup=31 -clib=sdcc_iy .\sfx\tracker.asm .\sfx\beeps.c --codesegBANK_4 --constsegBANK_4 --datasegBANK_4 -c
+zcc +zx -vn -m -startup=31 -clib=sdcc_iy .\sfx\tracker.asm .\sfx\clotho.asm .\sfx\music.c .\sfx\beeps.c --codesegBANK_4 --constsegBANK_4 --datasegBANK_4 -c
 zcc +zx -vn -m -startup=31 -clib=sdcc_iy .\gfx\gfx.asm --codesegBANK_0 --constsegBANK_0 --datasegBANK_0 -c
 
 REM build output binaries

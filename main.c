@@ -21,6 +21,7 @@ SECTION bss_user: assign zero initial data to this section
 #include <stdio.h>
 #include "int.h"
 #include "sfx/tracker.h"
+#include "sfx/music.h"
 
 void init(void)
 {
@@ -35,7 +36,8 @@ void init(void)
 
 void main(void)
 {
-    exec_far_asm(tracker_clotho, 4);
+    exec_far(music_select_clotho, 4);
+    //exec_far_asm(tracker_clotho, 4);
     int_init();
     init();
     do

@@ -1,0 +1,1 @@
+void music_select_clotho(void);
