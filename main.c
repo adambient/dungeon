@@ -14,13 +14,13 @@ SECTION bss_user: assign zero initial data to this section
 #include "screen.h"
 #include "map.h"
 #include <input.h>
-#include "beeps.h"
+#include "sfx/beeps.h"
 #include "enemy.h"
-#include "bank3.h"
+#include "bank3/bank3.h"
 #include "banker.h"
 #include <stdio.h>
 #include "int.h"
-#include "tracker.h"
+#include "sfx/tracker.h"
 
 void init(void)
 {
@@ -35,6 +35,7 @@ void init(void)
 
 void main(void)
 {
+    exec_far_asm(tracker_clotho, 4);
     int_init();
     init();
     do

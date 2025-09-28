@@ -5,9 +5,9 @@ REM create pasmo .tap file
 .\pasmo\pasmo.exe --name banker --tap .\pasmo\main.asm pasmo.build.tap
 
 REM build o files using segments
-zcc +zx -vn -m -startup=31 -clib=sdcc_iy bank3.c --codesegBANK_3 --constsegBANK_3 --datasegBANK_3 -c
-zcc +zx -vn -m -startup=31 -clib=sdcc_iy tracker.asm beeps.c --codesegBANK_4 --constsegBANK_4 --datasegBANK_4 -c
-zcc +zx -vn -m -startup=31 -clib=sdcc_iy gfx.asm --codesegBANK_0 --constsegBANK_0 --datasegBANK_0 -c
+zcc +zx -vn -m -startup=31 -clib=sdcc_iy .\bank3\bank3.c --codesegBANK_3 --constsegBANK_3 --datasegBANK_3 -c
+zcc +zx -vn -m -startup=31 -clib=sdcc_iy .\sfx\tracker.asm .\sfx\beeps.c --codesegBANK_4 --constsegBANK_4 --datasegBANK_4 -c
+zcc +zx -vn -m -startup=31 -clib=sdcc_iy .\gfx\gfx.asm --codesegBANK_0 --constsegBANK_0 --datasegBANK_0 -c
 
 REM build output binaries
 zcc +zx -vn -m -startup=5 -clib=sdcc_iy @zproject.lst -o build
@@ -23,6 +23,6 @@ type loader.build.tap pasmo.build.tap main.build.tap bank3.build.tap sfx.build.t
 
 REM tidy up
 del *.bin
-del *.o
+del /s /q "*.o"
 del *.build.tap
 del build

@@ -1,9 +1,9 @@
-bank3.o
 banker.asm
 banker.c
-beeps.o
-tracker.o
-gfx.o
+.\bank3\bank3.o
+.\sfx\beeps.o
+.\sfx\tracker.o
+.\gfx\gfx.o
 grid.asm
 globals.asm
 player.c

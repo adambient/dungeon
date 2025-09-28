@@ -109,6 +109,7 @@ fs8:   equ $0009
 g8:    equ $0009
 gs8:   equ $0008
 
+PUBLIC _tracker_clotho
 PUBLIC _tracker_init
 PUBLIC _tracker_play
 PUBLIC _tracker_stop
@@ -117,6 +118,23 @@ PUBLIC _clotho_channel1_score
 PUBLIC _clotho_channel2_score
 PUBLIC _clotho_channel3_score
 PUBLIC _clotho_score
+PUBLIC _clotho_score_end
+
+;-------------
+; tracker_clotho
+;-------------
+_tracker_clotho:
+            ld hl, _clotho_channel1_score - 2 ; -2 as first new note moves into position
+            ld (tracker_channel1_start), hl
+            ld hl, _clotho_channel2_score - 2 ; -2 as first new note moves into position
+            ld (tracker_channel2_start), hl
+            ld hl, _clotho_channel3_score - 2 ; -2 as first new note moves into position
+            ld (tracker_channel3_start), hl
+            ld hl, _clotho_score
+            ld (tracker_start), hl
+            ld hl, _clotho_score_end
+            ld (tracker_note), hl ; reset score
+            ret
 
 ;-------------
 ; tracker_init
@@ -130,8 +148,6 @@ _tracker_init:
             out (c), a
             ld b, $bf
             out (c), h ; psg
-            ld hl, clotho_score_end
-            ld (tracker_note), hl ; reset track
             ret
 
 _tracker_stop:
@@ -279,15 +295,17 @@ dw $0000 ; tracker.channel2_note
 tracker_channel3_note:
 dw $0000 ; tracker.channel3_note
 tracker_note:
-dw clotho_score_end ; tracker.note
+dw $0000 ; tracker.note
 tracker_channel1_start:
-dw _clotho_channel1_score - 2 ; tracker.channel1_start - first new note moves into position
+dw $0000 ; tracker.channel1_start
 tracker_channel2_start:
-dw _clotho_channel2_score - 2 ; tracker.channel2_start - first new note moves into position
+dw $0000 ; tracker.channel2_start
 tracker_channel3_start:
-dw _clotho_channel3_score - 2 ; tracker.channel3_start - first new note moves into position
+dw $0000 ; tracker.channel3_start
 tracker_start:
-dw _clotho_score ; tracker.start
+dw $0000 ; tracker.start
+_tracker_init_score:
+db %00000000 ; point tracker note here to reset current score (any 0 byte would work)
 
 _clotho_channel1_score:
 dw a3
@@ -1085,5 +1103,5 @@ db %10001010
 db %10001010
 db %10001010
 db %10001010
-clotho_score_end:
+_clotho_score_end:
 db %00000000 ; end

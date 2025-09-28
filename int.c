@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <z80.h>
-#include "tracker.h"
+#include "sfx/tracker.h"
 #include "banker.h"
 
 unsigned char tick;

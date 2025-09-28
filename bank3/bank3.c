@@ -3,7 +3,7 @@
 #include "globals.h"
 #include "screen.h"
 #include <stdio.h>
-#include "gfx.h"
+#include "gfx/gfx.h"
 #include "enemy.h"
 #include "map.h"
 #include "grid.h"

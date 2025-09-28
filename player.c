@@ -1,7 +1,7 @@
 #include "globals.h"
 #include "screen.h"
 #include "enemy.h"
-#include "gfx.h"
+#include "gfx/gfx.h"
 #include "grid.h"
 
 // UDGs

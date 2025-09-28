@@ -2,8 +2,8 @@
 #include "player.h"
 #include "enemy.h"
 #include "screen.h"
-#include "beeps.h"
-#include "gfx.h"
+#include "sfx/beeps.h"
+#include "gfx/gfx.h"
 #include "grid.h"
 #include "banker.h"
 

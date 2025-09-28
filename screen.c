@@ -3,7 +3,7 @@
 #include "globals.h"
 #include "screen.h"
 #include <stdio.h>
-#include "gfx.h"
+#include "gfx/gfx.h"
 
 screen_t screen;
 
