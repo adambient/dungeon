@@ -4,6 +4,7 @@ banker.c
 .\sfx\beeps.o
 .\sfx\tracker.o
 .\sfx\clotho.o
+.\sfx\hubbard.o
 .\sfx\music.o
 .\gfx\gfx.o
 grid.asm

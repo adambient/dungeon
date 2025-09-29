@@ -2,11 +2,15 @@ include ".\sfx\consts.asm"
 
 SECTION BANK_4
 
+PUBLIC _clotho_note_wait
 PUBLIC _clotho_channel1_score
 PUBLIC _clotho_channel2_score
 PUBLIC _clotho_channel3_score
 PUBLIC _clotho_score
 PUBLIC _clotho_score_end
+
+_clotho_note_wait:
+db 10 ; wait 0.2 seconds between notes (PAL)
 
 _clotho_channel1_score:
 dw a3

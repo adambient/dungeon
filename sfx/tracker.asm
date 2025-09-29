@@ -156,7 +156,7 @@ tracker_play_note_continue_2:            ; load values
             ret
 
 _tracker:
-db 10 ; tracker.note_wait
+db %00000000 ; tracker.note_wait
 tracker_channel1_note:
 dw $0000 ; tracker.channel1_note
 tracker_channel2_note:

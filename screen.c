@@ -40,8 +40,9 @@ void screen_init(void)
     puts("\x16\x26\x11 A:down;");
     puts("\x16\x26\x12 O:left;");
     puts("\x16\x26\x13 P:right;");
-    puts("\x16\x26\x14 Sp:action;");     
+    puts("\x16\x26\x14 Sp:action;");
     puts("\x16\x01\x14 A dark and mysterious labyrinth.");
+    puts("\x16\x26\x16 1-2:music select;");
         
     // default text is black on white
     gfx.x = 0;

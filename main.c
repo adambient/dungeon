@@ -37,7 +37,6 @@ void init(void)
 void main(void)
 {
     exec_far(music_select_clotho, 4);
-    //exec_far_asm(tracker_clotho, 4);
     int_init();
     init();
     do
@@ -85,6 +84,16 @@ void main(void)
         if (in_key_pressed(IN_KEY_SCANCODE_SPACE) ==0xFFFF)
         {
             globals.is_player_pushing = 1;
+        }
+
+        // music select demo
+        if (in_key_pressed(IN_KEY_SCANCODE_1) ==0xFFFF)
+        {
+            exec_far(music_select_clotho, 4);
+        }
+        else if (in_key_pressed(IN_KEY_SCANCODE_2) ==0xFFFF)
+        {
+            exec_far(music_select_hubbard, 4);
         }
 
         if (ENEMY == globals.player_tile)
