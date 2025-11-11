@@ -11,6 +11,7 @@ grid.asm
 globals.asm
 player.c
 enemy.c
+view.c
 map.c
 screen.c
 int.c

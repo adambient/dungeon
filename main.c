@@ -98,6 +98,7 @@ void main(void)
 
         if (ENEMY == globals.player_tile)
         {            
+            map_move_none();
             exec_far(beeps_death, 4);
             break;
         }
