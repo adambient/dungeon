@@ -12,13 +12,52 @@ static unsigned char *attr_address;
 static unsigned char map_frame;
 unsigned char map_uncovered_holes;
 
+unsigned char map_tile_get(unsigned char x, unsigned char y)
+{
+    if (x < MAP_SIZE && y < MAP_SIZE)
+    {  
+        grid.x = x;
+        grid.y = y;
+        grid_get();
+        if ((grid.tile & SEEN_BYTE) == SEEN_BYTE)
+        {
+            if (enemy_is_located(x, y))
+            {
+                return ENEMY;
+            }
+            if (map_uncovered_holes == 0)
+            {
+                if ((x == 1 && (y == (MAP_SIZE - 2) || y == 1)) ||
+                (x == (MAP_SIZE - 2) && (y == (MAP_SIZE - 2) || y == 1)))
+                {
+                    // uncovered secret exit, cycle between carpet colours
+                    return (CARPET_1 | (screen.colour & 0b00000001));
+                }
+            }
+            grid.tile = grid.tile & BG_BYTES;
+            switch (grid.tile)
+            {
+            case TARGET:
+                return screen.colour;
+            case PLACED:
+                // cycle bettween yellow and white
+                return (YELLOW | (screen.colour & 0b00000001));
+            default:
+                return grid.tile;
+            }
+        }
+    }
+
+    return DARKNESS;
+}
+
 static void row_draw_vertical(signed char x, signed char x2, unsigned char y)
 {
     unsigned char i = VISIBLE_BLOCKS;
     for (; i > 0; i--)
     {
-        unsigned char tile = tile_get(x, y);
-        unsigned char tile2 = x == x2 ? tile : tile_get(x2, y);
+        unsigned char tile = map_tile_get(x, y);
+        unsigned char tile2 = x == x2 ? tile : map_tile_get(x2, y);
         tile = tile | tile2 << 3;
         *attr_address++ = tile;
         *attr_address++ = tile;
@@ -35,13 +74,13 @@ static void row_draw_horizontal(signed char x, unsigned char y)
 {
     for (unsigned char i = VISIBLE_BLOCKS; i < 255; i--)
     {
-        unsigned char tile = tile_get(x, y);
+        unsigned char tile = map_tile_get(x, y);
         unsigned char tile2 = tile;
         switch (map_frame)
         {
         case 1:
         case 3:
-            tile = tile_get(x, y - 1);
+            tile = map_tile_get(x, y - 1);
             break;
         }
 
