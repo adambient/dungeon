@@ -118,68 +118,114 @@ void view_update(void)
 
 void view_draw(void)
 {
-    // 0,3
-    gfx.x = 5;
-    gfx.y = 24;
-    gfx.height = 2;
-    gfx.width = 1;
-    gfx.ink = view[0][3];
-    gfx.paper = view[0][3];
+    // clear screen
+    gfx.x = 2;
+    gfx.y = 19;
+    gfx.height = 8;
+    gfx.width = 13;
+    gfx.ink = BLACK;
+    gfx.paper = BLACK;
     gfx_attr();
 
     // 1,3 top
     gfx.x = 5;
-    gfx.y = 25;
+    gfx.y = 19;
     gfx.height = 1;
-    gfx.width = 1;
+    gfx.width = 13; // full width
     gfx.ink = BLACK; // black roof
     gfx.paper = BLACK; // black hole
     gfx_attr();
 
     // 1,3 bottom
     gfx.x = 6;
-    gfx.y = 25;
+    gfx.y = 19;
     gfx.height = 1;
-    gfx.width = 1;
+    gfx.width = 13; // full width
     gfx.ink = BLACK; // black hole
     gfx.paper = view[1][3]; // tile floor
     gfx_attr();
 
-    // 2,3
-    gfx.x = 5;
+    // 0,3 (left)
+    gfx.width = 6; // lhs
+    gfx.y = 19;
+    gfx.paper = view[0][3];
+    if (view[0][3] == WALL)
+    {
+        gfx.x = 5;
+        gfx.height = 2;
+        gfx.ink = view[0][3];
+    }
+    else
+    {
+        gfx.x = 6;
+        gfx.height = 1;
+        gfx.ink = BLACK;
+    }
+    gfx_attr();    
+
+    // 2,3 (right)
+    gfx.width = 6; // rhs
     gfx.y = 26;
-    gfx.height = 2;
-    gfx.width = 1;
-    gfx.ink = view[2][3];
     gfx.paper = view[2][3];
+    if (view[2][3] == WALL)
+    {
+        gfx.x = 5;    
+        gfx.height = 2;    
+        gfx.ink = view[2][3];
+    }   
+    else
+    {
+        gfx.x = 6;
+        gfx.height = 1;
+        gfx.ink = BLACK;
+    }     
     gfx_attr();
 
     // 0,2 (left)
-    gfx.x = 4;
-    gfx.y = 22;
-    gfx.height = 4;
-    gfx.width = 2;
-    gfx.ink = view[0][2];
+    gfx.width = 5;
+    gfx.y = 19;
     gfx.paper = view[0][2];
+    gfx.ink = view[0][2];
+    if (view[0][2] == WALL)
+    {
+        gfx.x = 4;    
+        gfx.height = 4;            
+    }
+    else
+    {
+        gfx.x = 7;    
+        gfx.height = 1;
+    }        
     gfx_attr();
 
     // 2,2 (right)
-    gfx.x = 4;
+    gfx.width = 5;
     gfx.y = 27;
-    gfx.height = 4;
-    gfx.width = 2;
-    gfx.ink = view[2][2];
     gfx.paper = view[2][2];
+    gfx.ink = view[2][2];
+    if (view[2][2] == WALL)
+    {
+        gfx.x = 4;      
+        gfx.height = 4;
+    }
+    else
+    {
+        gfx.x = 7;    
+        gfx.height = 1;
+    }   
     gfx_attr();
 
     // 1,2 (middle) - top
-    gfx.x = 4;
-    gfx.y = 23;
-    gfx.height = 1;
-    gfx.width = 1;
-    gfx.ink = BLACK; // black roof
-    gfx.paper = view[0][2]; // tile wall
-    gfx_attr();
+    if (view[0][2] == WALL)
+    {
+        gfx.x = 4;
+        gfx.y = 23;
+        gfx.height = 1;
+        gfx.width = 1;
+        gfx.ink = BLACK; // black roof
+        gfx.paper = view[0][2]; // tile wall
+        gfx_attr();
+    }
 
     gfx.x = 4;
     gfx.y = 24;
@@ -189,13 +235,16 @@ void view_draw(void)
     gfx.paper = BLACK; // black roof
     gfx_attr();
 
-    gfx.x = 4;
-    gfx.y = 27;
-    gfx.height = 1;
-    gfx.width = 1;
-    gfx.ink = BLACK; // black roof
-    gfx.paper = view[2][2]; // tile wall
-    gfx_attr();
+    if (view[2][2] == WALL)
+    {
+        gfx.x = 4;
+        gfx.y = 27;
+        gfx.height = 1;
+        gfx.width = 1;
+        gfx.ink = BLACK; // black roof
+        gfx.paper = view[2][2]; // tile wall
+        gfx_attr();
+    }
 
     // 1,2 (middle) - bottom
     gfx.x = 7;
@@ -223,31 +272,50 @@ void view_draw(void)
     gfx_attr();
 
     // 0,1 (left)
-    gfx.x = 3;
-    gfx.y = 20;
-    gfx.height = 6;
-    gfx.width = 2;
-    gfx.ink = view[0][1];
+    gfx.width = 3;
+    gfx.y = 19;
     gfx.paper = view[0][1];
+    gfx.ink = view[0][1];
+    if (view[0][1] == WALL)
+    {
+        gfx.x = 3;    
+        gfx.height = 6;
+    }
+    else
+    {
+        gfx.x = 8;    
+        gfx.height = 1;
+    }             
     gfx_attr();
 
     // 2,1 (right)
-    gfx.x = 3;
+    gfx.width = 3;
     gfx.y = 29;
-    gfx.height = 6;
-    gfx.width = 2;
     gfx.ink = view[2][1];
     gfx.paper = view[2][1];
+    if (view[2][1] == WALL)
+    {
+        gfx.x = 3;    
+        gfx.height = 6;
+    }
+    else
+    {
+        gfx.x = 8;    
+        gfx.height = 1;
+    }            
     gfx_attr();
 
     // 1,1 (middle) - top
-    gfx.x = 3;
-    gfx.y = 21;
-    gfx.height = 1;
-    gfx.width = 1;
-    gfx.ink = BLACK; // black roof
-    gfx.paper = view[0][1]; // tile wall
-    gfx_attr();
+    if (view[0][1] == WALL)
+    {
+        gfx.x = 3;
+        gfx.y = 21;
+        gfx.height = 1;
+        gfx.width = 1;
+        gfx.ink = BLACK; // black roof
+        gfx.paper = view[0][1]; // tile wall
+        gfx_attr();
+    }
 
     gfx.x = 3;
     gfx.y = 22;
@@ -257,13 +325,16 @@ void view_draw(void)
     gfx.paper = BLACK; // black roof
     gfx_attr();
 
-    gfx.x = 3;
-    gfx.y = 29;
-    gfx.height = 1;
-    gfx.width = 1;
-    gfx.ink = BLACK; // black roof
-    gfx.paper = view[2][1]; // tile wall
-    gfx_attr();
+    if (view[2][1] == WALL)
+    {
+        gfx.x = 3;
+        gfx.y = 29;
+        gfx.height = 1;
+        gfx.width = 1;
+        gfx.ink = BLACK; // black roof
+        gfx.paper = view[2][1]; // tile wall
+        gfx_attr();
+    }
 
     // 1,1 (middle) - bottom
     gfx.x = 8;
@@ -291,31 +362,50 @@ void view_draw(void)
     gfx_attr();
 
     // 0,0 (left)
-    gfx.x = 2;
-    gfx.y = 19;
-    gfx.height = 8;
     gfx.width = 1;
+    gfx.y = 19;
     gfx.ink = view[0][0];
     gfx.paper = view[0][0];
+    if (view[0][0] == WALL)
+    {
+        gfx.x = 2;    
+        gfx.height = 8;
+    }
+    else
+    {
+        gfx.x = 9;    
+        gfx.height = 1;
+    }            
     gfx_attr();
 
     // 2,0 (right)
-    gfx.x = 2;
-    gfx.y = 31;
-    gfx.height = 8;
     gfx.width = 1;
+    gfx.y = 31;
     gfx.ink = view[2][0];
     gfx.paper = view[2][0];
+    if (view[2][0] == WALL)
+    {
+        gfx.x = 2;    
+        gfx.height = 8;
+    }
+    else
+    {
+        gfx.x = 9;    
+        gfx.height = 1;
+    }            
     gfx_attr();
 
     // 1,0 (middle) - top
-    gfx.x = 2;
-    gfx.y = 19;
-    gfx.height = 1;
-    gfx.width = 1;
-    gfx.ink = BLACK; // black roof
-    gfx.paper = view[0][0]; // tile wall
-    gfx_attr();
+    if (view[0][0] == WALL)
+    {
+        gfx.x = 2;
+        gfx.y = 19;
+        gfx.height = 1;
+        gfx.width = 1;
+        gfx.ink = BLACK; // black roof
+        gfx.paper = view[0][0]; // tile wall
+        gfx_attr();
+    }
 
     gfx.x = 2;
     gfx.y = 20;
@@ -325,13 +415,16 @@ void view_draw(void)
     gfx.paper = BLACK; // black roof
     gfx_attr();
 
-    gfx.x = 2;
-    gfx.y = 31;
-    gfx.height = 1;
-    gfx.width = 1;
-    gfx.ink = BLACK; // black roof
-    gfx.paper = view[2][0]; // tile wall
-    gfx_attr();
+    if (view[2][0] == WALL)
+    {
+        gfx.x = 2;
+        gfx.y = 31;
+        gfx.height = 1;
+        gfx.width = 1;
+        gfx.ink = BLACK; // black roof
+        gfx.paper = view[2][0]; // tile wall
+        gfx_attr();
+    }
 
     // 1,0 (middle) - bottom
     gfx.x = 9;
