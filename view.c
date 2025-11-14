@@ -121,6 +121,12 @@ void view_update(void)
 
 void view_draw(void)
 {
+    if (globals.is_player_pushing)
+    {
+        // show crate in front of player
+        view[1][1] = CRATE | BLOCK_BYTE;
+    }
+
     // clear screen
     gfx.x = 2;
     gfx.y = 19;
