@@ -57,64 +57,66 @@ unsigned char view_tile_get(unsigned char x, unsigned char y)
 
 void view_update(void)
 {
+    // opt = traverse array by pointing to each element at a time
+    unsigned char *view_data = (unsigned char *)&view;
     switch (globals.player_facing)
     {
     default:
     case DIR_UP:
-        view[0][0] = view_tile_get(globals.player_x, globals.player_y-1);
-        view[1][0] = view_tile_get(globals.player_x, globals.player_y);
-        view[2][0] = view_tile_get(globals.player_x, globals.player_y+1);
-        view[0][1] = view_tile_get(globals.player_x-1, globals.player_y-1);
-        view[1][1] = view_tile_get(globals.player_x-1, globals.player_y);
-        view[2][1] = view_tile_get(globals.player_x-1, globals.player_y+1);
-        view[0][2] = view_tile_get(globals.player_x-2, globals.player_y-1);
-        view[1][2] = view_tile_get(globals.player_x-2, globals.player_y);
-        view[2][2] = view_tile_get(globals.player_x-2, globals.player_y+1);
-        view[0][3] = view_tile_get(globals.player_x-3, globals.player_y-1);
-        view[1][3] = view_tile_get(globals.player_x-3, globals.player_y);
-        view[2][3] = view_tile_get(globals.player_x-3, globals.player_y+1);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y-1);
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y-1);
+        *view_data++ = view_tile_get(globals.player_x-2, globals.player_y-1);
+        *view_data++ = view_tile_get(globals.player_x-3, globals.player_y-1);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x-2, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x-3, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y+1);                
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y+1);                
+        *view_data++ = view_tile_get(globals.player_x-2, globals.player_y+1);                
+        *view_data++ = view_tile_get(globals.player_x-3, globals.player_y+1);
         break;
     case DIR_DOWN:
-        view[0][0] = view_tile_get(globals.player_x, globals.player_y+1);
-        view[1][0] = view_tile_get(globals.player_x, globals.player_y);
-        view[2][0] = view_tile_get(globals.player_x, globals.player_y-1);
-        view[0][1] = view_tile_get(globals.player_x+1, globals.player_y+1);
-        view[1][1] = view_tile_get(globals.player_x+1, globals.player_y);
-        view[2][1] = view_tile_get(globals.player_x+1, globals.player_y-1);
-        view[0][2] = view_tile_get(globals.player_x+2, globals.player_y+1);
-        view[1][2] = view_tile_get(globals.player_x+2, globals.player_y);
-        view[2][2] = view_tile_get(globals.player_x+2, globals.player_y-1);
-        view[0][3] = view_tile_get(globals.player_x+3, globals.player_y+1);
-        view[1][3] = view_tile_get(globals.player_x+3, globals.player_y);
-        view[2][3] = view_tile_get(globals.player_x+3, globals.player_y-1);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y+1);
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y+1);
+        *view_data++ = view_tile_get(globals.player_x+2, globals.player_y+1);
+        *view_data++ = view_tile_get(globals.player_x+3, globals.player_y+1);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x+2, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x+3, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y-1);                
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y-1);                
+        *view_data++ = view_tile_get(globals.player_x+2, globals.player_y-1);                
+        *view_data++ = view_tile_get(globals.player_x+3, globals.player_y-1);
         break;
     case DIR_RIGHT:
-        view[0][0] = view_tile_get(globals.player_x-1, globals.player_y);
-        view[1][0] = view_tile_get(globals.player_x, globals.player_y);
-        view[2][0] = view_tile_get(globals.player_x+1, globals.player_y);
-        view[0][1] = view_tile_get(globals.player_x-1, globals.player_y+1);
-        view[1][1] = view_tile_get(globals.player_x, globals.player_y+1);
-        view[2][1] = view_tile_get(globals.player_x+1, globals.player_y+1);
-        view[0][2] = view_tile_get(globals.player_x-1, globals.player_y+2);
-        view[1][2] = view_tile_get(globals.player_x, globals.player_y+2);
-        view[2][2] = view_tile_get(globals.player_x+1, globals.player_y+2);
-        view[0][3] = view_tile_get(globals.player_x-1, globals.player_y+3);
-        view[1][3] = view_tile_get(globals.player_x, globals.player_y+3);
-        view[2][3] = view_tile_get(globals.player_x+1, globals.player_y+3);
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y+1);
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y+2);
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y+3);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y+1);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y+2);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y+3);
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y);                
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y+1);                
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y+2);                
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y+3);
         break;
     case DIR_LEFT:
-        view[0][0] = view_tile_get(globals.player_x+1, globals.player_y);
-        view[1][0] = view_tile_get(globals.player_x, globals.player_y);
-        view[2][0] = view_tile_get(globals.player_x-1, globals.player_y);
-        view[0][1] = view_tile_get(globals.player_x+1, globals.player_y-1);
-        view[1][1] = view_tile_get(globals.player_x, globals.player_y-1);
-        view[2][1] = view_tile_get(globals.player_x-1, globals.player_y-1);
-        view[0][2] = view_tile_get(globals.player_x+1, globals.player_y-2);
-        view[1][2] = view_tile_get(globals.player_x, globals.player_y-2);
-        view[2][2] = view_tile_get(globals.player_x-1, globals.player_y-2);
-        view[0][3] = view_tile_get(globals.player_x+1, globals.player_y-3);
-        view[1][3] = view_tile_get(globals.player_x, globals.player_y-3);
-        view[2][3] = view_tile_get(globals.player_x-1, globals.player_y-3);
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y-1);
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y-2);
+        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y-3);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y-1);
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y-2);        
+        *view_data++ = view_tile_get(globals.player_x, globals.player_y-3);                
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y);                
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y-1);
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y-2);
+        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y-3);
         break;
     }
 }
@@ -144,7 +146,7 @@ void view_draw(void)
     {
         gfx.x = 5;
         gfx.height = 2;
-        gfx.ink = view[0][3] & BG_BYTES;
+        gfx.ink = gfx.paper;
     }
     else
     {
@@ -155,14 +157,13 @@ void view_draw(void)
     gfx_attr();    
 
     // 2,3 (right)
-    gfx.width = 6; // rhs
     gfx.y = 26;
     gfx.paper = view[2][3] & BG_BYTES;
     if (view[2][3] & BLOCK_BYTE)
     {
         gfx.x = 5;    
         gfx.height = 2;    
-        gfx.ink = view[2][3] & BG_BYTES;
+        gfx.ink = gfx.paper;
     }   
     else
     {
@@ -173,42 +174,37 @@ void view_draw(void)
     gfx_attr();
 
     // 1,3 (middle)
+    gfx.paper = view[1][3] & BG_BYTES;
     if (view[1][3] & BLOCK_BYTE)
     {
         gfx.x = 5;
         gfx.y = 24;
         gfx.height = 2;
         gfx.width = 3;
-        gfx.ink = view[1][3] & BG_BYTES; // tile block
-        gfx.paper = view[1][3] & BG_BYTES; // tile block
+        gfx.ink = gfx.paper; // tile block
         gfx_attr();
     }
     else
     {
-        // top
-        gfx.x = 5;
-        gfx.y = 25;
-        gfx.height = 1;
-        gfx.width = 1;
-        gfx.ink = DARKNESS;
-        gfx.paper = DARKNESS;
-        gfx_attr();
-
         // bottom
         gfx.x = 6;
         gfx.y = 25;
         gfx.height = 1;
-        gfx.width = 1; // full width    
+        gfx.width = 1;
         gfx.ink = DARKNESS;
-        gfx.paper = view[1][3] & BG_BYTES; // tile floor                                    
         gfx_attr();
+
+        // top
+        gfx.x = 5;
+        gfx.paper = DARKNESS;
+        gfx_attr();        
     }   
 
     // 0,2 (left)
     gfx.width = 5;
     gfx.y = 19;
-    gfx.paper = view[0][2] & BG_BYTES;
     gfx.ink = view[0][2] & BG_BYTES;
+    gfx.paper = gfx.ink;
     if (view[0][2] & BLOCK_BYTE)
     {
         gfx.x = 4;    
@@ -222,10 +218,9 @@ void view_draw(void)
     gfx_attr();
 
     // 2,2 (right)
-    gfx.width = 5;
     gfx.y = 27;
-    gfx.paper = view[2][2] & BG_BYTES;
     gfx.ink = view[2][2] & BG_BYTES;
+    gfx.paper = gfx.ink;
     if (view[2][2] & BLOCK_BYTE)
     {
         gfx.x = 4;      
@@ -246,19 +241,19 @@ void view_draw(void)
         gfx.height = 5;
         gfx.width = 7;
         gfx.ink = view[1][2] & BG_BYTES; // tile wall
-        gfx.paper = view[1][2] & BG_BYTES; // tile wall
+        gfx.paper = gfx.ink; // tile wall
         gfx_attr();
     }
     else
     {
         // top
+        gfx.ink = DARKNESS;
         if (view[0][2] & BLOCK_BYTE)
         {
             gfx.x = 4;
             gfx.y = 23;
             gfx.height = 1;
-            gfx.width = 1;
-            gfx.ink = DARKNESS;
+            gfx.width = 1;            
             gfx.paper = view[0][2] & BG_BYTES; // lhs tile wall
             gfx_attr();
         }
@@ -267,17 +262,13 @@ void view_draw(void)
         gfx.y = 24;
         gfx.height = 1;
         gfx.width = 3;
-        gfx.ink = DARKNESS;
         gfx.paper = DARKNESS;
         gfx_attr();
 
         if (view[2][2] & BLOCK_BYTE)
         {
-            gfx.x = 4;
             gfx.y = 27;
-            gfx.height = 1;
             gfx.width = 1;
-            gfx.ink = DARKNESS;
             gfx.paper = view[2][2] & BG_BYTES; // rhs tile wall
             gfx_attr();
         }
@@ -291,28 +282,22 @@ void view_draw(void)
         gfx.paper = view[1][2] & BG_BYTES; // tile floor
         gfx_attr();
 
-        gfx.x = 7;
         gfx.y = 24;
-        gfx.height = 1;
         gfx.width = 3;
-        gfx.ink = view[1][2] & BG_BYTES; // tile floor
-        gfx.paper = view[1][2] & BG_BYTES; // tile floor
+        gfx.ink = gfx.paper; // tile floor
         gfx_attr();
 
-        gfx.x = 7;
         gfx.y = 27;
-        gfx.height = 1;
         gfx.width = 1;
         gfx.ink = view[2][2] & BG_BYTES; // tile wall
-        gfx.paper = view[1][2] & BG_BYTES; // tile floor
         gfx_attr();
     }
 
     // 0,1 (left)
     gfx.width = 3;
     gfx.y = 19;
-    gfx.paper = view[0][1] & BG_BYTES;
     gfx.ink = view[0][1] & BG_BYTES;
+    gfx.paper = gfx.ink;
     if (view[0][1] & BLOCK_BYTE)
     {
         gfx.x = 3;    
@@ -326,10 +311,9 @@ void view_draw(void)
     gfx_attr();
 
     // 2,1 (right)
-    gfx.width = 3;
     gfx.y = 29;
     gfx.ink = view[2][1] & BG_BYTES;
-    gfx.paper = view[2][1] & BG_BYTES;
+    gfx.paper = gfx.ink;
     if (view[2][1] & BLOCK_BYTE)
     {
         gfx.x = 3;    
@@ -350,19 +334,19 @@ void view_draw(void)
         gfx.height = 7;
         gfx.width = 11;
         gfx.ink = view[1][1] & BG_BYTES; // tile wall
-        gfx.paper = view[1][1] & BG_BYTES; // tile wall
+        gfx.paper = gfx.ink; // tile wall
         gfx_attr();
     }
     else
     {
         // top
+        gfx.ink = DARKNESS;
         if (view[0][1] & BLOCK_BYTE)
         {
             gfx.x = 3;
             gfx.y = 21;
             gfx.height = 1;
             gfx.width = 1;
-            gfx.ink = DARKNESS;
             gfx.paper = view[0][1] & BG_BYTES; // lhs tile wall
             gfx_attr();
         }
@@ -370,18 +354,14 @@ void view_draw(void)
         gfx.x = 3;
         gfx.y = 22;
         gfx.height = 1;
-        gfx.width = 7;
-        gfx.ink = DARKNESS;
+        gfx.width = 7;        
         gfx.paper = DARKNESS;
         gfx_attr();
 
         if (view[2][1] & BLOCK_BYTE)
         {
-            gfx.x = 3;
             gfx.y = 29;
-            gfx.height = 1;
             gfx.width = 1;
-            gfx.ink = DARKNESS;
             gfx.paper = view[2][1] & BG_BYTES; // rhs tile wall
             gfx_attr();
         }
@@ -395,28 +375,23 @@ void view_draw(void)
         gfx.paper = view[1][1] & BG_BYTES; // tile floor    
         gfx_attr();
 
-        gfx.x = 8;
         gfx.y = 22;
-        gfx.height = 1;
         gfx.width = 7;
-        gfx.ink = view[1][1] & BG_BYTES; // tile floor
-        gfx.paper = view[1][1] & BG_BYTES; // tile floor
+        gfx.ink = gfx.paper; // tile floor
         gfx_attr();
 
         gfx.x = 8;
         gfx.y = 29;
-        gfx.height = 1;
         gfx.width = 1;
         gfx.ink = view[2][1] & BG_BYTES; // tile wall
-        gfx.paper = view[1][1] & BG_BYTES; // tile floor    
         gfx_attr();
-    }    
+    }
 
     // 0,0 (left)
     gfx.width = 1;
     gfx.y = 19;
     gfx.ink = view[0][0] & BG_BYTES;
-    gfx.paper = view[0][0] & BG_BYTES;
+    gfx.paper = gfx.ink;
     if (view[0][0] & BLOCK_BYTE)
     {
         gfx.x = 2;    
@@ -430,10 +405,9 @@ void view_draw(void)
     gfx_attr();
 
     // 2,0 (right)
-    gfx.width = 1;
     gfx.y = 31;
     gfx.ink = view[2][0] & BG_BYTES;
-    gfx.paper = view[2][0] & BG_BYTES;
+    gfx.paper = gfx.ink;
     if (view[2][0] & BLOCK_BYTE)
     {
         gfx.x = 2;    
@@ -447,13 +421,13 @@ void view_draw(void)
     gfx_attr();
 
     // 1,0 (middle) - top
+    gfx.ink = DARKNESS;
     if (view[0][0] & BLOCK_BYTE)
     {
         gfx.x = 2;
         gfx.y = 19;
         gfx.height = 1;
-        gfx.width = 1;
-        gfx.ink = DARKNESS;
+        gfx.width = 1;        
         gfx.paper = view[0][0] & BG_BYTES; // tile wall
         gfx_attr();
     }
@@ -462,17 +436,13 @@ void view_draw(void)
     gfx.y = 20;
     gfx.height = 1;
     gfx.width = 11;
-    gfx.ink = DARKNESS;
     gfx.paper = DARKNESS;
     gfx_attr();
 
     if (view[2][0] & BLOCK_BYTE)
     {
-        gfx.x = 2;
         gfx.y = 31;
-        gfx.height = 1;
         gfx.width = 1;
-        gfx.ink = DARKNESS;
         gfx.paper = view[2][0] & BG_BYTES; // tile wall
         gfx_attr();
     }
@@ -480,7 +450,6 @@ void view_draw(void)
     // 1,0 (middle) - bottom
     gfx.x = 9;
     gfx.y = 19;
-    gfx.height = 1;
     gfx.width = 1;
     if (view[0][0] & BLOCK_BYTE) // is there a block to our immediate left
     {
@@ -494,15 +463,12 @@ void view_draw(void)
     }    
     gfx_attr();
 
-    gfx.x = 9;
     gfx.y = 20;
-    gfx.height = 1;
     gfx.width = 11;
     gfx.ink = view[1][1] & BG_BYTES; // tile floor (next tile floor looks better)
     gfx.paper = view[1][0] & BG_BYTES; // tile floor
     gfx_attr();
 
-    gfx.x = 9;
     gfx.y = 31;
     gfx.height = 1;
     gfx.width = 1;
@@ -525,14 +491,10 @@ void view_draw(void)
     gfx.width = 13;
     gfx_bright(); 
     gfx.x = 2;
-    gfx.y = 19;
     gfx.height = 7;
     gfx.width = 1;
     gfx_bright(); 
-    gfx.x = 2;
     gfx.y = 31;
-    gfx.height = 7;
-    gfx.width = 1;
     gfx_bright();
     if (view[1][1] & BLOCK_BYTE)
     {
