@@ -476,8 +476,16 @@ void view_draw(void)
     gfx.y = 19;
     gfx.height = 1;
     gfx.width = 1;
-    gfx.ink = view[0][0] & BG_BYTES; // tile wall
-    gfx.paper = view[1][0] & BG_BYTES; // tile floor
+    if (view[0][0] & BLOCK_BYTE) // is there a block to our immediate left
+    {
+        gfx.ink = view[0][0] & BG_BYTES; // lhs tile wall
+        gfx.paper = view[1][0] & BG_BYTES; // middle floor
+    }
+    else
+    {
+        gfx.ink = view[0][1] & BG_BYTES; // next lhs tile wall
+        gfx.paper = view[0][0] & BG_BYTES; // lhs tile floor
+    }    
     gfx_attr();
 
     gfx.x = 9;
@@ -492,7 +500,15 @@ void view_draw(void)
     gfx.y = 31;
     gfx.height = 1;
     gfx.width = 1;
-    gfx.ink = view[2][0] & BG_BYTES; // tile wall
-    gfx.paper = view[1][0] & BG_BYTES; // tile floor
+    if (view[2][0] & BLOCK_BYTE)
+    {
+        gfx.ink = view[2][0] & BG_BYTES; // rhs tile wall
+        gfx.paper = view[1][0] & BG_BYTES; // middle floor
+    }
+    else
+    {
+        gfx.ink = view[2][1] & BG_BYTES; // next rhs tile wall
+        gfx.paper = view[2][0] & BG_BYTES; // rhs tile floor
+    }    
     gfx_attr();    
 }
