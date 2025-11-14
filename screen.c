@@ -38,17 +38,14 @@ void screen_init(void)
     gfx_char();
 
     // instructions text
-    puts("\x16\x26\x0C Harelquins: INFINITE");
-    puts("\x16\x26\x0D Enemies: 4");
-    puts("\x16\x26\x0E Carried: Turnip");
-    puts("\x16\x26\x10 Q:up;");
-    puts("\x16\x26\x11 A:down;");
-    puts("\x16\x26\x12 O:left;");
-    puts("\x16\x26\x13 P:right;");
-    puts("\x16\x26\x14 Sp:action;");
+    puts("\x16\x26\x0C You wake up in a dark and "); // max string length
+    puts("\x16\x26\x0D mysterious labarynth.");
+    puts("\x16\x26\x0E Beware of green enemies.");
+    puts("\x16\x26\x10 Block holes in the fabric");
+    puts("\x16\x26\x11 of reality with gold then");
+    puts("\x16\x26\x12 find the secret exit."); 
     puts("\x16\x01\x14 A dark and mysterious labyrinth.");
-    puts("\x16\x26\x16 1-2:music select;");
-        
+       
     // default text is black on white
     gfx.x = 0;
     gfx.y = 0;
@@ -63,6 +60,19 @@ void screen_init(void)
     gfx.c = "[$";
     gfx.bank = &gfx_bank0;
     gfx_char(); 
+    // make the word green, green
+    gfx.x = 13;
+    gfx.y = 24;
+    gfx.height = 1;
+    gfx.width = 3;
+    gfx.ink = GREEN;
+    gfx_attr();
+    // make the word gold, yellow
+    gfx.x = 16;
+    gfx.y = 27;
+    gfx.width = 2;
+    gfx.ink = YELLOW;
+    gfx_attr();
 }
 
 void screen_success(void)
@@ -87,6 +97,14 @@ void screen_success(void)
 
 void screen_refresh(void)
 {    
+    // cycle colour for the text "holes"
+    gfx.x = 15;
+    gfx.y = 22;
+    gfx.height = 1;
+    gfx.width = 3;
+    gfx.ink = screen.colour;
+    gfx.paper = WHITE;
+    gfx_attr();
     // cycle colour for flashing blocks
     ++screen.colour;    
     if (screen.colour > WHITE)
