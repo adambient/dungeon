@@ -3,6 +3,7 @@
 #include "enemy.h"
 #include "gfx/gfx.h"
 #include "grid.h"
+#include "view.h"
 
 // UDGs
 #define MAN_UP_HEAD "KL$"
@@ -123,6 +124,10 @@ void player_draw_up(void)
         gfx.c = MAN_UP_HEAD;
         gfx.bank = &gfx_bank0;
         gfx_char();
+
+        // TEMP - wip
+        view_update();
+        view_draw();
     }
     frame_draw_body(MAN_UP_BODY1, MAN_UP_BODY2, MAN_UP_BODY3);
 }
@@ -150,6 +155,10 @@ void player_draw_right(void)
         gfx.c = MAN_RIGHT_HEAD;
         gfx.bank = &gfx_bank0;
         gfx_char();
+
+        // TEMP - wip
+        view_update();
+        view_draw();
     }
     frame_draw_body(MAN_RIGHT_BODY1, MAN_RIGHT_BODY2, MAN_RIGHT_BODY3);
 }
@@ -177,6 +186,10 @@ void player_draw_down(void)
         gfx.c = MAN_DOWN_HEAD;
         gfx.bank = &gfx_bank0;
         gfx_char();
+
+        // TEMP - wip
+        view_update();
+        view_draw();
     }
     frame_draw_body(MAN_DOWN_BODY1, MAN_DOWN_BODY2, MAN_DOWN_BODY3);
 }
@@ -204,6 +217,10 @@ void player_draw_left(void)
         gfx.c = MAN_LEFT_HEAD;
         gfx.bank = &gfx_bank0;
         gfx_char();
+
+        // TEMP - wip
+        view_update();
+        view_draw();
     }
     frame_draw_body(MAN_LEFT_BODY1, MAN_LEFT_BODY2, MAN_LEFT_BODY3);
 }
