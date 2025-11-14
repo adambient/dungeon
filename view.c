@@ -516,5 +516,31 @@ void view_draw(void)
         gfx.ink = view[2][1] & BG_BYTES; // next rhs tile wall
         gfx.paper = view[2][0] & BG_BYTES; // rhs tile floor
     }    
-    gfx_attr();    
+    gfx_attr();
+
+    // add bright torch effect
+    gfx.x = 9;
+    gfx.y = 19;
+    gfx.height = 1;
+    gfx.width = 13;
+    gfx_bright(); 
+    gfx.x = 2;
+    gfx.y = 19;
+    gfx.height = 7;
+    gfx.width = 1;
+    gfx_bright(); 
+    gfx.x = 2;
+    gfx.y = 31;
+    gfx.height = 7;
+    gfx.width = 1;
+    gfx_bright();
+    if (view[1][1] & BLOCK_BYTE)
+    {
+        // block in front so torchlight would touch centre
+        gfx.x = 4;
+        gfx.y = 21;
+        gfx.height = 5;
+        gfx.width = 9;
+        gfx_bright();
+    }
 }
