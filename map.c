@@ -12,23 +12,21 @@ static unsigned char *attr_address;
 static unsigned char map_frame;
 unsigned char map_uncovered_holes;
 
-unsigned char map_tile_get(unsigned char x, unsigned char y)
+unsigned char map_tile_get(void)
 {
-    if (x < MAP_SIZE && y < MAP_SIZE)
-    {  
-        grid.x = x;
-        grid.y = y;
+    if (grid.x < MAP_SIZE && grid.y < MAP_SIZE)
+    {
         grid_get();
         if ((grid.tile & SEEN_BYTE) == SEEN_BYTE)
         {
-            if (enemy_is_located(x, y))
+            if (enemy_is_located(grid.x, grid.y))
             {
                 return ENEMY;
             }
             if (map_uncovered_holes == 0)
             {
-                if ((x == 1 && (y == (MAP_SIZE - 2) || y == 1)) ||
-                (x == (MAP_SIZE - 2) && (y == (MAP_SIZE - 2) || y == 1)))
+                if ((grid.x == 1 && (grid.y == (MAP_SIZE - 2) || grid.y == 1)) ||
+                (grid.x == (MAP_SIZE - 2) && (grid.y == (MAP_SIZE - 2) || grid.y == 1)))
                 {
                     // uncovered secret exit, cycle between carpet colours
                     return (CARPET_1 | (screen.colour & 0b00000001));
@@ -54,14 +52,17 @@ unsigned char map_tile_get(unsigned char x, unsigned char y)
 static void row_draw_vertical(signed char x, signed char x2, unsigned char y)
 {
     unsigned char i = VISIBLE_BLOCKS;
+    grid.y = y;
     for (; i > 0; i--)
     {
-        unsigned char tile = map_tile_get(x, y);
-        unsigned char tile2 = x == x2 ? tile : map_tile_get(x2, y);
+        grid.x = x;
+        unsigned char tile = map_tile_get();
+        grid.x = x2;
+        unsigned char tile2 = x == x2 ? tile : map_tile_get();
         tile = tile | tile2 << 3;
         *attr_address++ = tile;
         *attr_address++ = tile;
-        y++;
+        grid.y++;
     }
     for (i = 15; i >= VISIBLE_BLOCKS; i--)
     {
@@ -72,15 +73,19 @@ static void row_draw_vertical(signed char x, signed char x2, unsigned char y)
 
 static void row_draw_horizontal(signed char x, unsigned char y)
 {
+    grid.x = x;
+    grid.y = y;
     for (unsigned char i = VISIBLE_BLOCKS; i < 255; i--)
     {
-        unsigned char tile = map_tile_get(x, y);
+        unsigned char tile = map_tile_get();
         unsigned char tile2 = tile;
         switch (map_frame)
         {
         case 1:
         case 3:
-            tile = map_tile_get(x, y - 1);
+            grid.y--;
+            tile = map_tile_get();
+            grid.y++;
             break;
         }
 
@@ -105,7 +110,7 @@ static void row_draw_horizontal(signed char x, unsigned char y)
                 *attr_address++ = tile | tile << 3;
             }
             *attr_address++ = tile | tile2 << 3;
-            y++;
+            grid.y++;
         }
     }
     for (unsigned char i = 15; i > VISIBLE_BLOCKS; i--)
