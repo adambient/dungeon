@@ -31,7 +31,7 @@ void init(void)
     globals.player_y = 1;
     globals.player_facing = DIR_NONE;
     globals.player_dir = DIR_UP; // move up first of all to draw map TODO - shouldn't need to do this    
-    map_move_none();
+    map_move_up();
 }
 
 void main(void)
