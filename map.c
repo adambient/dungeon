@@ -298,14 +298,17 @@ static void map_refresh_horizontal(void)
 
 unsigned char map_move_up(void)
 {    
-    if (globals.player_x == 0 || !can_move_check(-1, 0))
+    if (globals.player_facing != globals.player_dir)
     {
-        if (globals.player_facing != globals.player_dir)
-        {
-            player_draw_up();
-        }
+        // look in direction before moving
+        player_draw_up();
         return DIR_NONE;
-    }    
+    }
+    else if (globals.player_x == 0 || !can_move_check(-1, 0))
+    {
+        return DIR_NONE;
+    }
+ 
     // animate up
     player_draw_up();
     map_frame = 1;
@@ -329,14 +332,17 @@ unsigned char map_move_up(void)
 
 unsigned char map_move_down(void)
 {    
-    if (globals.player_x == MAP_SIZE - 1 || !can_move_check(1, 0))
+    if (globals.player_facing != globals.player_dir)
     {
-        if (globals.player_facing != globals.player_dir)
-        {
-            player_draw_down();
-        }
+        // look in direction before moving
+        player_draw_down();
         return DIR_NONE;
-    }    
+    }
+    else if (globals.player_x == MAP_SIZE - 1 || !can_move_check(1, 0))
+    {
+        return DIR_NONE;
+    }
+  
     // animate down
     player_draw_down();
     map_frame = 3;
@@ -360,15 +366,17 @@ unsigned char map_move_down(void)
 
 unsigned char map_move_left(void)
 {    
-    if (globals.player_y == 0 || !can_move_check(0, -1))
+    if (globals.player_facing != globals.player_dir)
     {
-        if (globals.player_facing != globals.player_dir)
-        {
-            // look in direction
-            player_draw_left();
-        }
+        // look in direction before moving
+        player_draw_left();
         return DIR_NONE;
-    }    
+    }
+    else if (globals.player_y == 0 || !can_move_check(0, -1))
+    {
+        return DIR_NONE;
+    }
+ 
     // animate left
     player_draw_left();
     map_frame = 1;
@@ -392,15 +400,17 @@ unsigned char map_move_left(void)
 
 unsigned char map_move_right(void)
 {    
-    if (globals.player_y == MAP_SIZE - 1 || !can_move_check(0, 1))
+    if (globals.player_facing != globals.player_dir)
     {
-        if (globals.player_facing != globals.player_dir)
-        {
-            // look in direction
-            player_draw_right();
-        }
+        // look in direction before moving
+        player_draw_right();
         return DIR_NONE;
-    }    
+    }
+    else if (globals.player_y == MAP_SIZE - 1 || !can_move_check(0, 1))
+    {
+        return DIR_NONE;
+    }
+
     // animate right
     player_draw_right();
     map_frame = 3;
