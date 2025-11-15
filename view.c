@@ -15,27 +15,25 @@
 //012
 static unsigned char view[3][4];
 
-unsigned char view_tile_get(unsigned char x, unsigned char y)
+unsigned char view_tile_get(void)
 {
-    if (x < MAP_SIZE && y < MAP_SIZE)
+    if (grid.x < MAP_SIZE && grid.y < MAP_SIZE)
     {  
-        grid.x = x;
-        grid.y = y;
-        grid_get();
-
-        if (enemy_is_located(x, y))
+        if (enemy_is_located(grid.x, grid.y))
         {
             return ENEMY | BLOCK_BYTE;
         }
         if (map_uncovered_holes == 0)
         {
-            if ((x == 1 && (y == (MAP_SIZE - 2) || y == 1)) ||
-            (x == (MAP_SIZE - 2) && (y == (MAP_SIZE - 2) || y == 1)))
+            // TODO - need a quicker way of identifying exits
+            if ((grid.x == 1 && (grid.y == (MAP_SIZE - 2) || grid.y == 1)) ||
+            (grid.x == (MAP_SIZE - 2) && (grid.y == (MAP_SIZE - 2) || grid.y == 1)))
             {
                 // uncovered secret exit, cycle between carpet colours
                 return (CARPET_1 | (screen.colour & 0b00000001));
             }
         }
+        grid_get();
         grid.tile = grid.tile & BG_BYTES;
         switch (grid.tile)
         {
@@ -63,60 +61,120 @@ void view_update(void)
     {
     default:
     case DIR_UP:
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y-1);
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y-1);
-        *view_data++ = view_tile_get(globals.player_x-2, globals.player_y-1);
-        *view_data++ = view_tile_get(globals.player_x-3, globals.player_y-1);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x-2, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x-3, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y+1);                
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y+1);                
-        *view_data++ = view_tile_get(globals.player_x-2, globals.player_y+1);                
-        *view_data++ = view_tile_get(globals.player_x-3, globals.player_y+1);
+        grid.x = globals.player_x;
+        grid.y = globals.player_y-1;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        *view_data++ = view_tile_get();
+        grid.x = globals.player_x;
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        *view_data++ = view_tile_get();
+        grid.x = globals.player_x;
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        *view_data = view_tile_get();
         break;
     case DIR_DOWN:
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y+1);
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y+1);
-        *view_data++ = view_tile_get(globals.player_x+2, globals.player_y+1);
-        *view_data++ = view_tile_get(globals.player_x+3, globals.player_y+1);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x+2, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x+3, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y-1);                
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y-1);                
-        *view_data++ = view_tile_get(globals.player_x+2, globals.player_y-1);                
-        *view_data++ = view_tile_get(globals.player_x+3, globals.player_y-1);
+        grid.x = globals.player_x;
+        grid.y = globals.player_y+1;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        *view_data++ = view_tile_get();
+        grid.x = globals.player_x;
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        *view_data++ = view_tile_get();
+        grid.x = globals.player_x;
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        *view_data = view_tile_get();
         break;
     case DIR_RIGHT:
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y+1);
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y+2);
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y+3);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y+1);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y+2);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y+3);
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y);                
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y+1);                
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y+2);                
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y+3);
+        grid.x = globals.player_x-1;
+        grid.y = globals.player_y;
+        *view_data++ = view_tile_get();
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        grid.y = globals.player_y;
+        *view_data++ = view_tile_get();
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.x++;
+        grid.y = globals.player_y;
+        *view_data++ = view_tile_get();
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.y++;
+        *view_data++ = view_tile_get();
+        grid.y++;
+        *view_data = view_tile_get();
         break;
     case DIR_LEFT:
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y-1);
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y-2);
-        *view_data++ = view_tile_get(globals.player_x+1, globals.player_y-3);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y-1);
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y-2);        
-        *view_data++ = view_tile_get(globals.player_x, globals.player_y-3);                
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y);                
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y-1);
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y-2);
-        *view_data++ = view_tile_get(globals.player_x-1, globals.player_y-3);
+        grid.x = globals.player_x+1;
+        grid.y = globals.player_y;
+        *view_data++ = view_tile_get();
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        grid.y = globals.player_y;
+        *view_data++ = view_tile_get();
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.x--;
+        grid.y = globals.player_y;
+        *view_data++ = view_tile_get();
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.y--;
+        *view_data++ = view_tile_get();
+        grid.y--;
+        *view_data = view_tile_get();
         break;
     }
 }
